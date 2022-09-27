@@ -1,0 +1,14 @@
+<h6>{{ waypoint.name }}</h6>
+{% if hasImage(waypoint) %}
+<a href="{{ asset('wp_images/'~ waypoint.guid ~ '.jpg') }}">
+    <img src="{{ asset('wp_images/'~ waypoint.guid ~ '.jpg') | imagine_filter('squared_thumbnail') }}" alt="Image">
+</a>
+{% else %}
+    No image found :(
+{% endif %}
+<ul class="list-unstyled">
+    <li>Lat: {{ waypoint.lat }}</li>
+    <li>Lon: {{ waypoint.lon }}</li>
+</ul>
+
+<a href="{{ path('waypoints_edit', {'id': waypoint.id}) }}">{{ 'Edit'|trans }}</a>

@@ -47,6 +47,11 @@ form.form-nomargin {
 .sortable-ghost {
     background-color: lightblue;
 }
+
 .drag-handle {
     cursor: grab;
+}
+
+.row-hover:hover {
+    background-color: #99f6e4;
 }

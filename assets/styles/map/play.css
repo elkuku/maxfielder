@@ -1,0 +1,64 @@
+html, body, #map {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    padding: 0;
+}
+
+.link-layer h4{
+    color: blue;
+    font-size: 1.4em;
+}
+
+.farm-layer b{
+    color: red;
+    font-size: 1.6em;
+}
+
+button#btnNext {
+    background-color: green;
+    border: 1px solid green;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+button#btnNext:hover {
+    background-color: white;
+    border: 1px solid green;
+    color: green;
+}
+
+.circle {
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    padding: 10px;
+    background: #fff;
+    border: 3px solid #000;
+    color: #000;
+    text-align: center;
+}
+
+.circle.farmalot {
+    background-color: #e7e1a5;
+}
+.circle-dest {
+    background: #ffd840;
+    font-size: 1.6em;
+
+}
+
+a.routing-enabled {
+    color: orange;
+    cursor: pointer;
+}

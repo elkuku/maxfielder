@@ -1,0 +1,17 @@
+{% extends 'base-map.html.twig' %}
+
+{% block title %}{{ parent() }} - {{ 'Map 2'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('map-edit') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('map-edit') }}
+{% endblock %}
+
+{% block body %}
+    <div id="map"></div>
+{% endblock %}

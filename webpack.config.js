@@ -21,6 +21,10 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
+    .addEntry('map-maxfield', './assets/js/map/maxfield.js')
+    .addEntry('map-play', './assets/js/map/play.js')
+    .addEntry('map-edit', './assets/js/map/edit.js')
+    .addEntry('maxfields', './assets/js/maxfields.js')
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')

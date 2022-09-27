@@ -1,0 +1,47 @@
+html, body, #map {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    padding-top: 55px;
+}
+
+#map {
+    margin-bottom: -40px;
+}
+
+#logoContainer {
+    position: absolute;
+    z-index: 1;
+    top: 70px;
+    cursor: pointer;
+}
+
+#selection-count {
+    position: absolute;
+    z-index: 1;
+    top: 100px;
+    font-size: 3em;
+    color: #07bf05;
+    text-shadow: 2px 2px #666666;
+}
+
+#controls-container {
+    position: absolute;
+    z-index: 1;
+    top: 140px;
+    font-size: 3em;
+    color: #07bf05;
+    text-shadow: 2px 2px #666666;
+    cursor: pointer;
+}
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    background: lightgreen;
+}
+
+.marker-cluster span {
+    color: black;
+}

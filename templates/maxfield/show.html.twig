@@ -1,0 +1,24 @@
+{% extends 'base-map.html.twig' %}
+
+{% block title %}
+    {{ maxfield.name }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('map-play') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('map-play') }}
+{% endblock %}
+
+{% block body %}
+    <div
+            id="map"
+            data-maxfield-data='{{ jsonData|json_encode }}'
+    ></div>
+{% endblock %}
+
+

@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} - MaxFields Result{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('maxfields') }}
+{% endblock %}
+
+{% block body %}
+    <span id="js-data"
+          data-max-frames="{{ info.frames }}"
+          data-item="{{ item }}"
+          data-steps="{{ info.steps|json_encode }}"
+    ></span>
+{#    <a href="{{ path('max_fields_json', {'item': item}) }}" class="btn btn-sm btn-outline-success">#}
+{#        JSON#}
+{#    </a>#}
+{#    <a href="{{ path('max_fields_gpx', {'item': item}) }}" class="btn btn-sm btn-outline-success">#}
+{#        {{ 'Download GPX'|trans }}#}
+{#    </a>#}
+{#    <a href="{{ path('max_fields_gpxtrack', {'item': item}) }}" class="btn btn-sm btn-outline-success">#}
+{#        {{ 'Download GPX Track'|trans }}#}
+{#    </a>#}
+{#    <a href="#" class="btn btn-sm btn-outline-info" id="maxfield2strike_btn">#}
+{#        {{ 'Create STRIKE OP'|trans }}#}
+{#    </a>#}
+
+{#    <form action="" id="maxfield2strike_form">#}
+{#        <h3>Create a S.T.R.I.K.E OP</h3>#}
+{#        Name: <input type="text" name="opName" value="{{ item }}">#}
+{#        <input type="hidden" name="maxfieldName" value="{{ item }}">#}
+{#        <button id="maxfield2strike_create" class="btn btn-success">Create OP</button>#}
+{#        <span id="maxfield2strike_status"></span>#}
+{#        <pre id="maxfield2strike_result"></pre>#}
+{#    </form>#}
+    <h3>MaxFields for <span id="itemId">{{ item }}</span></h3>
+
+    <div class="row">
+        <div class="col">
+            <button id="frameMinus" class="btn btn-outline-secondary">-</button>
+            <button id="framePlus" class="btn btn-outline-secondary">+</button>
+            <span id="frameNum">#</span>
+            <div id="frameLinkInfo"></div>
+        </div>
+        <div class="col border">
+            <img id="displayFrames" src="/maxfields/{{ item }}/frames/frame_00000.png" alt="Frames" width="350px">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {% if maxfieldVersion < 4 %}
+                <img src="/maxfields/{{ item }}/portalMap.png" alt="Portal Map">
+            {% else %}
+                <img src="/maxfields/{{ item }}/portal_map.png" width="350px" alt="Portal Map">
+            {% endif %}
+        </div>
+        <div class="col">
+            {% if maxfieldVersion < 4 %}
+                <img src="/maxfields/{{ item }}/linkMap.png" alt="Link Map">
+            {% else %}
+                <img src="/maxfields/{{ item }}/link_map.png" width="350px" alt="Link Map">
+            {% endif %}
+        </div>
+        {% if maxfieldVersion >= 4 %}
+        <div class="col">
+            <img src="/maxfields/{{ item }}/plan_movie.gif" width="350px" alt="Link movie">
+        </div>
+        {% endif %}
+
+    </div>
+    <div class="row">
+        <div class="col">
+            <h4>Key Preparation</h4>
+            <table>
+                <tr>
+                    <th>Map No</th>
+                    <th>Keys</th>
+                    <th>Name</th>
+                </tr>
+                {% for wayPoint in info.keyPrep.wayPoints %}
+                    <tr>
+                        <th>{{ wayPoint.mapNo }}</th>
+                        <td>{{ wayPoint.keysNeeded }}</td>
+                        <td>{{ wayPoint.name }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    {% for agentInfo in info.agentsInfo %}
+        <div class="row">
+            <div class="col-lg">
+                <h4>Keys for agent {{ agentInfo.agentNumber }}</h4>
+                <table class="table table-sm">
+                    {% for point in agentInfo.keys.wayPoints %}
+                        {% if point.agentNum + 1 == agentInfo.agentNumber %}
+                            <tr>
+                                <td>{{ point.mapNo }}</td>
+                                <td>{{ point.name }}</td>
+                                <td>{{ point.keysNeeded ?: '-' }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="col-lg">
+                <h4>Links for agent {{ agentInfo.agentNumber }}</h4>
+                <button class="showAllLinks" data-agent-id="{{ agentInfo.agentNumber }}">Show all</button>
+                <table class="table table-sm">
+                    {% set origin=-1 %}
+                    {% for link in agentInfo.links %}
+                        <tr
+                                {% if agentInfo.agentNumber != link.agentNum %}
+                                class="foreign-Link-{{ agentInfo.agentNumber }}"
+                                {% endif %}
+                                style="border-bottom: 1px solid silver;{% if link.originNum != origin %}border-top: 2px solid darkblue;{% endif %}">
+                            <td>{{ link.isEarly ? 'X' : '' }}</td>
+                            <td>{{ link.linkNum }}</td>
+                            <td>
+                                {% if agentInfo.agentNumber != link.agentNum %}
+                                <del>{% endif %}
+                                    {% if link.originNum != origin %}
+                                        <b>{{ link.originNum }} - {{ link.originName }}</b><br>
+                                    {% endif %}
+                                    {% set origin = link.originNum %}
+                                    L {{ link.destinationNum }} - {{ link.destinationName }}
+                                    {% if agentInfo.agentNumber != link.agentNum %}</del>{% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                Agent {{ agentInfo.agentNumber }} - Send e-mail to <input type="text">
+                <button class="btn btn-outline-success sendMail" id="{{ agentInfo.agentNumber }}">Send</button>
+                <span id="result-{{ agentInfo.agentNumber }}"></span>
+            </div>
+        </div>
+
+    {% endfor %}
+{% endblock %}

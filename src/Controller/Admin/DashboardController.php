@@ -2,7 +2,9 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Maxfield;
 use App\Entity\User;
+use App\Entity\Waypoint;
 use App\Repository\UserRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -37,6 +39,8 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToCrud('Users', 'fa fa-users', User::class);
+        yield MenuItem::linkToCrud('Waypoints', 'fa fa-users', Waypoint::class);
+        yield MenuItem::linkToCrud('Maxfields', 'fa fa-users', Maxfield::class);
 
         yield MenuItem::section();
         yield MenuItem::linkToUrl('Homepage', 'fas fa-home', $this->generateUrl('default'));

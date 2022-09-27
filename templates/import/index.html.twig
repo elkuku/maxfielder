@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} - Import{% endblock %}
+
+{% block body %}
+    <h1>Import</h1>
+
+    {{ form_start(form) }}
+
+    {{ form_errors(form) }}
+
+    <h5>Import method</h5>
+
+{#    <ul class="nav nav-tabs" id="myTab" role="tablist">#}
+{#        <li class="nav-item">#}
+{#            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab">#}
+{#                Intel Link#}
+{#            </a>#}
+{#        </li>#}
+{#        <li class="nav-item">#}
+{#            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab">#}
+{#                GPX#}
+{#            </a>#}
+{#        </li>#}
+{#        <li class="nav-item">#}
+{#            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab">#}
+{#                CSV#}
+{#            </a>#}
+{#        </li>#}
+{#        <li class="nav-item">#}
+{#            <a class="nav-link" id="idmcsv-tab" data-toggle="tab" href="#idmcsv" role="tab">#}
+{#                IDM CSV#}
+{#            </a>#}
+{#        </li>#}
+{#        <li class="nav-item">#}
+{#            <a class="nav-link" id="json-tab" data-toggle="tab" href="#json" role="tab">#}
+{#                JSON#}
+{#            </a>#}
+{#        </li>#}
+{#        <li class="nav-item">#}
+{#            <a class="nav-link" id="offle-json-tab" data-toggle="tab" href="#offle-json" role="tab">#}
+{#                Offle JSON#}
+{#            </a>#}
+{#        </li>#}
+{#        <li class="nav-item">#}
+{#            <a class="nav-link" id="multiexportcsv-tab" data-toggle="tab" href="#multiexportcsv" role="tab">#}
+{#                multiexportcsv#}
+{#            </a>#}
+{#        </li>#}
+{#    </ul>#}
+{#    <div class="tab-content" id="myTabContent">#}
+{#        <div class="tab-pane fade show active" id="home" role="tabpanel">#}
+{#            {{ form_row(form.intelLink) }}#}
+{#        </div>#}
+{#        <div class="tab-pane fade" id="profile" role="tabpanel">#}
+{#            {{ form_row(form.gpxRaw) }}#}
+{#        </div>#}
+{#        <div class="tab-pane fade" id="contact" role="tabpanel">#}
+{#            {{ form_row(form.csvRaw) }}#}
+{#        </div>#}
+{#        <div class="tab-pane fade" id="idmcsv" role="tabpanel">#}
+{#            {{ form_row(form.idmcsvRaw) }}#}
+{#        </div>#}
+{#        <div class="tab-pane fade" id="json" role="tabpanel">#}
+{#            {{ form_row(form.JsonRaw) }}#}
+{#        </div>#}
+{#        <div class="tab-pane fade" id="offle-json" role="tabpanel">#}
+{#            {{ form_row(form.OffleJson) }}#}
+{#        </div>#}
+{#        <div class="tab-pane fade" id="multiexportcsv" role="tabpanel">#}
+{#            {{ form_row(form.multiexportcsv) }}#}
+{#        </div>#}
+{#    </div>#}
+    {{ form_row(form.multiexportjson) }}
+    <button type="submit" class="btn btn-primary">Import</button>
+
+    {{ form_end(form) }}
+{% endblock %}
