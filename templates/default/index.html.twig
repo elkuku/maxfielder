@@ -1,56 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ parent() }} - DefaultController{% endblock %}
+{% block title %}{{ parent() }}{% endblock %}
 
 {% block body %}
-    <h2>{{ 'system.welcome.message'|trans({'controller_name':controller_name}) }}</h2>
     {% if app.user %}
         <div class="alert alert-success">
             <h4>Welcome {{ app.user.userIdentifier }}!</h4>
         </div>
+        <div class="row">
+            {% for maxfield in maxfields %}
+            <div class="col-1">
+                <a class="btn btn-outline-success" href="{{ path('maxfield_play', {'id': maxfield.id}) }}">{{ maxfield.name }}</a>
+
+            </div>
+            {% endfor %}
+        </div>
     {% else %}
         <h4>
-            Use the <code>symfony console user-admin</code> command to create a user and <a href="{{ path('login') }}">log in</a>!
+            Please <a href="{{ path('login') }}">log in</a>!
         </h4>
     {% endif %}
-
-    <h4>We're using Symfony <code>{{ symfony_version }}</code> on PHP <code>{{ php_version }}</code></h4>
-
-    This friendly message is coming from:
-    <ul>
-        <li>
-            Your project at <code>{{ project_dir }}</code>
-        </li>
-        <li>Your controller at <code>
-                <a href="{{ (project_dir ~ '/src/Controller/DefaultController.php')|file_link(0) }}">src/Controller/DefaultController.php</a>
-            </code>
-        </li>
-        <li>Your template at <code>
-                <a href="{{ (project_dir ~ '/templates/default/index.html.twig')|file_link(0) }}">templates/default/index.html.twig</a>
-            </code>
-        </li>
-    </ul>
-
-    <div data-controller="hello" class="alert alert-primary">Stimulus test - LOADING...</div>
-
-    <div class="text-center">
-        <a href="http://www.wtfpl.net/">
-            <img src="{{ asset('build/images/wtfpl-logo-220x1601.png') }}" alt="WTFPL licensed">
-        </a>
-
-        <h3>Profanity is offensive!</h3>
-
-        <p>
-            You know what? Fuck your stance on profanity. Fuck your priorities in life. The WTFPL is about fucking
-            freedom and we mean it. Freedom means freedom to copy and modify and share works of art and science with the
-            rest of mankind, but also freedom to be gay and marry and have crazy gay sex, freedom to have tattoos,
-            freedom to say there is no God, freedom to take the pill, freedom to have an abortion. People die for being
-            gay or atheists. Don’t tell me that there is something sacred enough that it must be protected from the mere
-            existence of the word “fuck”. If the F in WTFPL offends you, then fuck you and your beliefs. Triple fuck
-            you.
-        </p>
-        <p>
-            From the <a href="http://www.wtfpl.net/faq/">WTFPL FAQ</a>
-        </p>
-    </div>
 {% endblock %}

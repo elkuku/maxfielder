@@ -5,7 +5,11 @@ html, body, #map {
 }
 
 body {
-    padding: 0;
+    padding-top: 55px;
+}
+
+#map {
+    margin-bottom: -40px;
 }
 
 .link-layer h4{

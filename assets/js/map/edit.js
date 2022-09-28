@@ -40,7 +40,7 @@ function loadMarkers() {
     markers.clearLayers()
 
     const myIcon = L.icon({
-        iconUrl: '/build/img/ico/my-icon.png',
+        iconUrl: '/build/images/ico/my-icon.png',
         iconSize: [22, 36],
         iconAnchor: [11, 36],
         popupAnchor: [0, -18],

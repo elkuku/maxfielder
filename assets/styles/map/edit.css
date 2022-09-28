@@ -4,6 +4,14 @@ html, body, #map {
     width: 100%;
 }
 
+body {
+    padding-top: 55px;
+}
+
+#map {
+    margin-bottom: -40px;
+}
+
 .marker-cluster span {
     color: black;
 }

@@ -46,3 +46,5 @@ public/wp_images
 ###> liip/imagine-bundle ###
 /public/media/cache/
 ###< liip/imagine-bundle ###
+
+pws.txt
