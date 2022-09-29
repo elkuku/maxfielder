@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Elkuku\MaxfieldParser\JsonHelper;
 use Knp\Snappy\Pdf;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,15 +22,46 @@ use Symfony\Component\Routing\Annotation\Route;
 
 #[Route(path: 'max-fields')]
 #[IsGranted('ROLE_ADMIN')]
-class MaxFieldsController extends AbstractController
+class MaxFieldsController extends BaseController
 {
     #[Route(path: '/', name: 'max_fields')]
-    public function index(MaxfieldRepository $maxfieldRepository): Response
-    {
+    public function index(
+        MaxfieldRepository $maxfieldRepository,
+        MaxFieldHelper $maxFieldHelper
+    ): Response {
+        $maxfieldsFiles = $maxFieldHelper->getList();
+        $maxfields = [];
+
+        foreach ($maxfieldRepository->findAll() as $maxfield) {
+            $m = new \stdClass();
+
+            $m->id = $maxfield->getId();
+            $m->path = $maxfield->getPath();
+            $m->name = $maxfield->getName();
+
+            try {
+                $log = $maxFieldHelper->getLog($m->path);
+                $m->status = str_contains($log, 'Total maxfield runtime')
+                    ? 'Finished' : 'Running';
+
+            } catch (FileNotFoundException) {
+                $m->status = 'n/f';
+            }
+
+            $maxfields[] = $m;
+
+            $index = array_search($m->path, $maxfieldsFiles);
+            if ($index) {
+                unset($maxfieldsFiles[$index]);
+            }
+        }
+
         return $this->render(
             'maxfield/index.html.twig',
             [
-                'maxfields' => $maxfieldRepository->findAll(),
+
+                'maxfields'      => $maxfields,
+                'maxfieldsFiles' => $maxfieldsFiles,
             ]
         );
     }
@@ -51,13 +82,18 @@ class MaxFieldsController extends AbstractController
     }
 
     #[Route('/play/{id}', name: 'maxfield_play', methods: ['GET'])]
-    public function show(Maxfield $maxfield): Response
-    {
+    public function play(
+        MaxFieldHelper $maxFieldHelper,
+        Maxfield $maxfield
+    ): Response {
+        $json = (new JsonHelper())
+            ->getJson($maxFieldHelper->getParser($maxfield->getPath()));
+
         return $this->render(
-            'maxfield/show.html.twig',
+            'maxfield/play.html.twig',
             [
                 'maxfield' => $maxfield,
-                'jsonData' => $maxfield->getJsonData(),
+                'jsonData' => $json,
             ]
         );
     }
@@ -98,25 +134,23 @@ class MaxFieldsController extends AbstractController
             $options
         );
 
-        $json = (new JsonHelper())
-            ->getJson($maxFieldHelper->getParser($projectName));
+        // $json = (new JsonHelper())
+        //     ->getJson($maxFieldHelper->getParser($projectName));
 
         $maxfield = (new Maxfield())
             ->setName($projectName)
             ->setPath($projectName)
-            ->setJsonData(json_decode($json))
+            // ->setJsonData(json_decode($json))
             ->setOwner($this->getUser());
 
         $entityManager->persist($maxfield);
         $entityManager->flush();
 
         return $this->render(
-            'maxfield/result.html.twig',
+            'maxfield/status.html.twig',
             [
-                'item'            => $projectName,
-                'info'            => $maxFieldHelper->getMaxField($projectName),
-                'maxfieldVersion' => $maxFieldHelper->getMaxfieldVersion(),
-
+                'projectName' => $projectName,
+                // 'maxfield' => $maxFieldHelper->getMaxField($projectName),
             ]
         );
     }
@@ -124,13 +158,13 @@ class MaxFieldsController extends AbstractController
     #[Route(path: '/delete/{id}', name: 'max_fields_delete')]
     public function delete(
         MaxFieldGenerator $maxFieldGenerator,
-        MaxfieldRepository $maxfieldRepository,
         EntityManagerInterface $entityManager,
         Maxfield $maxfield,
     ): Response {
         $item = $maxfield->getPath();
         try {
-            $maxFieldGenerator->remove($item);
+            $maxFieldGenerator->remove((string)$item);
+
             $entityManager->remove($maxfield);
             $entityManager->flush();
 
@@ -139,6 +173,22 @@ class MaxFieldsController extends AbstractController
             $this->addFlash('warning', $exception->getMessage());
         }
 
-        return $this->index($maxfieldRepository);
+        return $this->redirectToRoute('max_fields');
+    }
+
+    #[Route(path: '/delete-files/{item}', name: 'maxfield_delete_files')]
+    public function deleteFiles(
+        MaxFieldGenerator $maxFieldGenerator,
+        string $item,
+    ): Response {
+        try {
+            $maxFieldGenerator->remove($item);
+
+            $this->addFlash('success', sprintf('%s has been removed.', $item));
+        } catch (IOException $exception) {
+            $this->addFlash('warning', $exception->getMessage());
+        }
+
+        return $this->redirectToRoute('max_fields');
     }
 }

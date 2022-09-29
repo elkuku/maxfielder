@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} - MaxField status{% endblock %}
+
+{% block body %}
+    <h3>MaxField Status</h3>
+
+    {{ dump(projectName) }}
+{#    {{ dump(maxfield) }}#}
+{% endblock %}

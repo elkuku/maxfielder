@@ -3,13 +3,10 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Maxfield;
-use App\Entity\User;
-use App\Entity\Waypoint;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class MaxfieldsCrudController extends AbstractCrudController
 {
@@ -26,7 +23,7 @@ class MaxfieldsCrudController extends AbstractCrudController
             Field::new('name'),
             Field::new('path'),
             // Field::new('jsondata'),
-            // Field::new('owner'),
+            AssociationField::new('owner'),
         ];
     }
 }

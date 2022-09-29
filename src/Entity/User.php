@@ -56,6 +56,11 @@ class User implements UserInterface
         $this->maxfields = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return $this->identifier;
+    }
+
     /**
      * @return array{
      *     id: integer|null,

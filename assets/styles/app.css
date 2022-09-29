@@ -55,3 +55,19 @@ form.form-nomargin {
 .row-hover:hover {
     background-color: #99f6e4;
 }
+
+
+.linkCurrent {
+    background-color: #ffffa0;
+    color: black;
+}
+
+span.msgLink {
+    background-color: #b3ffb3;
+    color: black;
+}
+
+span.msgMove {
+    background-color: #e3beff;
+    color: black;
+}

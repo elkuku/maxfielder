@@ -1,3 +1,5 @@
+const $ = require('jquery'); // @todo remove jquery :(
+
 let frameNum = 0
 let intervalId = 0
 
@@ -37,6 +39,8 @@ $('.sendMail').click(function () {
 })
 
 $('#framePlus').click(function () {
+    console.log('hey'+frameNum+maxFrames)
+    console.log(jsData.data('maxFrames'))
     if (frameNum === maxFrames) {
         return
     }

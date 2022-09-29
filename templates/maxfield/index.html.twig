@@ -6,7 +6,8 @@
     <h3>MaxFields</h3>
     {% for maxfield in maxfields %}
         <div class="row row-hover">
-            <div class="col-8">
+            <div class="col-1">{{ maxfield.status }}</div>
+            <div class="col-7">
                 <a href="{{ path('maxfield_play', {'id': maxfield.id}) }}">{{ maxfield.name }}</a>
             </div>
             <div class="col-4">
@@ -15,4 +16,6 @@
             </div>
         </div>
     {% endfor %}
+
+    {{ dump(maxfieldsFiles) }}
 {% endblock %}

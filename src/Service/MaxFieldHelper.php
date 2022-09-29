@@ -5,6 +5,7 @@ namespace App\Service;
 use DirectoryIterator;
 use Elkuku\MaxfieldParser\MaxfieldParser;
 use Elkuku\MaxfieldParser\Type\MaxField;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 class MaxFieldHelper
 {
@@ -45,6 +46,17 @@ class MaxFieldHelper
     public function getMaxField(string $item): MaxField
     {
         return $this->getParser()->parse($item);
+    }
+
+    public function getLog(string $item): bool|string
+    {
+        $path = $this->rootDir.'/'.$item.'/log.txt';
+
+        if (false === file_exists($path)) {
+            throw new FileNotFoundException();
+        }
+
+        return file_get_contents($path);
     }
 
     public function getMaxfieldVersion(): int

@@ -9,7 +9,7 @@
 
 {% block body %}
     <span id="js-data"
-          data-max-frames="{{ info.frames }}"
+          data-max-frames="{{ info.steps|length }}"
           data-item="{{ item }}"
           data-steps="{{ info.steps|json_encode }}"
     ></span>

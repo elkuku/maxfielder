@@ -73,7 +73,7 @@ class MaxFieldGenerator
                     $command .= " --skip_step_plots";
                 }
 
-                $command .= " --verbose > $projectRoot/log.txt 2>&1";
+                $command .= " --verbose > $projectRoot/log.txt 2>&1 &";
             }
 
             $fileSystem->dumpFile($projectRoot.'/command.txt', $command);
