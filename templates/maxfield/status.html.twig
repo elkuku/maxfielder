@@ -4,7 +4,23 @@
 
 {% block body %}
     <h3>MaxField Status</h3>
-TBD...
-{#    {{ dump(projectName) }}#}
-{#    {{ dump(maxfield) }}#}
+    <h4>{{ maxfield.name }}</h4>
+    <div data-controller="maxfieldstatus"
+        data-project-id="{{ maxfield.id }}">
+        <div class="row">
+            <div class="col">Status</div>
+            <div class="col">Files</div>
+            <div class="col">Frames</div>
+            <div class="col">Movie</div>
+        </div>
+        <div class="row">
+            <div class="col" data-maxfieldstatus-target="status">...</div>
+            <div class="col" data-maxfieldstatus-target="files">...</div>
+            <div class="col" data-maxfieldstatus-target="frames">...</div>
+            <div class="col" data-maxfieldstatus-target="movie">...</div>
+        </div>
+        <div class="row">
+            <code class="col-12" data-maxfieldstatus-target="log">...</code>
+        </div>
+    </div>
 {% endblock %}

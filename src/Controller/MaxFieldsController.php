@@ -5,16 +5,15 @@ namespace App\Controller;
 use App\Entity\Maxfield;
 use App\Repository\MaxfieldRepository;
 use App\Repository\WaypointRepository;
-use App\Service\MaxField2Strike;
 use App\Service\MaxFieldGenerator;
 use App\Service\MaxFieldHelper;
-use App\Service\StrikeLogger;
+use App\Type\MaxfieldStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Elkuku\MaxfieldParser\JsonHelper;
-use Knp\Snappy\Pdf;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -33,24 +32,12 @@ class MaxFieldsController extends BaseController
         $maxfields = [];
 
         foreach ($maxfieldRepository->findAll() as $maxfield) {
-            $m = new \stdClass();
 
-            $m->id = $maxfield->getId();
-            $m->path = $maxfield->getPath();
-            $m->name = $maxfield->getName();
+            $maxfieldStatus = (new MaxfieldStatus($maxFieldHelper))
+                ->fromMaxfield($maxfield);
+            $maxfields[] = $maxfieldStatus;
 
-            try {
-                $log = $maxFieldHelper->getLog($m->path);
-                $m->status = str_contains($log, 'Total maxfield runtime')
-                    ? 'Finished' : 'Running';
-
-            } catch (FileNotFoundException) {
-                $m->status = 'n/f';
-            }
-
-            $maxfields[] = $m;
-
-            $index = array_search($m->path, $maxfieldsFiles);
+            $index = array_search($maxfieldStatus->getPath(), $maxfieldsFiles);
             if ($index) {
                 unset($maxfieldsFiles[$index]);
             }
@@ -102,7 +89,6 @@ class MaxFieldsController extends BaseController
     public function generateMaxFields(
         WaypointRepository $repository,
         MaxFieldGenerator $maxFieldGenerator,
-        MaxFieldHelper $maxFieldHelper,
         EntityManagerInterface $entityManager,
         Request $request
     ): Response {
@@ -134,13 +120,9 @@ class MaxFieldsController extends BaseController
             $options
         );
 
-        // $json = (new JsonHelper())
-        //     ->getJson($maxFieldHelper->getParser($projectName));
-
         $maxfield = (new Maxfield())
             ->setName($projectName)
             ->setPath($projectName)
-            // ->setJsonData(json_decode($json))
             ->setOwner($this->getUser());
 
         $entityManager->persist($maxfield);
@@ -149,8 +131,7 @@ class MaxFieldsController extends BaseController
         return $this->render(
             'maxfield/status.html.twig',
             [
-                'projectName' => $projectName,
-                // 'maxfield' => $maxFieldHelper->getMaxField($projectName),
+                'maxfield' => $maxfield,
             ]
         );
     }
@@ -190,5 +171,25 @@ class MaxFieldsController extends BaseController
         }
 
         return $this->redirectToRoute('max_fields');
+    }
+
+    #[Route(path: '/status/{id}', name: 'max_fields_status')]
+    public function status(MaxFieldHelper $maxFieldHelper, Maxfield $maxfield):JsonResponse
+    {
+        $status = (new MaxfieldStatus($maxFieldHelper))
+            ->fromMaxfield($maxfield);
+
+        return $this->json($status);
+    }
+
+    #[Route(path: '/statusx/{id}', name: 'max_fields_statusx')]
+    public function statusx(Maxfield $maxfield):Response
+    {
+        return $this->render(
+            'maxfield/status.html.twig',
+            [
+                'maxfield' => $maxfield,
+            ]
+        );
     }
 }
