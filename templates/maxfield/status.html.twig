@@ -6,14 +6,25 @@
     <h3>MaxField Status</h3>
     <h4>{{ maxfield.name }}</h4>
     <div data-controller="maxfieldstatus"
-        data-project-id="{{ maxfield.id }}">
+        data-fetch-url="{{ path('maxfield_status', {id: maxfield.id}) }}">
+        <div class="btn-group d-none" data-maxfieldstatus-target="actions">
+            <a href="{{ path('maxfield_play', {'id': maxfield.id}) }}" class="btn btn-outline-success">Play</a>
+            <a href="{{ path('max_fields_result', {'item': maxfield.path}) }}" class="btn btn-outline-info">View</a>
+            <a href="{{ path('max_fields_delete', {'id': maxfield.id}) }}" class="btn btn-outline-danger">Delete</a>
+        </div>
         <div class="row">
+            <div class="col-1"></div>
             <div class="col">Status</div>
             <div class="col">Files</div>
             <div class="col">Frames</div>
             <div class="col">Movie</div>
         </div>
         <div class="row">
+            <div class="col-1 text-center">
+                <div class="spinner-border spinner-border-sm d-none" role="status" data-maxfieldstatus-target="statusicon">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
             <div class="col" data-maxfieldstatus-target="status">...</div>
             <div class="col" data-maxfieldstatus-target="files">...</div>
             <div class="col" data-maxfieldstatus-target="frames">...</div>

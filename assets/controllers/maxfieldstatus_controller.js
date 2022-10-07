@@ -1,12 +1,14 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['status', 'files', 'frames', 'movie', 'log'];
+    static targets = ['status', 'statusicon', 'files', 'frames', 'movie', 'log', 'actions'];
 
     runner
 
     connect() {
         const parent = this
+
+        this.fetchStatus()
 
         this.runner = setInterval(function() {
             parent.fetchStatus().catch(console.log)
@@ -15,8 +17,8 @@ export default class extends Controller {
     }
 
     async fetchStatus() {
-        const url = '/max-fields/status/'+this.element.dataset.projectId
-        const response = await fetch(url);
+        this.statusiconTarget.classList.remove('d-none')
+        const response = await fetch(this.element.dataset.fetchUrl);
         const responseText = await response.text()
 
         const status = JSON.parse(responseText)
@@ -53,6 +55,7 @@ export default class extends Controller {
             case true:
                 this.filesTarget.classList.remove('bg-warning')
                 this.filesTarget.classList.add('bg-success')
+                this.actionsTarget.classList.remove('d-none')
 
                 break
         }
@@ -82,5 +85,7 @@ export default class extends Controller {
         }
 
         this.logTarget.innerText = status.log;
+        this.statusiconTarget.classList.add('d-none')
+
     }
 }

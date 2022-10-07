@@ -11,7 +11,6 @@ use App\Type\MaxfieldStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Elkuku\MaxfieldParser\JsonHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -173,7 +172,7 @@ class MaxFieldsController extends BaseController
         return $this->redirectToRoute('max_fields');
     }
 
-    #[Route(path: '/status/{id}', name: 'max_fields_status')]
+    #[Route(path: '/status/{id}', name: 'maxfield_status')]
     public function status(MaxFieldHelper $maxFieldHelper, Maxfield $maxfield):JsonResponse
     {
         $status = (new MaxfieldStatus($maxFieldHelper))
@@ -182,8 +181,8 @@ class MaxFieldsController extends BaseController
         return $this->json($status);
     }
 
-    #[Route(path: '/statusx/{id}', name: 'max_fields_statusx')]
-    public function statusx(Maxfield $maxfield):Response
+    #[Route(path: '/view-status/{id}', name: 'maxfield_view_status')]
+    public function viewStatus(Maxfield $maxfield):Response
     {
         return $this->render(
             'maxfield/status.html.twig',
