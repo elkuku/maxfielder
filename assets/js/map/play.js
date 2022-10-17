@@ -40,6 +40,8 @@ class Map {
         this.farmLayer = L.featureGroup()
         this.linkLayer = L.layerGroup()
         this.links = []
+        this.soundNotifier = null
+        this.distance = 0
 
         this.map = L.map(mapId, {
             center: [centerLat, centerLon],
@@ -62,6 +64,8 @@ class Map {
         L.control.layers(baseLayers, overlays).addTo(this.map);
 
         this.linkSelector = L.control({position: 'bottomleft'})
+
+        // this.linkSelector.addTo(this.map)
 
         this.destinationMarker = L.marker([0, 0])
             .bindPopup('Please load a GPX file...')
@@ -106,6 +110,7 @@ class Map {
             // .addTo(this.map);
 
         this.routingEnabled = false
+        this.soundEnabled = true
 
         this.addButtons()
     }
@@ -115,8 +120,8 @@ class Map {
         legend.onAdd = function () {
             let div = L.DomUtil.create('div', 'leaflet-bar')
             div.innerHTML =
-                '<a id="btnRoute" class="" title="Routing">R</a>'
-                + '<a class="" href="/">Home</a>'//<br>'
+                '<a id="btnRoute" title="Routing">R</a>'
+                + '<a id="btnSoundEnabled" class="routing-enabled" title="Sound">S</a>'
             div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation
             L.DomEvent.disableClickPropagation(div)
             return div
@@ -125,6 +130,8 @@ class Map {
         legend.addTo(this.map)
         document.getElementById('btnRoute')
             .addEventListener('click', this.enableRouting.bind(this), false);
+        document.getElementById('btnSoundEnabled')
+            .addEventListener('click', this.enableSound.bind(this), false);
     }
 
     enableRouting(e) {
@@ -136,6 +143,16 @@ class Map {
             this.routingEnabled = true
             $(e.target).addClass('routing-enabled')
             this.routingControl.addTo(this.map)
+        }
+    }
+
+    enableSound(e) {
+        if (this.soundEnabled) {
+            this.soundEnabled = false
+            $(e.target).removeClass('routing-enabled')
+        } else {
+            this.soundEnabled = true
+            $(e.target).addClass('routing-enabled')
         }
     }
 
@@ -247,7 +264,7 @@ class Map {
         this.linkSelector.onAdd = function () {
             let div = L.DomUtil.create('div', 'info legend')
             div.innerHTML = ''
-                + '<button id="btnNext">Next...</button>'
+                + '<button id="btnNext">Next...</button><br />'
                 + '<select id="groupSelect">'
                 + linkList
                 + '</select>'
@@ -282,6 +299,8 @@ class Map {
             this.destinationMarker.setLatLng([0, 0])
                 .bindPopup('')
             this.destination = null
+            clearInterval(this.soundNotifier)
+            this.soundNotifier = null
 
             return
         }
@@ -313,19 +332,65 @@ class Map {
                 this.routingControl.setWaypoints(points);
             }
         }
+
+        // Sound
+        // this.soundNotify()
+        if (!this.soundNotifier) {
+            this.soundNotifier = setInterval(this.soundNotify.bind(this), 15000)
+        }
     }
 
     onLocationFound(e) {
         if (this.destination) {
-            const distance = e.latlng.distanceTo(this.destination).toFixed(1)
+            this.distance = e.latlng.distanceTo(this.destination).toFixed(1)
             this.userDestinationLine.setLatLngs([e.latlng, this.destination])
             this.userDistanceMarker
                 .setLatLng(e.latlng)
                 .setIcon(L.divIcon({
                     className: 'user-distance',
-                    html: '<b class="circle">' + distance + 'm</b>'
+                    html: '<b class="circle">' + this.distance + 'm</b>'
                 }))
         }
+    }
+
+    soundNotify(){
+        if (0 === this.distance) {
+            return
+        }
+
+        if (!this.soundEnabled) {
+            return
+        }
+
+        if (this.distance >= 200) {
+            this.playLong()
+        } else if (this.distance >= 100) {
+            this.playMid()
+        } else if (this.distance >= 20) {
+            this.playShort()
+        } else {
+            this.playPortalInRange()
+        }
+
+        console.log(this.distance)
+    }
+
+    playShort(){
+        this.playSound('/sounds/echo_3.mp3')
+    }
+    playMid(){
+        this.playSound('/sounds/echo_2.mp3')
+    }
+    playLong(){
+        this.playSound('/sounds/echo_1.mp3')
+    }
+    playPortalInRange(){
+        this.playSound('/sounds/portal_in_range.mp3')
+    }
+
+    playSound(url) {
+        const audio = new Audio(url);
+        audio.play();
     }
 }
 

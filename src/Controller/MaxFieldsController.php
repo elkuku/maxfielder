@@ -27,7 +27,7 @@ class MaxFieldsController extends BaseController
         MaxfieldRepository $maxfieldRepository,
         MaxFieldHelper $maxFieldHelper
     ): Response {
-        $maxfieldsFiles = $maxFieldHelper->getList();
+        $maxfieldFiles = $maxFieldHelper->getList();
         $maxfields = [];
 
         foreach ($maxfieldRepository->findAll() as $maxfield) {
@@ -36,9 +36,9 @@ class MaxFieldsController extends BaseController
                 ->fromMaxfield($maxfield);
             $maxfields[] = $maxfieldStatus;
 
-            $index = array_search($maxfieldStatus->getPath(), $maxfieldsFiles);
+            $index = array_search($maxfieldStatus->getPath(), $maxfieldFiles);
             if ($index) {
-                unset($maxfieldsFiles[$index]);
+                unset($maxfieldFiles[$index]);
             }
         }
 
@@ -47,7 +47,7 @@ class MaxFieldsController extends BaseController
             [
 
                 'maxfields'      => $maxfields,
-                'maxfieldsFiles' => $maxfieldsFiles,
+                'maxfieldFiles' => $maxfieldFiles,
             ]
         );
     }
