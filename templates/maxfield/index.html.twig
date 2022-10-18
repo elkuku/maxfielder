@@ -8,9 +8,9 @@
         <div class="row row-hover">
             <div class="col-1">
                 {% if 'running' == maxfield.status %}
-                <div class="spinner-border spinner-border-sm" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
                 {% endif %}
                 {{ maxfield.status }}</div>
             <div class="col-7">
@@ -24,6 +24,15 @@
         </div>
     {% endfor %}
     {% if maxfieldFiles %}
-    {{ dump(maxfieldFiles) }}
+        <p>There are unregistered folders...</p>
+
+        <ul>
+            {% for folder in maxfieldFiles %}
+                <li>
+                    {{ folder }}
+                </li>
+            {% endfor %}
+        </ul>
+        {#    {{ dump(maxfieldFiles) }} #}
     {% endif %}
 {% endblock %}
