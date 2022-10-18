@@ -19,20 +19,22 @@
             <div class="col-4">
                 <a href="{{ path('max_fields_result', {'item': maxfield.path}) }}">View</a>
                 <a href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
+                <a href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
                 <a href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
             </div>
         </div>
     {% endfor %}
     {% if maxfieldFiles %}
-        <p>There are unregistered folders...</p>
-
-        <ul>
-            {% for folder in maxfieldFiles %}
-                <li>
+        <div class="alert alert-warning">There are unregistered folders...</div>
+        {% for folder in maxfieldFiles %}
+            <div class="row row-hover">
+                <div class="col-10">
                     {{ folder }}
-                </li>
-            {% endfor %}
-        </ul>
-        {#    {{ dump(maxfieldFiles) }} #}
+                </div>
+                <div class="col-2">
+                    <a href="{{ path('maxfield_delete_files', {'item': folder}) }}">DELETE</a>
+                </div>
+            </div>
+        {% endfor %}
     {% endif %}
 {% endblock %}

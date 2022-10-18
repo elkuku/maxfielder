@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Maxfield;
+use App\Form\MaxfieldFormType;
 use App\Repository\MaxfieldRepository;
 use App\Repository\WaypointRepository;
 use App\Service\MaxFieldGenerator;
@@ -37,7 +38,7 @@ class MaxFieldsController extends BaseController
             $maxfields[] = $maxfieldStatus;
 
             $index = array_search($maxfieldStatus->getPath(), $maxfieldFiles);
-            if ($index) {
+            if (false !== $index) {
                 unset($maxfieldFiles[$index]);
             }
         }
@@ -131,6 +132,32 @@ class MaxFieldsController extends BaseController
             'maxfield/status.html.twig',
             [
                 'maxfield' => $maxfield,
+            ]
+        );
+    }
+
+    #[Route(path: '/edit/{id}', name: 'maxfield_edit')]
+    public function edit(
+        Request $request,
+        Maxfield $maxfield,
+        EntityManagerInterface $entityManager
+    ): RedirectResponse|Response {
+        $form = $this->createForm(MaxfieldFormType::class, $maxfield);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $maxfield = $form->getData();
+            $entityManager->persist($maxfield);
+            $entityManager->flush();
+            $this->addFlash('success', 'Waypoint updated!');
+
+            return $this->redirectToRoute('max_fields');
+        }
+
+        return $this->render(
+            'maxfield/edit.html.twig',
+            [
+                'form'     => $form->createView(),
             ]
         );
     }
