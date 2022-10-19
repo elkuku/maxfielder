@@ -14,6 +14,7 @@ use Elkuku\MaxfieldParser\JsonHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -149,7 +150,7 @@ class MaxFieldsController extends BaseController
             $maxfield = $form->getData();
             $entityManager->persist($maxfield);
             $entityManager->flush();
-            $this->addFlash('success', 'Waypoint updated!');
+            $this->addFlash('success', 'Maxfield updated!');
 
             return $this->redirectToRoute('max_fields');
         }
