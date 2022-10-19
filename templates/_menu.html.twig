@@ -13,7 +13,7 @@
             <div class="navbar-nav mr-auto">
                 {% if app.user %}
                 <a class="nav-link" href="{{ path('map-maxfield') }}">Plan</a>
-                <a class="nav-link" href="{{ path('max_fields') }}">Play</a>
+                <a class="nav-link" href="{{ path('maxfields') }}">Play</a>
 
                 {% if is_granted('ROLE_ADMIN') %}
                     <a class="nav-link" href="{{ path('map-edit') }}">Edit</a>

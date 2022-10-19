@@ -20,11 +20,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route(path: 'max-fields')]
+#[Route(path: 'maxfield')]
 #[IsGranted('ROLE_ADMIN')]
 class MaxFieldsController extends BaseController
 {
-    #[Route(path: '/', name: 'max_fields')]
+    #[Route(path: '/list', name: 'maxfields')]
     public function index(
         MaxfieldRepository $maxfieldRepository,
         MaxFieldHelper $maxFieldHelper
