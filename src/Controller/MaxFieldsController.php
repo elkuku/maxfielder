@@ -152,7 +152,7 @@ class MaxFieldsController extends BaseController
             $entityManager->flush();
             $this->addFlash('success', 'Maxfield updated!');
 
-            return $this->redirectToRoute('max_fields');
+            return $this->redirectToRoute('maxfields');
         }
 
         return $this->render(
