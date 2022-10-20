@@ -245,7 +245,7 @@ $('#build').on('click', function () {
         + '  Working...'
     )
 
-    doPostRequest('/max-fields/export', {
+    doPostRequest('/maxfield/export', {
         points: selectedMarkers,
         buildName: buildName.val(),
         players_num: $('#players_num').val(),
