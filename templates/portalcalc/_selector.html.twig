@@ -1,0 +1,16 @@
+<div id="status_{{ id }}">&nbsp;</div>
+<select
+        class="form-select-lg"
+        name="portal_{{ id }}" id="portal_{{ id }}"
+        onchange="document.getElementById('status_{{ id }}').className = 'reso_level_'+this.value;calcPortals()"
+>
+    <option value="0"></option>
+    <option class="reso_level_1">1</option>
+    <option class="reso_level_2">2</option>
+    <option class="reso_level_3">3</option>
+    <option class="reso_level_4">4</option>
+    <option class="reso_level_5">5</option>
+    <option class="reso_level_6">6</option>
+    <option class="reso_level_7">7</option>
+    <option class="reso_level_8">8</option>
+</select>

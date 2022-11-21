@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PortalCalc{% endblock %}
+
+{% block body %}
+    <style>
+        .reso_level_1 {
+            background-color: #f0ff20;
+        }
+
+        .reso_level_2 {
+            background-color: #ffb01c;
+        }
+
+        .reso_level_3 {
+            background-color: #ff8733;
+        }
+
+        .reso_level_4 {
+            background-color: #ff632c;
+        }
+
+        .reso_level_5 {
+            background-color: #c80431;
+        }
+
+        .reso_level_6 {
+            background-color: #ff0e82;
+        }
+
+        .reso_level_7 {
+            background-color: #b400ff;
+        }
+
+        .reso_level_8 {
+            background-color: #5200ff;
+        }
+
+        .resultContainer {
+            border: 1px solid silver;
+        }
+
+        #result {
+            font-size: 2em;
+            /*vertical-align: middle;*/
+        }
+    </style>
+    <script>
+        function calcPortals() {
+            let total = 0
+            for (let i = 1; i < 9; i++) {
+                total += parseInt(document.getElementById('portal_' + i).value)
+            }
+
+            const level = total / 8
+            let cssLevel
+
+            if (level > 0 && level < 1) {
+                cssLevel = 1
+            } else {
+                cssLevel = Math.floor(level)
+            }
+
+            document.getElementById('result').innerText = level
+            document.getElementById('result').className = 'reso_level_'+cssLevel
+        }
+    </script>
+    <h1>PortalCalc</h1>
+    <div class="row text-center">
+        <div class="col-4">{% include 'portalcalc/_selector.html.twig' with {'id': 1} %}</div>
+        <div class="col-4">{% include 'portalcalc/_selector.html.twig' with {'id': 2} %}</div>
+        <div class="col-4">{% include 'portalcalc/_selector.html.twig' with {'id': 3} %}</div>
+    </div>
+    <div class="row text-center">
+        <div class="col-4">{% include 'portalcalc/_selector.html.twig' with {'id': 4} %}</div>
+        <div id="resultContainer" class="col-4">
+            <div id="result"></div>
+        </div>
+        <div class="col-4">{% include 'portalcalc/_selector.html.twig' with {'id': 5} %}</div>
+    </div>
+    <div class="row text-center">
+        <div class="col-4">{% include 'portalcalc/_selector.html.twig' with {'id': 6} %}</div>
+        <div class="col-4">{% include 'portalcalc/_selector.html.twig' with {'id': 7} %}</div>
+        <div class="col-4">{% include 'portalcalc/_selector.html.twig' with {'id': 8} %}</div>
+    </div>
+{% endblock %}
