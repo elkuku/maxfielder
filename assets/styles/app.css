@@ -71,3 +71,8 @@ span.msgMove {
     background-color: #e3beff;
     color: black;
 }
+
+.code-console {
+    background: black;
+    color: lime;
+}
