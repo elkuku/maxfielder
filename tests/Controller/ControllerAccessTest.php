@@ -29,6 +29,9 @@ class ControllerAccessTest extends ControllerBaseTest
             'login'   => [
                 'statusCodes' => ['GET' => 200],
             ],
+            'app_portalcalc'   => [
+                'statusCodes' => ['GET' => 200],
+            ],
         ];
 
     public function testRoutes(): void
