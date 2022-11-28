@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PortalCalcController extends AbstractController
 {
-    #[Route('/portalcalc', name: 'app_portalcalc')]
+    #[Route('/portalcalc', name: 'app_portalcalc', methods: ['GET'])]
     public function index(): Response
     {
         return $this->render('portalcalc/index.html.twig');

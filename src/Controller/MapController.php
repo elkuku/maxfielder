@@ -11,13 +11,13 @@ use Symfony\Component\Routing\Annotation\Route;
 #[IsGranted('ROLE_ADMIN')]
 class MapController extends AbstractController
 {
-    #[Route(path: '/maxfield', name: 'map-maxfield')]
+    #[Route(path: '/maxfield', name: 'map-maxfield', methods: ['GET'])]
     public function maxfield(): Response
     {
         return $this->render('maps/maxfield.html.twig');
     }
 
-    #[Route(path: '/edit', name: 'map-edit')]
+    #[Route(path: '/edit', name: 'map-edit', methods: ['GET'])]
     public function edit(): Response
     {
         return $this->render('maps/edit.html.twig');

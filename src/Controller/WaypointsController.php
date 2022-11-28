@@ -21,7 +21,7 @@ class WaypointsController extends AbstractController
 {
     // use PaginatorTrait;
 
-    #[Route(path: '/waypoints', name: 'waypoints')]
+    #[Route(path: '/waypoints', name: 'waypoints', methods: ['GET'])]
     public function index(
         WaypointRepository $repository,
         Request $request
@@ -45,7 +45,7 @@ class WaypointsController extends AbstractController
         );
     }
 
-    #[Route(path: '/waypoint/{id}', name: 'waypoints_edit')]
+    #[Route(path: '/waypoint/{id}', name: 'waypoints_edit', methods: ['GET', 'POST'])]
     public function edit(
         Request $request,
         Waypoint $waypoint,
@@ -72,7 +72,7 @@ class WaypointsController extends AbstractController
         );
     }
 
-    #[Route(path: '/waypoint-details/{id}', name: 'waypoints_edit_details')]
+    #[Route(path: '/waypoint-details/{id}', name: 'waypoints_edit_details', methods: ['GET', 'POST'])]
     public function editDetails(
         Request $request,
         Waypoint $waypoint,
@@ -105,7 +105,7 @@ class WaypointsController extends AbstractController
         );
     }
 
-    #[Route(path: '/waypoint-remove/{id}', name: 'waypoints_remove')]
+    #[Route(path: '/waypoint-remove/{id}', name: 'waypoints_remove', methods: ['GET'])]
     public function remove(
         Waypoint $waypoint,
         EntityManagerInterface $entityManager
@@ -119,7 +119,7 @@ class WaypointsController extends AbstractController
         return $this->redirectToRoute('waypoints');
     }
 
-    #[Route(path: '/waypoints_run', name: 'run-waypoints')]
+    #[Route(path: '/waypoints_run', name: 'run-waypoints', methods: ['GET'])]
     public function waypoints(WaypointRepository $repository): Response
     {
         return $this->render(
@@ -130,7 +130,7 @@ class WaypointsController extends AbstractController
         );
     }
 
-    #[Route(path: '/waypoints_map', name: 'map-waypoints')]
+    #[Route(path: '/waypoints_map', name: 'map-waypoints', methods: ['GET'])]
     public function map(WaypointRepository $repository): JsonResponse
     {
         $waypoints = $repository->findAll();
@@ -151,7 +151,7 @@ class WaypointsController extends AbstractController
         return $this->json($wps);
     }
 
-    #[Route(path: '/waypoints_info/{id}', name: 'waypoints-info')]
+    #[Route(path: '/waypoints_info/{id}', name: 'waypoints-info', methods: ['GET'])]
     public function info(Waypoint $waypoint): Response
     {
         return $this->render(

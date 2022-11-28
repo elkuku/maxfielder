@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[IsGranted('ROLE_ADMIN')]
 class ImportController extends AbstractController
 {
-    #[Route(path: '/import', name: 'import')]
+    #[Route(path: '/import', name: 'import', methods: ['GET', 'POST'])]
     public function index(
         Request $request,
         WaypointRepository $waypointRepo,

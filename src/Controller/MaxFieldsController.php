@@ -24,7 +24,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[IsGranted('ROLE_ADMIN')]
 class MaxFieldsController extends BaseController
 {
-    #[Route(path: '/list', name: 'maxfields')]
+    #[Route(path: '/list', name: 'maxfields', methods: ['GET'])]
     public function index(
         MaxfieldRepository $maxfieldRepository,
         MaxFieldHelper $maxFieldHelper
@@ -54,7 +54,7 @@ class MaxFieldsController extends BaseController
         );
     }
 
-    #[Route(path: '/show/{item}', name: 'max_fields_result')]
+    #[Route(path: '/show/{item}', name: 'max_fields_result', methods: ['GET'])]
     public function display(
         MaxFieldHelper $maxFieldHelper,
         string $item
@@ -86,7 +86,7 @@ class MaxFieldsController extends BaseController
         );
     }
 
-    #[Route(path: '/export', name: 'export-maxfields')]
+    #[Route(path: '/export', name: 'export-maxfields', methods: ['POST'])]
     public function generateMaxFields(
         WaypointRepository $repository,
         MaxFieldGenerator $maxFieldGenerator,
@@ -137,7 +137,7 @@ class MaxFieldsController extends BaseController
         );
     }
 
-    #[Route(path: '/edit/{id}', name: 'maxfield_edit')]
+    #[Route(path: '/edit/{id}', name: 'maxfield_edit', methods: ['GET', 'POST'])]
     public function edit(
         Request $request,
         Maxfield $maxfield,
@@ -163,7 +163,7 @@ class MaxFieldsController extends BaseController
         );
     }
 
-    #[Route(path: '/delete/{id}', name: 'max_fields_delete')]
+    #[Route(path: '/delete/{id}', name: 'max_fields_delete', methods: ['GET'])]
     public function delete(
         MaxFieldGenerator $maxFieldGenerator,
         EntityManagerInterface $entityManager,
@@ -184,7 +184,7 @@ class MaxFieldsController extends BaseController
         return $this->redirectToRoute('max_fields');
     }
 
-    #[Route(path: '/delete-files/{item}', name: 'maxfield_delete_files')]
+    #[Route(path: '/delete-files/{item}', name: 'maxfield_delete_files', methods: ['GET'])]
     public function deleteFiles(
         MaxFieldGenerator $maxFieldGenerator,
         string $item,
@@ -200,7 +200,7 @@ class MaxFieldsController extends BaseController
         return $this->redirectToRoute('max_fields');
     }
 
-    #[Route(path: '/status/{id}', name: 'maxfield_status')]
+    #[Route(path: '/status/{id}', name: 'maxfield_status', methods: ['GET'])]
     public function status(MaxFieldHelper $maxFieldHelper, Maxfield $maxfield):JsonResponse
     {
         $status = (new MaxfieldStatus($maxFieldHelper))
@@ -209,7 +209,7 @@ class MaxFieldsController extends BaseController
         return $this->json($status);
     }
 
-    #[Route(path: '/view-status/{id}', name: 'maxfield_view_status')]
+    #[Route(path: '/view-status/{id}', name: 'maxfield_view_status', methods: ['GET'])]
     public function viewStatus(Maxfield $maxfield):Response
     {
         return $this->render(
