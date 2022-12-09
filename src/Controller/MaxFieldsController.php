@@ -34,7 +34,6 @@ class MaxFieldsController extends BaseController
         $maxfields = [];
 
         foreach ($maxfieldRepository->findAll() as $maxfield) {
-
             $maxfieldStatus = (new MaxfieldStatus($maxFieldHelper))
                 ->fromMaxfield($maxfield);
             $maxfields[] = $maxfieldStatus;
@@ -49,7 +48,7 @@ class MaxFieldsController extends BaseController
             'maxfield/index.html.twig',
             [
 
-                'maxfields'      => $maxfields,
+                'maxfields'     => $maxfields,
                 'maxfieldFiles' => $maxfieldFiles,
             ]
         );
@@ -102,7 +101,9 @@ class MaxFieldsController extends BaseController
 
         $wayPoints = $repository->findBy(['id' => $points]);
         $maxField = $maxFieldGenerator->convertWayPointsToMaxFields($wayPoints);
-        $buildName = (new AsciiSlugger())->slug($request->request->get('buildName'));
+        $buildName = (new AsciiSlugger())->slug(
+            $request->request->get('buildName')
+        );
         $playersNum = (int)$request->request->get('players_num') ?: 1;
         $options = [
             'skip_plots'      => $request->request->getBoolean('skip_plots'),
@@ -137,7 +138,10 @@ class MaxFieldsController extends BaseController
         );
     }
 
-    #[Route(path: '/edit/{id}', name: 'maxfield_edit', methods: ['GET', 'POST'])]
+    #[Route(path: '/edit/{id}', name: 'maxfield_edit', methods: [
+        'GET',
+        'POST',
+    ])]
     public function edit(
         Request $request,
         Maxfield $maxfield,
@@ -158,7 +162,7 @@ class MaxFieldsController extends BaseController
         return $this->render(
             'maxfield/edit.html.twig',
             [
-                'form'     => $form->createView(),
+                'form' => $form->createView(),
             ]
         );
     }
@@ -201,8 +205,10 @@ class MaxFieldsController extends BaseController
     }
 
     #[Route(path: '/status/{id}', name: 'maxfield_status', methods: ['GET'])]
-    public function status(MaxFieldHelper $maxFieldHelper, Maxfield $maxfield):JsonResponse
-    {
+    public function status(
+        MaxFieldHelper $maxFieldHelper,
+        Maxfield $maxfield
+    ): JsonResponse {
         $status = (new MaxfieldStatus($maxFieldHelper))
             ->fromMaxfield($maxfield);
 
@@ -210,7 +216,7 @@ class MaxFieldsController extends BaseController
     }
 
     #[Route(path: '/view-status/{id}', name: 'maxfield_view_status', methods: ['GET'])]
-    public function viewStatus(Maxfield $maxfield):Response
+    public function viewStatus(Maxfield $maxfield): Response
     {
         return $this->render(
             'maxfield/status.html.twig',

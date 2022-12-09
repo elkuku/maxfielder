@@ -40,7 +40,7 @@ abstract class AbstractParser
     }
 
     /**
-     * @param array<string>  $data
+     * @param array<string> $data
      */
     protected function check(string $key, array $data): bool
     {

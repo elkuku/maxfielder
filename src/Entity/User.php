@@ -23,7 +23,7 @@ class User implements UserInterface
 {
     final public const ROLES
         = [
-            'user' => 'ROLE_USER',
+            'user'  => 'ROLE_USER',
             'agent' => 'ROLE_AGENT',
             'admin' => 'ROLE_ADMIN',
         ];
@@ -71,7 +71,7 @@ class User implements UserInterface
     public function __serialize(): array
     {
         return [
-            'id' => $this->id,
+            'id'         => $this->id,
             'identifier' => $this->identifier,
         ];
     }
@@ -85,7 +85,7 @@ class User implements UserInterface
     public function __unserialize(array $data): void
     {
         $this->id = $data['id'] ?? null;
-        $this->identifier = (string) ($data['identifier'] ?? null);
+        $this->identifier = (string)($data['identifier'] ?? null);
     }
 
     public function eraseCredentials(): void

@@ -27,7 +27,7 @@ class AppFixtures extends Fixture
         $manager->persist(
             (new Maxfield())
                 ->setName('test')
-            ->setOwner($user)
+                ->setOwner($user)
         );
 
         $manager->flush();

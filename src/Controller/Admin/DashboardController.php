@@ -43,6 +43,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Maxfields', 'fa fa-users', Maxfield::class);
 
         yield MenuItem::section();
-        yield MenuItem::linkToUrl('Homepage', 'fas fa-home', $this->generateUrl('default'));
+        yield MenuItem::linkToUrl(
+            'Homepage',
+            'fas fa-home',
+            $this->generateUrl('default')
+        );
     }
 }

@@ -16,7 +16,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class WaypointsController extends AbstractController
 {
-    #[Route(path: '/waypoint/{id}', name: 'waypoints_edit', methods: ['GET', 'POST'])]
+    #[Route(path: '/waypoint/{id}', name: 'waypoints_edit', methods: [
+        'GET',
+        'POST',
+    ])]
     #[IsGranted('ROLE_ADMIN')]
     public function edit(
         Request $request,
@@ -38,7 +41,7 @@ class WaypointsController extends AbstractController
         return $this->render(
             'waypoint/edit.html.twig',
             [
-                'form'     => $form->createView(),
+                'form' => $form->createView(),
                 'waypoint' => $waypoint,
             ]
         );

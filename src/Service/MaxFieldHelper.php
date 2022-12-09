@@ -84,7 +84,8 @@ class MaxFieldHelper
             $size = filesize($path);
             $factor = floor(((strlen($size)) - 1) / 3);
 
-            return sprintf("%.{$decimals}f", $size / pow(1024, $factor)) . @$sz[$factor];
+            return sprintf("%.{$decimals}f", $size / pow(1024, $factor))
+                .@$sz[$factor];
         }
 
         return 'n/a';

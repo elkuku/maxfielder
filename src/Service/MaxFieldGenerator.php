@@ -35,7 +35,7 @@ class MaxFieldGenerator
     }
 
     /**
-     * @param array<string, bool>  $options
+     * @param array<string, bool> $options
      */
     public function generate(
         string $projectName,
@@ -50,7 +50,10 @@ class MaxFieldGenerator
             $fileSystem->mkdir($projectRoot);
             $fileName = $projectRoot.'/'.$projectName.'.waypoints';
             $fileSystem->appendToFile($fileName, $wayPointList);
-            $fileSystem->appendToFile($projectRoot.'/portals.txt', $wayPointList);
+            $fileSystem->appendToFile(
+                $projectRoot.'/portals.txt',
+                $wayPointList
+            );
 
             if ($this->maxfieldVersion < 4) {
                 $command = "python {$this->maxfieldExec} $fileName"

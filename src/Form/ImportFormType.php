@@ -77,7 +77,7 @@ class ImportFormType extends AbstractType
                 'multiexportjson',
                 TextareaType::class,
                 [
-                    'attr'     => ['cols' => '30', 'rows' => '5'],
+                    'attr' => ['cols' => '30', 'rows' => '5'],
                     'required' => false,
                 ]
             );
