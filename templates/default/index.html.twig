@@ -3,7 +3,7 @@
 {% block title %}{{ parent() }}{% endblock %}
 
 {% block body %}
-    {% if app.user %}
+    {% if is_granted('ROLE_AGENT') %}
         {% for row in maxfields|batch(4) %}
             <div class="row">
                 {% for maxfield in row %}

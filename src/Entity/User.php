@@ -24,6 +24,7 @@ class User implements UserInterface
     final public const ROLES
         = [
             'user' => 'ROLE_USER',
+            'agent' => 'ROLE_AGENT',
             'admin' => 'ROLE_ADMIN',
         ];
 
