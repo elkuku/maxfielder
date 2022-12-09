@@ -17,7 +17,7 @@ function initmap() {
     const osmAttrib = 'Map data (C) <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
     const osm = new L.TileLayer(osmUrl, {attribution: osmAttrib})
 
-    map.setView(new L.LatLng(0.990275, -79.659482), 9)
+    map.setView(new L.LatLng(0, 0), 3)
     map.addLayer(osm)
 
     const editableLayers = new L.FeatureGroup()
