@@ -44,11 +44,8 @@ function initMap() {
         editOptions: {}
     })
 
-    // ec
-    map.setView(new L.LatLng(0.990275, -79.659482), 9)
-
-    // de
-    // map.setView(new L.LatLng(50.085314, 8.240779), 9)
+    // World
+    map.setView(new L.LatLng(0, 0), 3)
 
     map.addLayer(osm)
 
