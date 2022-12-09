@@ -6,6 +6,7 @@ use App\Entity\Waypoint;
 use App\Form\ImportFormType;
 use App\Parser\WayPointParser;
 use App\Repository\WaypointRepository;
+use App\Service\WayPointHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -22,6 +23,7 @@ class ImportController extends AbstractController
         Request $request,
         WaypointRepository $waypointRepo,
         WayPointParser $wayPointParser,
+        WayPointHelper $wayPointHelper,
         EntityManagerInterface $entityManager,
     ): Response {
         $form = $this->createForm(ImportFormType::class);
@@ -64,6 +66,7 @@ class ImportController extends AbstractController
     private function storeWayPoints(
         array $wayPoints,
         WaypointRepository $repository,
+        WayPointHelper $wayPointHelper,
         EntityManagerInterface $entityManager
     ): int {
         $currentWayPoints = $repository->findAll();
@@ -88,6 +91,10 @@ class ImportController extends AbstractController
                     continue 2;
                 }
             }
+
+            $wayPoint->setName(
+                $wayPointHelper->cleanName((string)$wayPoint->getName())
+            );
 
             $entityManager->persist($wayPoint);
 
