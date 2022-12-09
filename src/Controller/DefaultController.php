@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Repository\MaxfieldRepository;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends BaseController

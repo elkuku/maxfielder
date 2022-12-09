@@ -69,6 +69,9 @@ class MaxFieldsController extends BaseController
         );
     }
 
+    /**
+     * @throws \JsonException
+     */
     #[Route('/play/{id}', name: 'maxfield_play', methods: ['GET'])]
     public function play(
         MaxFieldHelper $maxFieldHelper,
@@ -96,7 +99,7 @@ class MaxFieldsController extends BaseController
         $points = $request->request->all('points');
 
         if (!$points) {
-            throw new NotFoundHttpException('No waypoints selected.');
+            throw $this->createNotFoundException('No waypoints selected.');
         }
 
         $wayPoints = $repository->findBy(['id' => $points]);

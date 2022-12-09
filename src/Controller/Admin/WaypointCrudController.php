@@ -2,13 +2,10 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\User;
 use App\Entity\Waypoint;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class WaypointCrudController extends AbstractCrudController
 {

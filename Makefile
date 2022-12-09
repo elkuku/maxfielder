@@ -9,5 +9,5 @@ tests:
 	symfony php bin/phpunit --testdox $@
 	vendor/bin/rector process --dry-run
 	vendor/bin/phpstan
-	tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run
+	tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff
 .PHONY: tests
