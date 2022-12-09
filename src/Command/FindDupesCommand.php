@@ -33,6 +33,7 @@ class FindDupesCommand extends Command
         $waypoints = $this->waypointRepository->findAll();
         $progressBar = new ProgressBar($output, count($waypoints));
 
+        /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
         $choices = [
