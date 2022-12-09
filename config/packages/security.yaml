@@ -20,7 +20,6 @@ security:
             custom_authenticators:
                 - App\Security\LoginFormAuthenticator
                 - App\Security\GoogleAuthenticator
-                - App\Security\GitHubAuthenticator
 
             form_login:
                 login_path: login
@@ -34,7 +33,7 @@ security:
                 secret: '%kernel.secret%'
                 path: /
                 always_remember_me: true
-                name: S3C0DERREMEMBERME
+                name: MAXFIELDERREMEMBERME
 
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
@@ -55,4 +54,3 @@ when@test:
                 cost: 4 # Lowest possible value for bcrypt
                 time_cost: 3 # Lowest possible value for argon
                 memory_cost: 10 # Lowest possible value for argon
-
