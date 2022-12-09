@@ -11,7 +11,7 @@
 
         <div class="collapse navbar-collapse" id="navbarContent">
             <div class="navbar-nav mr-auto">
-                {% if app.user %}
+                {% if is_granted('ROLE_AGENT') %}
                 <a class="nav-link" href="{{ path('map-maxfield') }}">Plan</a>
                 <a class="nav-link" href="{{ path('maxfields') }}">Play</a>
 

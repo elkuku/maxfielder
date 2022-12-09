@@ -16,6 +16,8 @@
                 {% endfor %}
             </div>
         {% endfor %}
+    {% elseif app.user %}
+        <h4 class="alert alert-warning">Welcome {{ app.user.identifier }}.<br>Please contact an administrator to fully unlock your account!</h4>
     {% else %}
         <h4>
             Please <a href="{{ path('login') }}">log in</a>!
