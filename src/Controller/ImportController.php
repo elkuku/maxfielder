@@ -31,7 +31,7 @@ class ImportController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $waypoints = $wayPointParser->parse($form->getData());
-                $count = $this->storeWayPoints($waypoints, $waypointRepo, $entityManager);
+                $count = $this->storeWayPoints($waypoints, $waypointRepo, $wayPointHelper, $entityManager);
                 if ($count) {
                     $this->addFlash('success', $count.' Waypoint(s) imported!');
                 } else {
