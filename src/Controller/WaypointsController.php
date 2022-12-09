@@ -16,12 +16,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[IsGranted('ROLE_ADMIN')]
 class WaypointsController extends AbstractController
 {
-    // use PaginatorTrait;
-
     #[Route(path: '/waypoints', name: 'waypoints', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function index(
         WaypointRepository $repository,
         Request $request
@@ -46,6 +44,7 @@ class WaypointsController extends AbstractController
     }
 
     #[Route(path: '/waypoint/{id}', name: 'waypoints_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function edit(
         Request $request,
         Waypoint $waypoint,
@@ -73,6 +72,7 @@ class WaypointsController extends AbstractController
     }
 
     #[Route(path: '/waypoint-details/{id}', name: 'waypoints_edit_details', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function editDetails(
         Request $request,
         Waypoint $waypoint,
@@ -106,6 +106,7 @@ class WaypointsController extends AbstractController
     }
 
     #[Route(path: '/waypoint-remove/{id}', name: 'waypoints_remove', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function remove(
         Waypoint $waypoint,
         EntityManagerInterface $entityManager
@@ -120,6 +121,7 @@ class WaypointsController extends AbstractController
     }
 
     #[Route(path: '/waypoints_run', name: 'run-waypoints', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function waypoints(WaypointRepository $repository): Response
     {
         return $this->render(
@@ -131,6 +133,7 @@ class WaypointsController extends AbstractController
     }
 
     #[Route(path: '/waypoints_map', name: 'map-waypoints', methods: ['GET'])]
+    #[IsGranted('ROLE_AGENT')]
     public function map(WaypointRepository $repository): JsonResponse
     {
         $waypoints = $repository->findAll();
@@ -152,6 +155,7 @@ class WaypointsController extends AbstractController
     }
 
     #[Route(path: '/waypoints_info/{id}', name: 'waypoints-info', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function info(Waypoint $waypoint): Response
     {
         return $this->render(

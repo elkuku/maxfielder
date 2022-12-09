@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route(path: 'maxfield')]
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_AGENT')]
 class MaxFieldsController extends BaseController
 {
     #[Route(path: '/list', name: 'maxfields', methods: ['GET'])]
