@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 #[Route(path: 'maxfield')]
 #[IsGranted('ROLE_AGENT')]
@@ -101,8 +102,7 @@ class MaxFieldsController extends BaseController
 
         $wayPoints = $repository->findBy(['id' => $points]);
         $maxField = $maxFieldGenerator->convertWayPointsToMaxFields($wayPoints);
-
-        $buildName = $request->request->get('buildName');
+        $buildName = (new AsciiSlugger())->slug($request->request->get('buildName'));
         $playersNum = (int)$request->request->get('players_num') ?: 1;
         $options = [
             'skip_plots'      => $request->request->getBoolean('skip_plots'),
