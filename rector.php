@@ -19,7 +19,6 @@ return static function (RectorConfig $rectorConfig): void {
         SymfonyLevelSetList::UP_TO_SYMFONY_62,
         SymfonySetList::SYMFONY_CODE_QUALITY,
         SymfonySetList::SYMFONY_CONSTRUCTOR_INJECTION,
-        // SymfonySetList::SYMFONY_STRICT,
         SymfonySetList::ANNOTATIONS_TO_ATTRIBUTES,
 
         SetList::EARLY_RETURN
