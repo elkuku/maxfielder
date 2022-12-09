@@ -21,7 +21,6 @@
         "league/oauth2-google": "^4.0",
         "liip/imagine-bundle": "^2.3",
         "phpdocumentor/reflection-docblock": "^5.2",
-        "sensio/framework-extra-bundle": "^6.0",
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "6.*",
         "symfony/console": "6.*",
