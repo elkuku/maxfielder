@@ -181,7 +181,7 @@ class MaxFieldsController extends BaseController
             $this->addFlash('warning', $exception->getMessage());
         }
 
-        return $this->redirectToRoute('max_fields');
+        return $this->redirectToRoute('maxfields');
     }
 
     #[Route(path: '/delete-files/{item}', name: 'maxfield_delete_files', methods: ['GET'])]
@@ -197,7 +197,7 @@ class MaxFieldsController extends BaseController
             $this->addFlash('warning', $exception->getMessage());
         }
 
-        return $this->redirectToRoute('max_fields');
+        return $this->redirectToRoute('maxfields');
     }
 
     #[Route(path: '/status/{id}', name: 'maxfield_status', methods: ['GET'])]
