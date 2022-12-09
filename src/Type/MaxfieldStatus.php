@@ -29,7 +29,7 @@ class MaxfieldStatus
         $this->path = (string)$maxfield->getPath();
 
         try {
-            $this->log = $this->maxFieldHelper->getLog($this->path);
+            $this->log = (string)$this->maxFieldHelper->getLog($this->path);
             if (str_contains((string)$this->log, 'Total maxfield runtime')) {
                 $this->status = 'finished';
             } elseif (str_contains((string)$this->log, 'Traceback (most recent call last):')) {

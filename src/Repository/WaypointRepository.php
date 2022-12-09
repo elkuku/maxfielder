@@ -18,7 +18,11 @@ class WaypointRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Waypoint::class);
+        /**
+         * @var class-string<WaypointRepository>
+         */
+        $className = Waypoint::class;
+        parent::__construct($registry, $className);
     }
 
     /**

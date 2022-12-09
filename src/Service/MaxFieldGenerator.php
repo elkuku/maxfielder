@@ -134,7 +134,7 @@ class MaxFieldGenerator
         $fileSystem->remove($this->rootDir."/$item");
     }
 
-    private function findFrames(string $item): int
+    public function findFrames(string $item): int
     {
         $path = $this->rootDir.'/'.$item.'/frames';
         $frames = 0;

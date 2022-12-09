@@ -74,7 +74,7 @@ class Maxfield
     }
 
     /**
-     * @param array<string, array<Waypoint|\stdClass>>|null $jsonData
+     * @param array<string, array<Waypoint|stdClass>>|stdClass $jsonData
      */
     public function setJsonData(array|stdClass $jsonData): self
     {
