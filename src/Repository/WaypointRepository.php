@@ -3,11 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Waypoint;
-use App\Helper\Paginator\PaginatorOptions;
-use App\Helper\Paginator\PaginatorRepoTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Query;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -20,8 +16,6 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class WaypointRepository extends ServiceEntityRepository
 {
-    // use PaginatorRepoTrait;
-
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Waypoint::class);
@@ -83,30 +77,4 @@ class WaypointRepository extends ServiceEntityRepository
         return array_column((array)$result, 'lat_lon');
     }
 
-    /**
-     * @return Paginator<Query>
-     */
-    public function getRawList(PaginatorOptions $options): Paginator
-    {
-        $criteria = $options->getCriteria();
-
-        $query = $this->createQueryBuilder('w')
-            ->orderBy('w.'.$options->getOrder(), $options->getOrderDir());
-
-        if ($options->searchCriteria('name')) {
-            $query->andWhere('LOWER(w.name) LIKE :name')
-                ->setParameter(
-                    'name',
-                    '%'.strtolower($options->searchCriteria('name')).'%'
-                );
-        }
-
-        $query = $query->getQuery();
-
-        return $this->paginate(
-            $query,
-            $options->getPage(),
-            $options->getLimit()
-        );
-    }
 }

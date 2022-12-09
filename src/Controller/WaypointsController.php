@@ -4,8 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Waypoint;
 use App\Form\WaypointFormType;
-use App\Form\WaypointFormTypeDetails;
-use App\Helper\Paginator\PaginatorTrait;
 use App\Repository\WaypointRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,31 +16,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class WaypointsController extends AbstractController
 {
-    #[Route(path: '/waypoints', name: 'waypoints', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function index(
-        WaypointRepository $repository,
-        Request $request
-    ): Response {
-        $paginatorOptions = $this->getPaginatorOptions($request);
-
-        $waypoints = $repository->getRawList($paginatorOptions);
-
-        $paginatorOptions->setMaxPages(
-            (int)ceil(
-                $waypoints->count() / $paginatorOptions->getLimit()
-            )
-        );
-
-        return $this->render(
-            'waypoints/index.html.twig',
-            [
-                'waypoints'        => $waypoints,
-                'paginatorOptions' => $paginatorOptions,
-            ]
-        );
-    }
-
     #[Route(path: '/waypoint/{id}', name: 'waypoints_edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function edit(
@@ -59,45 +32,11 @@ class WaypointsController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'Waypoint updated!');
 
-            return $this->redirectToRoute('waypoints');
+            return $this->redirectToRoute('default');
         }
 
         return $this->render(
             'waypoint/edit.html.twig',
-            [
-                'form'     => $form->createView(),
-                'waypoint' => $waypoint,
-            ]
-        );
-    }
-
-    #[Route(path: '/waypoint-details/{id}', name: 'waypoints_edit_details', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function editDetails(
-        Request $request,
-        Waypoint $waypoint,
-        EntityManagerInterface $entityManager
-    ): RedirectResponse|Response {
-        $form = $this->createForm(WaypointFormTypeDetails::class, $waypoint);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $waypoint = $form->getData();
-            $entityManager->persist($waypoint);
-            $entityManager->flush();
-            $this->addFlash('success', 'Waypoint updated!');
-
-            $redirectUri = (string)$request->request->get('redirectUri');
-
-            if ($redirectUri) {
-                return $this->redirect($redirectUri);
-            }
-
-            return $this->redirectToRoute('waypoints');
-        }
-
-        return $this->render(
-            'waypoints/edit_details.html.twig',
             [
                 'form'     => $form->createView(),
                 'waypoint' => $waypoint,
@@ -117,19 +56,7 @@ class WaypointsController extends AbstractController
 
         $this->addFlash('success', 'Waypoint removed!');
 
-        return $this->redirectToRoute('waypoints');
-    }
-
-    #[Route(path: '/waypoints_run', name: 'run-waypoints', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function waypoints(WaypointRepository $repository): Response
-    {
-        return $this->render(
-            'waypoints/index.html.twig',
-            [
-                'waypoints' => $repository->findAll(),
-            ]
-        );
+        return $this->redirectToRoute('default');
     }
 
     #[Route(path: '/waypoints_map', name: 'map-waypoints', methods: ['GET'])]
