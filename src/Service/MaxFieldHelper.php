@@ -6,6 +6,7 @@ use DirectoryIterator;
 use Elkuku\MaxfieldParser\MaxfieldParser;
 use Elkuku\MaxfieldParser\Type\MaxField;
 use FilesystemIterator;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 class MaxFieldHelper
@@ -13,8 +14,8 @@ class MaxFieldHelper
     private string $rootDir;
 
     public function __construct(
-        string $projectDir,
-        private readonly int $maxfieldVersion
+        #[Autowire('%kernel.project_dir%')] string $projectDir,
+        #[Autowire('%env(MAXFIELD_VERSION)%')] private readonly int $maxfieldVersion
     ) {
         $this->rootDir = $projectDir.'/public/maxfields';
     }

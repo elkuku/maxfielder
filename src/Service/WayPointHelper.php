@@ -8,6 +8,7 @@
 
 namespace App\Service;
 
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 
 class WayPointHelper
@@ -15,8 +16,8 @@ class WayPointHelper
     private readonly string $rootDir;
 
     public function __construct(
-        string $projectDir,
-        private readonly string $intelUrl
+        #[Autowire('%kernel.project_dir%')] string $projectDir,
+        #[Autowire('%env(INTEL_URL)%')] private readonly string $intelUrl
     ) {
         $this->rootDir = $projectDir.'/public/wp_images';
     }

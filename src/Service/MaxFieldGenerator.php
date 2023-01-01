@@ -11,6 +11,7 @@ namespace App\Service;
 use App\Entity\Waypoint;
 use DirectoryIterator;
 use Exception;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -25,11 +26,11 @@ class MaxFieldGenerator
     protected string $rootDir = '';
 
     public function __construct(
-        string $projectDir,
-        private readonly string $maxfieldExec,
-        private readonly int $maxfieldVersion,
-        private readonly string $googleApiKey,
-        private readonly string $googleApiSecret,
+        #[Autowire('%kernel.project_dir%')] string $projectDir,
+        #[Autowire('%env(MAXFIELDS_EXEC)%')] private readonly string $maxfieldExec,
+        #[Autowire('%env(MAXFIELD_VERSION)%')] private readonly int $maxfieldVersion,
+        #[Autowire('%env(GOOGLE_API_KEY)%')] private readonly string $googleApiKey,
+        #[Autowire('%env(GOOGLE_API_SECRET)%')] private readonly string $googleApiSecret,
     ) {
         $this->rootDir = $projectDir.'/public/maxfields';
     }

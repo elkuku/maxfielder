@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
@@ -21,7 +22,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public function __construct(
         private readonly RouterInterface $router,
-        private readonly string $appEnv
+        #[Autowire('%env(APP_ENV)%')] private readonly string $appEnv
     ) {
     }
 
