@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -54,16 +53,19 @@ class MaxFieldsController extends BaseController
         );
     }
 
-    #[Route(path: '/show/{item}', name: 'max_fields_result', methods: ['GET'])]
+    #[Route(path: '/show/{path}', name: 'max_fields_result', methods: ['GET'])]
     public function display(
         MaxFieldHelper $maxFieldHelper,
-        string $item
+        MaxField $maxfield,
     ): Response {
         return $this->render(
             'maxfield/result.html.twig',
             [
-                'item'            => $item,
-                'info'            => $maxFieldHelper->getMaxField($item),
+                'maxfield'        => $maxfield,
+                'item'            => $maxfield->getPath(),
+                'info'            => $maxFieldHelper->getMaxField(
+                    $maxfield->getPath()
+                ),
                 'maxfieldVersion' => $maxFieldHelper->getMaxfieldVersion(),
             ]
         );
@@ -72,7 +74,7 @@ class MaxFieldsController extends BaseController
     /**
      * @throws \JsonException
      */
-    #[Route('/play/{id}', name: 'maxfield_play', methods: ['GET'])]
+    #[Route('/play/{path}', name: 'maxfield_play', methods: ['GET'])]
     public function play(
         MaxFieldHelper $maxFieldHelper,
         Maxfield $maxfield
@@ -104,9 +106,7 @@ class MaxFieldsController extends BaseController
 
         $wayPoints = $repository->findBy(['id' => $points]);
         $maxField = $maxFieldGenerator->convertWayPointsToMaxFields($wayPoints);
-        $buildName = (new AsciiSlugger())->slug(
-            $request->request->get('buildName')
-        );
+        $buildName = $request->request->get('buildName');
         $playersNum = (int)$request->request->get('players_num') ?: 1;
         $options = [
             'skip_plots'      => $request->request->getBoolean('skip_plots'),
@@ -115,8 +115,7 @@ class MaxFieldsController extends BaseController
             ),
         ];
 
-        $timeStamp = date('Y-m-d');
-        $projectName = $playersNum.'pl-'.$timeStamp.'-'.$buildName;
+        $projectName = uniqid().'-'.(new AsciiSlugger())->slug($buildName);
 
         $maxFieldGenerator->generate(
             $projectName,
@@ -126,7 +125,7 @@ class MaxFieldsController extends BaseController
         );
 
         $maxfield = (new Maxfield())
-            ->setName($projectName)
+            ->setName($buildName)
             ->setPath($projectName)
             ->setOwner($this->getUser());
 

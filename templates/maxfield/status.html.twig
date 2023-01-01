@@ -8,8 +8,8 @@
     <div data-controller="maxfieldstatus"
         data-fetch-url="{{ path('maxfield_status', {id: maxfield.id}) }}">
         <div class="btn-group d-none" data-maxfieldstatus-target="actions">
-            <a href="{{ path('maxfield_play', {'id': maxfield.id}) }}" class="btn btn-outline-success">Play</a>
-            <a href="{{ path('max_fields_result', {'item': maxfield.path}) }}" class="btn btn-outline-info">View</a>
+            <a href="{{ path('maxfield_play', {'path': maxfield.path}) }}" class="btn btn-outline-success">Play</a>
+            <a href="{{ path('max_fields_result', {'path': maxfield.path}) }}" class="btn btn-outline-info">View</a>
             <a href="{{ path('max_fields_delete', {'id': maxfield.id}) }}" class="btn btn-outline-danger">Delete</a>
         </div>
         <div class="row">

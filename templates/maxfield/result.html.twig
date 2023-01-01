@@ -13,28 +13,14 @@
           data-item="{{ item }}"
           data-steps="{{ info.steps|json_encode }}"
     ></span>
-{#    <a href="{{ path('max_fields_json', {'item': item}) }}" class="btn btn-sm btn-outline-success">#}
-{#        JSON#}
-{#    </a>#}
-{#    <a href="{{ path('max_fields_gpx', {'item': item}) }}" class="btn btn-sm btn-outline-success">#}
-{#        {{ 'Download GPX'|trans }}#}
-{#    </a>#}
-{#    <a href="{{ path('max_fields_gpxtrack', {'item': item}) }}" class="btn btn-sm btn-outline-success">#}
-{#        {{ 'Download GPX Track'|trans }}#}
-{#    </a>#}
-{#    <a href="#" class="btn btn-sm btn-outline-info" id="maxfield2strike_btn">#}
-{#        {{ 'Create STRIKE OP'|trans }}#}
-{#    </a>#}
 
-{#    <form action="" id="maxfield2strike_form">#}
-{#        <h3>Create a S.T.R.I.K.E OP</h3>#}
-{#        Name: <input type="text" name="opName" value="{{ item }}">#}
-{#        <input type="hidden" name="maxfieldName" value="{{ item }}">#}
-{#        <button id="maxfield2strike_create" class="btn btn-success">Create OP</button>#}
-{#        <span id="maxfield2strike_status"></span>#}
-{#        <pre id="maxfield2strike_result"></pre>#}
-{#    </form>#}
-    <h3>MaxFields for <span id="itemId">{{ item }}</span></h3>
+    <div class="float-end">
+        <a href="{{ path('maxfield_play', {'path': maxfield.path}) }}" class="btn btn-outline-success">Play</a>
+        <a href="{{ path('max_fields_delete', {'id': maxfield.id}) }}" class="btn btn-outline-danger">Delete</a>
+
+    </div>
+
+    <h3>MaxFields for <span id="itemId">{{ maxfield.name }}</span></h3>
 
     <div class="row">
         <div class="col">
@@ -67,7 +53,6 @@
             <img src="/maxfields/{{ item }}/plan_movie.gif" width="350px" alt="Link movie">
         </div>
         {% endif %}
-
     </div>
     <div class="row">
         <div class="col">

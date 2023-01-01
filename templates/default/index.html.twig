@@ -9,7 +9,7 @@
                 {% for maxfield in row %}
                     <div class="col-3">
                         <a class="btn btn-outline-success"
-                           href="{{ path('maxfield_play', {'id': maxfield.id}) }}">
+                           href="{{ path('maxfield_play', {'path': maxfield.path}) }}">
                             {{ maxfield.name }}
                         </a>
                     </div>

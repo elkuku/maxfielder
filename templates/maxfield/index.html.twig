@@ -20,9 +20,9 @@
                 <div class="card-body">
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group me-5">
-                            <a class="btn btn-success" href="{{ path('maxfield_play', {'id': maxfield.id}) }}">Play</a>
+                            <a class="btn btn-success" href="{{ path('maxfield_play', {'path': maxfield.path}) }}">Play</a>
                             <a class="btn btn-info"
-                               href="{{ path('max_fields_result', {'item': maxfield.path}) }}">View</a>
+                               href="{{ path('max_fields_result', {'path': maxfield.path}) }}">View</a>
                             <a class="btn btn-primary" href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
                             <a class="btn btn-warning" href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
                         </div>
@@ -46,10 +46,10 @@
                     {% endif %}
                     {{ maxfield.status }}</div>
                 <div class="col-7">
-                    <a href="{{ path('maxfield_play', {'id': maxfield.id}) }}">{{ maxfield.name }}</a>
+                    <a href="{{ path('maxfield_play', {'path': maxfield.path}) }}">{{ maxfield.name }}</a>
                 </div>
                 <div class="col-4">
-                    <a href="{{ path('max_fields_result', {'item': maxfield.path}) }}">View</a>
+                    <a href="{{ path('max_fields_result', {'path': maxfield.path}) }}">View</a>
                     <a href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
                     <a href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
                     <a href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
