@@ -66,3 +66,7 @@ a.routing-enabled {
     color: orange;
     cursor: pointer;
 }
+
+div.leaflet-popup-content ol {
+    padding-left: 0;
+}

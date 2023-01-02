@@ -231,7 +231,12 @@ class Map {
         this.links.forEach(function (link) {
             pointList.push(L.latLng(link.lat, link.lon))
             if (link.links) {
-                description = link.links.join('<br/>')
+                description = ''
+
+                description += '<ol>'
+                link.links.forEach(link => { description += '<li>'+link+'</li>' });
+                description += '</ol>'
+
             } else {
                 description = link.description.replace(/\*BR\*/g, '<br/>')
             }
@@ -310,7 +315,11 @@ class Map {
 
         this.map.panTo(this.destination)
 
-        const description = destination.links.join('<br/>')
+        let description = ''
+
+        description += '<ol>'
+        destination.links.forEach(link => { description += '<li>'+link+'</li>' });
+        description += '</ol>'
 
         this.destinationMarker.setLatLng(this.destination)
             .bindPopup('<b>' + destination.name + '</b><hr>' + description)
