@@ -17,17 +17,16 @@
             </div>
         {% endfor %}
     {% elseif app.user %}
-        <h4 class="alert alert-warning">Welcome {{ app.user.identifier }}.<br>Please contact an administrator to fully unlock your account!</h4>
+        <h4 class="alert alert-warning">Welcome {{ app.user.identifier }}.<br>Please contact an administrator to fully
+            unlock your account!</h4>
     {% else %}
         <h4>
             Please <a href="{{ path('login') }}">log in</a>!
         </h4>
     {% endif %}
-    <div class="text-center">
         <img
                 src="https://user-images.githubusercontent.com/33978/206504470-ec700fe1-66d6-4da4-9b74-4d601239da2e.gif"
-                height="100%"
+                class="img-fluid"
                 alt="Plan movie"
         >
-    </div>
 {% endblock %}
