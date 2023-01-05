@@ -78,7 +78,7 @@ class WaypointRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
 
-        return array_column((array)$result, 'lat_lon');
+        return array_column((array) $result, 'lat_lon');
     }
 
 }

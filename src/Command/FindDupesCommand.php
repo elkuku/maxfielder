@@ -86,7 +86,7 @@ class FindDupesCommand extends Command
                             $this->entityManager->flush();
                             $removals++;
                         } elseif ($choice === $choices[2]) {
-                            $waypoint->setName((string)$test->getName());
+                            $waypoint->setName((string) $test->getName());
                             $this->entityManager->persist($waypoint);
                             $this->entityManager->flush();
                         } elseif ($choice === $choices[3]) {

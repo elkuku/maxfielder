@@ -98,7 +98,7 @@ class ImportController extends AbstractController
             }
 
             $wayPoint->setName(
-                $wayPointHelper->cleanName((string)$wayPoint->getName())
+                $wayPointHelper->cleanName((string) $wayPoint->getName())
             );
 
             $entityManager->persist($wayPoint);

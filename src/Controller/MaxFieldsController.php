@@ -47,7 +47,7 @@ class MaxFieldsController extends BaseController
             'maxfield/index.html.twig',
             [
 
-                'maxfields'     => $maxfields,
+                'maxfields' => $maxfields,
                 'maxfieldFiles' => $maxfieldFiles,
             ]
         );
@@ -61,9 +61,9 @@ class MaxFieldsController extends BaseController
         return $this->render(
             'maxfield/result.html.twig',
             [
-                'maxfield'        => $maxfield,
-                'item'            => $maxfield->getPath(),
-                'info'            => $maxFieldHelper->getMaxField(
+                'maxfield' => $maxfield,
+                'item' => $maxfield->getPath(),
+                'info' => $maxFieldHelper->getMaxField(
                     $maxfield->getPath()
                 ),
                 'maxfieldVersion' => $maxFieldHelper->getMaxfieldVersion(),
@@ -107,9 +107,9 @@ class MaxFieldsController extends BaseController
         $wayPoints = $repository->findBy(['id' => $points]);
         $maxField = $maxFieldGenerator->convertWayPointsToMaxFields($wayPoints);
         $buildName = $request->request->get('buildName');
-        $playersNum = (int)$request->request->get('players_num') ?: 1;
+        $playersNum = (int) $request->request->get('players_num') ?: 1;
         $options = [
-            'skip_plots'      => $request->request->getBoolean('skip_plots'),
+            'skip_plots' => $request->request->getBoolean('skip_plots'),
             'skip_step_plots' => $request->request->getBoolean(
                 'skip_step_plots'
             ),
@@ -177,7 +177,7 @@ class MaxFieldsController extends BaseController
     ): Response {
         $item = $maxfield->getPath();
         try {
-            $maxFieldGenerator->remove((string)$item);
+            $maxFieldGenerator->remove((string) $item);
 
             $entityManager->remove($maxfield);
             $entityManager->flush();

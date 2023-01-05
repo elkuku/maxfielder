@@ -24,16 +24,16 @@ class MaxfieldStatus
 
     public function fromMaxfield(Maxfield $maxfield): self
     {
-        $this->id = (int)$maxfield->getId();
-        $this->name = (string)$maxfield->getName();
-        $this->path = (string)$maxfield->getPath();
+        $this->id = (int) $maxfield->getId();
+        $this->name = (string) $maxfield->getName();
+        $this->path = (string) $maxfield->getPath();
 
         try {
-            $this->log = (string)$this->maxFieldHelper->getLog($this->path);
-            if (str_contains((string)$this->log, 'Total maxfield runtime')) {
+            $this->log = (string) $this->maxFieldHelper->getLog($this->path);
+            if (str_contains((string) $this->log, 'Total maxfield runtime')) {
                 $this->status = 'finished';
             } elseif (str_contains(
-                (string)$this->log,
+                (string) $this->log,
                 'Traceback (most recent call last):'
             )
             ) {

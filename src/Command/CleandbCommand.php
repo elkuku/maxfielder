@@ -60,7 +60,7 @@ class CleandbCommand extends Command
             }
 
             $cleanName = $this->wayPointHelper->cleanName(
-                (string)$waypoint->getName()
+                (string) $waypoint->getName()
             );
 
             if ($waypoint->getName() !== $cleanName) {

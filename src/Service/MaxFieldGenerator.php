@@ -118,7 +118,7 @@ class MaxFieldGenerator
 
         foreach ($wayPoints as $wayPoint) {
             $points = $wayPoint->getLat().','.$wayPoint->getLon();
-            $name = str_replace([';', '#'], '', (string)$wayPoint->getName());
+            $name = str_replace([';', '#'], '', (string) $wayPoint->getName());
             $maxFields[] = $name.'; '.$_ENV['INTEL_URL']
                 .'?ll='.$points.'&z=1&pll='.$points;
         }
@@ -154,7 +154,7 @@ class MaxFieldGenerator
                 $matches
             )
             ) {
-                $x = (int)$matches[1];
+                $x = (int) $matches[1];
                 $frames = max($x, $frames);
             }
         }

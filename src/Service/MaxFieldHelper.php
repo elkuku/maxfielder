@@ -71,7 +71,7 @@ class MaxFieldHelper
         $path = $this->rootDir."/$item/frames";
 
         return (is_dir($path))
-            ? (string)iterator_count(new FilesystemIterator($path))
+            ? (string) iterator_count(new FilesystemIterator($path))
             : 'n/a';
     }
 
