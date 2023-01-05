@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: elkuku
- * Date: 11.10.18
- * Time: 10:32
- */
 
 namespace App\Service;
 
@@ -16,13 +10,10 @@ use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
- * This is for https://github.com/tvwenger/maxfield
+ * This is for https://github.com/tvwenger/maxfield .
  */
 class MaxFieldGenerator
 {
-    /**
-     * @var string
-     */
     protected string $rootDir = '';
 
     public function __construct(
@@ -62,7 +53,7 @@ class MaxFieldGenerator
             } else {
                 $command = "{$this->maxfieldExec} $fileName"
                     ." --outdir $projectRoot --num_agents $playersNum --output_csv"
-                    ." --num_cpus 0 --num_field_iterations 10 --max_route_solutions 10";
+                    .' --num_cpus 0 --num_field_iterations 10 --max_route_solutions 10';
 
                 if ($this->googleApiKey) {
                     $command .= ' --google_api_key '.$this->googleApiKey;
@@ -70,11 +61,11 @@ class MaxFieldGenerator
                 }
 
                 if ($options['skip_plots']) {
-                    $command .= " --skip_plots";
+                    $command .= ' --skip_plots';
                 }
 
                 if ($options['skip_step_plots']) {
-                    $command .= " --skip_step_plots";
+                    $command .= ' --skip_step_plots';
                 }
 
                 $command .= " --verbose > $projectRoot/log.txt 2>&1 &";

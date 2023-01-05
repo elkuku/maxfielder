@@ -13,7 +13,7 @@ class MultiExportJson extends AbstractParser
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function parse(array $data): array
     {

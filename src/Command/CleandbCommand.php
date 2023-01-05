@@ -43,19 +43,19 @@ class CleandbCommand extends Command
                 $io->error(
                     sprintf('"%s" missing location', $waypoint->getName())
                 );
-                $errorCount++;
+                ++$errorCount;
                 $this->entityManager->remove($waypoint);
             }
 
             if (!$waypoint->getName()) {
                 $io->error(sprintf('"%s" missing name', $waypoint->getName()));
-                $errorCount++;
+                ++$errorCount;
                 $this->entityManager->remove($waypoint);
             }
 
             if ('undefined' === $waypoint->getName()) {
                 $io->error(sprintf('"%s" name', $waypoint->getName()));
-                $errorCount++;
+                ++$errorCount;
                 $this->entityManager->remove($waypoint);
             }
 
@@ -71,7 +71,7 @@ class CleandbCommand extends Command
                         $cleanName
                     )
                 );
-                $warningCount++;
+                ++$warningCount;
                 $waypoint->setName($cleanName);
                 $this->entityManager->persist($waypoint);
             }

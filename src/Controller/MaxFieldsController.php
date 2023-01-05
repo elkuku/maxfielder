@@ -46,7 +46,6 @@ class MaxFieldsController extends BaseController
         return $this->render(
             'maxfield/index.html.twig',
             [
-
                 'maxfields' => $maxfields,
                 'maxfieldFiles' => $maxfieldFiles,
             ]

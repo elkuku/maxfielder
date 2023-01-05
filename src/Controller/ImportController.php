@@ -103,7 +103,7 @@ class ImportController extends AbstractController
 
             $entityManager->persist($wayPoint);
 
-            $cnt++;
+            ++$cnt;
         }
 
         $entityManager->flush();

@@ -84,7 +84,7 @@ class FindDupesCommand extends Command
                         } elseif ($choice === $choices[1]) {
                             $this->entityManager->remove($test);
                             $this->entityManager->flush();
-                            $removals++;
+                            ++$removals;
                         } elseif ($choice === $choices[2]) {
                             $waypoint->setName((string) $test->getName());
                             $this->entityManager->persist($waypoint);
@@ -95,7 +95,7 @@ class FindDupesCommand extends Command
                     } else {
                         $this->entityManager->remove($test);
                         $this->entityManager->flush();
-                        $removals++;
+                        ++$removals;
                     }
                 }
             }

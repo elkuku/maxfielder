@@ -80,5 +80,4 @@ class WaypointRepository extends ServiceEntityRepository
 
         return array_column((array) $result, 'lat_lon');
     }
-
 }
