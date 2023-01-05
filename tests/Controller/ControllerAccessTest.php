@@ -32,6 +32,16 @@ class ControllerAccessTest extends ControllerBaseTest
             'app_portalcalc'   => [
                 'statusCodes' => ['GET' => 200],
             ],
+            'max_fields_result' => [
+                'params' => [
+                    '{path}' => 'test',
+                ],
+            ],
+            'maxfield_play' => [
+                'params' => [
+                    '{path}' => 'test',
+                ],
+            ],
         ];
 
     public function testRoutes(): void
