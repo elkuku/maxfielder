@@ -4,19 +4,14 @@
 
 {% block body %}
     <h3>MaxFields</h3>
+    {{ pagerfanta(pagerfanta) }}
 
     {# This layout section is for small screens #}
     <div class="d-sm-none">
-        {% for maxfield in maxfields %}
+        {% for maxfield in pagerfanta %}
             <div class="card mb-3">
                 <div class="card-header">
                     <div class="float-end">
-                        {% if 'running' == maxfield.status %}
-                            <div class="spinner-border spinner-border-sm" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        {% endif %}
-                        {{ maxfield.status }}
                         <button class="btn btn-sm text-danger"
                                 data-controller="like"
                                 data-action="like#toggle"
@@ -27,7 +22,8 @@
                             ></i>
                         </button>
                     </div>
-                    {{ maxfield.name }}</div>
+                    {{ maxfield.name }}
+                </div>
                 <div class="card-body">
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group me-5">
@@ -50,23 +46,13 @@
 
     {# This layout section is for large screens #}
     <div class="d-none d-sm-block">
-        {% for maxfield in maxfields %}
+        {% for maxfield in pagerfanta %}
             <div class="row row-hover">
-                <div class="col-1">
-                    {% if 'running' == maxfield.status %}
-                        <div class="spinner-border spinner-border-sm" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    {% endif %}
-                    {{ maxfield.status }}</div>
-                <div class="col-7">
-                    <a href="{{ path('maxfield_play', {'path': maxfield.path}) }}">{{ maxfield.name }}</a>
-                </div>
-                <div class="col-4">
-                    <a href="{{ path('max_fields_result', {'path': maxfield.path}) }}">View</a>
-                    <a href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
-                    <a href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
-                    <a href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
+
+{#                <div class="col-8">#}
+                    <a class="col-8" href="{{ path('maxfield_play', {'path': maxfield.path}) }}">{{ maxfield.name }}</a>
+{#                </div>#}
+                <div class="col-4 btn-group btn-group-sm">
                     <button class="btn btn-outline-danger btn-sm"
                             data-controller="like"
                             data-action="like#toggle"
@@ -76,21 +62,15 @@
                            data-like-target="heart"
                         ></i>
                     </button>
+                    <a class="btn btn-sm btn-outline-success" href="{{ path('maxfield_play', {'path': maxfield.path}) }}">Play</a>
+                    <a class="btn btn-sm btn-outline-info" href="{{ path('max_fields_result', {'path': maxfield.path}) }}">View</a>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
+                    <a class="btn btn-sm btn-outline-warning" href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
+                    <a class="btn btn-sm btn-outline-danger" href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
                 </div>
             </div>
         {% endfor %}
     </div>
-    {% if maxfieldFiles %}
-        <div class="alert alert-warning">There are unregistered folders...</div>
-        {% for folder in maxfieldFiles %}
-            <div class="row row-hover">
-                <div class="col-10">
-                    {{ folder }}
-                </div>
-                <div class="col-2">
-                    <a href="{{ path('maxfield_delete_files', {'item': folder}) }}">DELETE</a>
-                </div>
-            </div>
-        {% endfor %}
-    {% endif %}
+
+    {{ pagerfanta(pagerfanta) }}
 {% endblock %}

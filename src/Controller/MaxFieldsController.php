@@ -11,6 +11,8 @@ use App\Service\MaxFieldHelper;
 use App\Type\MaxfieldStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Elkuku\MaxfieldParser\JsonHelper;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use Pagerfanta\Pagerfanta;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -27,11 +29,33 @@ class MaxFieldsController extends BaseController
     #[Route(path: '/list', name: 'maxfields', methods: ['GET'])]
     public function index(
         MaxfieldRepository $maxfieldRepository,
-        MaxFieldHelper $maxFieldHelper
+        Request $request,
+    ): Response {
+        $pagerfanta = Pagerfanta::createForCurrentPageWithMaxPerPage(
+            new QueryAdapter($maxfieldRepository->createQueryBuilderSearch()),
+            $request->query->get('page', 1),
+            10
+        );
+
+        return $this->render(
+            'maxfield/index.html.twig',
+            [
+                'favourites' => $this->getUser()?->getFavourites(),
+                'pagerfanta' => $pagerfanta,
+            ]
+        );
+    }
+
+    #[Route(path: '/check', name: 'maxfields_check', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function check(
+        MaxfieldRepository $maxfieldRepository,
+        MaxFieldHelper $maxFieldHelper,
     ): Response {
         $maxfieldFiles = $maxFieldHelper->getList();
-        $maxfields = [];
         $dbMaxfields = $maxfieldRepository->findAll();
+
+        $maxfields = [];
 
         foreach ($dbMaxfields as $maxfield) {
             $maxfieldStatus = (new MaxfieldStatus($maxFieldHelper))
@@ -44,23 +68,11 @@ class MaxFieldsController extends BaseController
             }
         }
 
-        $favourites = [];
-
-        foreach ($this->getUser()?->getFavourites() as $favourite) {
-            foreach ($maxfields as $maxfield) {
-                if ($maxfield->getId() === $favourite->getId()) {
-                    $favourites[] = $maxfield;
-                    continue 2;
-                }
-            }
-        }
-
         return $this->render(
-            'maxfield/index.html.twig',
+            'maxfield/check.html.twig',
             [
                 'maxfields' => $maxfields,
                 'maxfieldFiles' => $maxfieldFiles,
-                'favourites' => $favourites,
             ]
         );
     }
@@ -83,9 +95,6 @@ class MaxFieldsController extends BaseController
         );
     }
 
-    /**
-     * @throws \JsonException
-     */
     #[Route('/play/{path}', name: 'maxfield_play', methods: ['GET'])]
     public function play(
         MaxFieldHelper $maxFieldHelper,
