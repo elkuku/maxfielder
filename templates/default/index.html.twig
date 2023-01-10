@@ -4,6 +4,21 @@
 
 {% block body %}
     {% if is_granted('ROLE_AGENT') %}
+        {% if favourites %}
+            <div class="bg-secondary">
+                {% for row in favourites|batch(4) %}
+                    <div class="row">
+                        {% for maxfield in row %}
+                            <a class="btn btn-outline-success col-3"
+                               href="{{ path('maxfield_play', {'path': maxfield.path}) }}">
+                                {{ maxfield.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            <hr>
+        {% endif %}
         {% for row in maxfields|batch(4) %}
             <div class="row">
                 {% for maxfield in row %}
@@ -12,10 +27,26 @@
                            href="{{ path('maxfield_play', {'path': maxfield.path}) }}">
                             {{ maxfield.name }}
                         </a>
+                        <button class="btn btn-outline-danger"
+                                data-controller="like"
+                                data-action="like#toggle"
+                                data-like-toggle-url-value="{{ path('maxfield_toggle_favourite', {'id': maxfield.id}) }}"
+                        >
+                            <i class="bi bi-heart{% if maxfield in favourites %}-fill{% endif %}"
+                               data-like-target="heart"
+                            ></i>
+                        </button>
                     </div>
                 {% endfor %}
             </div>
+        {% else %}
+            <div class="alert alert-primary">
+                You don't have any maxfields yet. <code>:(</code><br>
+                You may <a href="{{ path('map-maxfield') }}">Create your first maxfield</a> or <a
+                        href="{{ path('maxfields') }}">Play a maxfield from another user ;)</a>
+            </div>
         {% endfor %}
+        <hr>
     {% elseif app.user %}
         <h4 class="alert alert-warning">Welcome {{ app.user.identifier }}.<br>Please contact an administrator to fully
             unlock your account!</h4>
@@ -24,9 +55,15 @@
             Please <a href="{{ path('login') }}">log in</a>!
         </h4>
     {% endif %}
-        <img
-                src="https://user-images.githubusercontent.com/33978/206504470-ec700fe1-66d6-4da4-9b74-4d601239da2e.gif"
-                class="img-fluid"
-                alt="Plan movie"
-        >
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <img src="https://user-images.githubusercontent.com/33978/206504470-ec700fe1-66d6-4da4-9b74-4d601239da2e.gif"
+                 class="img-fluid"
+                 alt="Plan movie"
+            >
+
+        </div>
+        <div class="col-3"></div>
+    </div>
 {% endblock %}

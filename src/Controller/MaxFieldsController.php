@@ -31,8 +31,9 @@ class MaxFieldsController extends BaseController
     ): Response {
         $maxfieldFiles = $maxFieldHelper->getList();
         $maxfields = [];
+        $dbMaxfields = $maxfieldRepository->findAll();
 
-        foreach ($maxfieldRepository->findAll() as $maxfield) {
+        foreach ($dbMaxfields  as $maxfield) {
             $maxfieldStatus = (new MaxfieldStatus($maxFieldHelper))
                 ->fromMaxfield($maxfield);
             $maxfields[] = $maxfieldStatus;
@@ -43,11 +44,23 @@ class MaxFieldsController extends BaseController
             }
         }
 
+        $favourites = [];
+
+        foreach ($this->getUser()?->getFavourites() as $favourite) {
+            foreach ($maxfields as $maxfield) {
+                if ($maxfield->getId() === $favourite->getId()) {
+                    $favourites[] = $maxfield;
+                    continue 2;
+                }
+            }
+        }
+
         return $this->render(
             'maxfield/index.html.twig',
             [
                 'maxfields' => $maxfields,
                 'maxfieldFiles' => $maxfieldFiles,
+                'favourites' => $favourites,
             ]
         );
     }
@@ -225,5 +238,19 @@ class MaxFieldsController extends BaseController
                 'maxfield' => $maxfield,
             ]
         );
+    }
+
+    #[Route(path: '/toggle-favourite/{id}', name: 'maxfield_toggle_favourite', methods: ['GET'])]
+    public function toggleFavourite(Maxfield $maxfield, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $user = $this->getUser();
+
+        $newState = $user->toggleFavourite($maxfield);
+
+        $entityManager->flush();
+
+        return $this->json([
+            'new-state' => $newState,
+        ]);
     }
 }

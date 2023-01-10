@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -52,9 +53,16 @@ class User implements UserInterface
     #[OneToMany(mappedBy: 'owner', targetEntity: Maxfield::class)]
     private Collection $maxfields;
 
+    /**
+     * @var Collection<int, Maxfield>
+     */
+    #[ManyToMany(targetEntity: Maxfield::class)]
+    private Collection $favourites;
+
     public function __construct()
     {
         $this->maxfields = new ArrayCollection();
+        $this->favourites = new ArrayCollection();
     }
 
     public function __toString()
@@ -194,5 +202,45 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Maxfield>
+     */
+    public function getFavourites(): Collection
+    {
+        return $this->favourites;
+    }
+
+    public function addFavourite(Maxfield $favourite): self
+    {
+        if (!$this->favourites->contains($favourite)) {
+            $this->favourites->add($favourite);
+        }
+
+        return $this;
+    }
+
+    public function removeFavourite(Maxfield $favourite): self
+    {
+        $this->favourites->removeElement($favourite);
+
+        return $this;
+    }
+
+    /**
+     * @return bool the new state
+     */
+    public function toggleFavourite(Maxfield $favourite): bool
+    {
+        if ($this->favourites->contains($favourite)) {
+            $this->favourites->removeElement($favourite);
+
+            return false;
+        }
+
+        $this->favourites->add($favourite);
+
+        return true;
     }
 }
