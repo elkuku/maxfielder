@@ -17,6 +17,7 @@
         "easycorp/easyadmin-bundle": "^4.0",
         "elkuku/maxfield-parser": "@dev",
         "elkuku/symfony-utils": "dev-master",
+        "google/apiclient": "^2.13",
         "knpuniversity/oauth2-client-bundle": "^2.3",
         "league/oauth2-github": "^3.0",
         "league/oauth2-google": "^4.0",

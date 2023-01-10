@@ -1,17 +1,37 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}{{ parent() }} - Login{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+{% endblock %}
 
 {% block body %}
     <div class="row">
         <div class="col">
             <h2>Login</h2>
+
+            <div id="g_id_onload"
+                 data-client_id="{{ oauthGoogleId }}"
+                 data-login_uri="{{ url('connect_google_verify') }}"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-size="large"
+                 data-theme="outline"
+                 data-text="sign_in_with"
+                 data-shape="rectangular"
+                 data-logo_alignment="left">
+            </div>
+<!--
             <div class="btn-group">
                 <a href="{{ path('connect_google_start') }}" title="Google Login"
                    class="btn btn-outline-info">
                     <i class="bi-google" style="font-size: 2rem;"></i>
                 </a>
             </div>
+            -->
         </div>
         <div class="col">
             {% if 'dev' == app.environment %}

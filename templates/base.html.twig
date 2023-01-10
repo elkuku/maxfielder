@@ -21,6 +21,9 @@
 
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
+        {% if not app.user %}
+            <script src="https://accounts.google.com/gsi/client" async defer></script>
+        {% endif %}
     {% endblock %}
 </head>
 

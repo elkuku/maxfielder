@@ -19,6 +19,7 @@ security:
 
             custom_authenticators:
                 - App\Security\LoginFormAuthenticator
+                - App\Security\GoogleIdentityAuthenticator
                 - App\Security\GoogleAuthenticator
 
             form_login:

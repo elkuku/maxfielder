@@ -33,7 +33,7 @@ class MaxFieldsController extends BaseController
         $maxfields = [];
         $dbMaxfields = $maxfieldRepository->findAll();
 
-        foreach ($dbMaxfields  as $maxfield) {
+        foreach ($dbMaxfields as $maxfield) {
             $maxfieldStatus = (new MaxfieldStatus($maxFieldHelper))
                 ->fromMaxfield($maxfield);
             $maxfields[] = $maxfieldStatus;
@@ -161,6 +161,14 @@ class MaxFieldsController extends BaseController
         Maxfield $maxfield,
         EntityManagerInterface $entityManager
     ): RedirectResponse|Response {
+        if (!$this->isGranted('ROLE_ADMIN')
+            && ($maxfield->getOwner() !== $this->getUser())
+        ) {
+            throw $this->createAccessDeniedException(
+                'You are not allowed to edit this item :('
+            );
+        }
+
         $form = $this->createForm(MaxfieldFormType::class, $maxfield);
         $form->handleRequest($request);
 
@@ -187,6 +195,14 @@ class MaxFieldsController extends BaseController
         EntityManagerInterface $entityManager,
         Maxfield $maxfield,
     ): Response {
+        if (!$this->isGranted('ROLE_ADMIN')
+            && ($maxfield->getOwner() !== $this->getUser())
+        ) {
+            throw $this->createAccessDeniedException(
+                'You are not allowed to delete this item :('
+            );
+        }
+
         $item = $maxfield->getPath();
         try {
             $maxFieldGenerator->remove((string) $item);
@@ -207,6 +223,12 @@ class MaxFieldsController extends BaseController
         MaxFieldGenerator $maxFieldGenerator,
         string $item,
     ): Response {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException(
+                'You are not allowed to delete this item :('
+            );
+        }
+
         try {
             $maxFieldGenerator->remove($item);
 
@@ -241,11 +263,11 @@ class MaxFieldsController extends BaseController
     }
 
     #[Route(path: '/toggle-favourite/{id}', name: 'maxfield_toggle_favourite', methods: ['GET'])]
-    public function toggleFavourite(Maxfield $maxfield, EntityManagerInterface $entityManager): JsonResponse
-    {
-        $user = $this->getUser();
-
-        $newState = $user->toggleFavourite($maxfield);
+    public function toggleFavourite(
+        Maxfield $maxfield,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $newState = $this->getUser()?->toggleFavourite($maxfield);
 
         $entityManager->flush();
 
