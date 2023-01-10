@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} - MaxFields check{% endblock %}
+
+{% block body %}
+    <h3>Check MaxFields</h3>
+        {% for maxfield in maxfields %}
+            <div class="row row-hover">
+                <div class="col-1">
+                    {% if 'running' == maxfield.status %}
+                        <div class="spinner-border spinner-border-sm" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    {% endif %}
+                    {{ maxfield.status }}</div>
+                <div class="col-7">
+                    <a href="{{ path('maxfield_play', {'path': maxfield.path}) }}">{{ maxfield.name }}</a>
+                </div>
+                <div class="col-4">
+                    <a href="{{ path('max_fields_result', {'path': maxfield.path}) }}">View</a>
+                    <a href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
+                    <a href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
+                    <a href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
+
+                </div>
+            </div>
+        {% endfor %}
+
+    {% if maxfieldFiles %}
+        <div class="alert alert-warning">There are unregistered folders...</div>
+        {% for folder in maxfieldFiles %}
+            <div class="row row-hover">
+                <div class="col-10">
+                    {{ folder }}
+                </div>
+                <div class="col-2">
+                    <a href="{{ path('maxfield_delete_files', {'item': folder}) }}">DELETE</a>
+                </div>
+            </div>
+        {% endfor %}
+        {% else %}
+        <div class="alert alert-success">Everything is clean :)</div>
+    {% endif %}
+{% endblock %}

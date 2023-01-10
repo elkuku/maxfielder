@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Maxfield;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,38 +20,20 @@ class MaxfieldRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         /**
-         * @var class-string<MaxfieldRepository>
+         * @var class-string<MaxfieldRepository> $className
          */
         $className = Maxfield::class;
         parent::__construct($registry, $className);
     }
-
-    // /**
-    //  * @return Maxfield[] Returns an array of Maxfield objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function createQueryBuilderSearch(string $search = null): QueryBuilder
     {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('m.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $queryBuilder = $this->createQueryBuilder('m');
 
-    /*
-    public function findOneBySomeField($value): ?Maxfield
-    {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        if ($search) {
+            $queryBuilder->andWhere('m.name = :search')
+                ->setParameter('search', $search);
+        }
+
+        return $queryBuilder;
     }
-    */
 }

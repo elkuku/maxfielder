@@ -5,7 +5,7 @@
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:49153/main</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:32768/main</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
     <data-source source="LOCAL" name="postgres_test@localhost" uuid="f928eadd-a351-4a66-b292-5fa79420e180">
