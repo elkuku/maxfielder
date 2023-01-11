@@ -1,0 +1,19 @@
+<form action="">
+    <div class="input-group"
+            {{ stimulus_controller('search-preview', {
+                url: path('default')
+            }) }}
+    >
+
+        <input name="q"
+               value="{{ searchTerm|default }}"
+               type="search"
+               placeholder="Search maxfield..."
+               class="form-control"
+               data-action="search-preview#onSearchInput"
+        >
+        <div class="search-preview"
+             data-search-preview-target="result"
+        ></div>
+    </div>
+</form>

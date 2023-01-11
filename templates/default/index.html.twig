@@ -19,6 +19,7 @@
             </div>
             <hr>
         {% endif %}
+        {{ include('_/_searchbox.html.twig') }}
         {% for row in maxfields|batch(4) %}
             <div class="row">
                 {% for maxfield in row %}
@@ -29,7 +30,7 @@
                         </a>
                         <button {{ stimulus_controller('like', {
                             toggleUrl: path('maxfield_toggle_favourite', {'id': maxfield.id})
-                        })}}
+                        }) }}
                                 class="btn btn-outline-danger"
                                 data-action="like#toggle"
                         >
@@ -41,11 +42,18 @@
                 {% endfor %}
             </div>
         {% else %}
-            <div class="alert alert-primary">
-                You don't have any maxfields yet. <code>:(</code><br>
-                You may <a href="{{ path('map-maxfield') }}">Create your first maxfield</a> or <a
-                        href="{{ path('maxfields') }}">Play a maxfield from another user ;)</a>
-            </div>
+            {% if searchTerm %}
+                <div class="alert alert-primary">
+                    There are no items matching your search term :(
+                </div>
+            {% else %}
+                <div class="alert alert-primary">
+                    You don't have any maxfields yet. <code>:(</code><br>
+                    You may
+                    <a href="{{ path('map-maxfield') }}">Create your first maxfield</a>
+                    or <a href="{{ path('maxfields') }}">Play a maxfield from another user ;)</a>
+                </div>
+            {% endif %}
         {% endfor %}
         <hr>
     {% elseif app.user %}

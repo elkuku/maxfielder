@@ -25,13 +25,24 @@ class MaxfieldRepository extends ServiceEntityRepository
         $className = Maxfield::class;
         parent::__construct($registry, $className);
     }
+
+    /**
+     * @return Maxfield[]
+     */
+    public function search(string $search = null): array
+    {
+        return $this->createQueryBuilderSearch($search)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function createQueryBuilderSearch(string $search = null): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('m');
 
         if ($search) {
-            $queryBuilder->andWhere('m.name = :search')
-                ->setParameter('search', $search);
+            $queryBuilder->andWhere('LOWER(m.name) LIKE LOWER(:search)')
+                ->setParameter('search', '%'.$search.'%');
         }
 
         return $queryBuilder;

@@ -2,8 +2,10 @@
 
 namespace App\Twig;
 
+use App\Entity\Maxfield;
 use App\Entity\User;
 use App\Entity\Waypoint;
+use App\Service\MaxFieldHelper;
 use App\Service\WayPointHelper;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -11,7 +13,10 @@ use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
-    public function __construct(private readonly WayPointHelper $wayPointHelper)
+    public function __construct(
+        private readonly WayPointHelper $wayPointHelper,
+        private readonly MaxFieldHelper $maxFieldHelper,
+    )
     {
     }
 
@@ -27,6 +32,7 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFunction('hasImage', [$this, 'hasImage']),
+            new TwigFunction('previewImage', [$this, 'previewImage']),
         ];
     }
 
@@ -51,5 +57,10 @@ class AppExtension extends AbstractExtension
     public function hasImage(Waypoint $waypoint): bool
     {
         return (bool) $this->wayPointHelper->findImage($waypoint->getGuid());
+    }
+
+    public function previewImage(Maxfield $maxfield): string
+    {
+        return $this->maxFieldHelper->getPreviewImage($maxfield->getPath())?:'images/no-preview.png';
     }
 }

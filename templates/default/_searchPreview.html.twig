@@ -1,0 +1,15 @@
+<div class="list-group">
+    {% if searchTerm %}
+        {% for maxfield in maxfields %}
+            <a
+                    class="list-group-item list-group-item-action"
+                    href="{{ path('maxfield_play', { path: maxfield.path }) }}"
+            >
+                <img src="/{{ previewImage(maxfield) }}" alt="Preview Image">
+                {{ maxfield.name }}
+            </a>
+        {% else %}
+            <div class="list-group-item">No results found!</div>
+        {% endfor %}
+    {% endif %}
+</div>

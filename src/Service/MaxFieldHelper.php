@@ -96,4 +96,12 @@ class MaxFieldHelper
     {
         return $this->maxfieldVersion;
     }
+
+    public function getPreviewImage(string $item): string
+    {
+        $path = $this->rootDir."/$item/link_map.png";
+        $webPath = "maxfields/$item/link_map.png";
+
+        return file_exists($path) ? $webPath : '';
+    }
 }

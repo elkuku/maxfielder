@@ -3909,6 +3909,13 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"hotkeys-js@npm:>=3":
+  version: 3.10.1
+  resolution: "hotkeys-js@npm:3.10.1"
+  checksum: a61d74b4c0823f748d087f79c5d665caaed86e27c8a42c13b94e95a66f39f24611a8f681b739f23af99448de5c59eefdfc038e69cc876fb7dc7a1ef67c1d1cdd
+  languageName: node
+  linkType: hard
+
 "hotkeys-js@npm:^3.10.0":
   version: 3.10.0
   resolution: "hotkeys-js@npm:3.10.0"
@@ -5971,6 +5978,7 @@ fsevents@~2.3.2:
     leaflet.markercluster: ^1.4.1
     open-iconic: ^1.1.1
     regenerator-runtime: ^0.13.9
+    stimulus-use: ^0.51.1
     webpack: ^5.74.0
     webpack-cli: ^4.10.0
     webpack-notifier: ^1.15.0
@@ -6335,6 +6343,17 @@ fsevents@~2.3.2:
   version: 1.5.0
   resolution: "statuses@npm:1.5.0"
   checksum: 57735269bf231176a60deb80f6d60214cb4a87663b0937e79497afe9aebe2597f8377fd28893f4d1776205f18dd0b927774a26b72051411ac5108e9e2dfc77d2
+  languageName: node
+  linkType: hard
+
+"stimulus-use@npm:^0.51.1":
+  version: 0.51.1
+  resolution: "stimulus-use@npm:0.51.1"
+  dependencies:
+    hotkeys-js: ">=3"
+  peerDependencies:
+    "@hotwired/stimulus": ">= 3"
+  checksum: e47392b8d0b1b2a25a38c369776f9e817348e16d55522077704612c07a3a6ca35094a5e97ca3d92023390c1a2a1617b2f0d2dd3d38a30adec19fb52a487d2aab
   languageName: node
   linkType: hard
 
