@@ -48,25 +48,29 @@
     <div class="d-none d-sm-block">
         {% for maxfield in pagerfanta %}
             <div class="row row-hover">
-
-{#                <div class="col-8">#}
-                    <a class="col-8" href="{{ path('maxfield_play', {'path': maxfield.path}) }}">{{ maxfield.name }}</a>
-{#                </div>#}
+                <a class="col-8" href="{{ path('maxfield_play', {'path': maxfield.path}) }}">
+                    {{ maxfield.name }}
+                </a>
                 <div class="col-4 btn-group btn-group-sm">
-                    <button class="btn btn-outline-danger btn-sm"
-                            data-controller="like"
+                    <button {{ stimulus_controller('like', {
+                        toggleUrl: path('maxfield_toggle_favourite', {'id': maxfield.id})
+                    })}}
+                            class="btn btn-outline-danger btn-sm"
                             data-action="like#toggle"
-                            data-like-toggle-url-value="{{ path('maxfield_toggle_favourite', {'id': maxfield.id}) }}"
                     >
                         <i class="bi bi-heart{% if maxfield in favourites %}-fill{% endif %}"
                            data-like-target="heart"
                         ></i>
                     </button>
-                    <a class="btn btn-sm btn-outline-success" href="{{ path('maxfield_play', {'path': maxfield.path}) }}">Play</a>
-                    <a class="btn btn-sm btn-outline-info" href="{{ path('max_fields_result', {'path': maxfield.path}) }}">View</a>
-                    <a class="btn btn-sm btn-outline-primary" href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
+                    <a class="btn btn-sm btn-outline-success"
+                       href="{{ path('maxfield_play', {'path': maxfield.path}) }}">Play</a>
+                    <a class="btn btn-sm btn-outline-info"
+                       href="{{ path('max_fields_result', {'path': maxfield.path}) }}">View</a>
+                    <a class="btn btn-sm btn-outline-primary"
+                       href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
                     <a class="btn btn-sm btn-outline-warning" href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
-                    <a class="btn btn-sm btn-outline-danger" href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
+                    <a class="btn btn-sm btn-outline-danger"
+                       href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
                 </div>
             </div>
         {% endfor %}

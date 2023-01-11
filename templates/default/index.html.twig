@@ -27,10 +27,11 @@
                            href="{{ path('maxfield_play', {'path': maxfield.path}) }}">
                             {{ maxfield.name }}
                         </a>
-                        <button class="btn btn-outline-danger"
-                                data-controller="like"
+                        <button {{ stimulus_controller('like', {
+                            toggleUrl: path('maxfield_toggle_favourite', {'id': maxfield.id})
+                        })}}
+                                class="btn btn-outline-danger"
                                 data-action="like#toggle"
-                                data-like-toggle-url-value="{{ path('maxfield_toggle_favourite', {'id': maxfield.id}) }}"
                         >
                             <i class="bi bi-heart{% if maxfield in favourites %}-fill{% endif %}"
                                data-like-target="heart"
