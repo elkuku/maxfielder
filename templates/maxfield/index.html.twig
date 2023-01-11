@@ -22,22 +22,30 @@
                             ></i>
                         </button>
                     </div>
+                    {% if maxfield.owner == app.user %}
+                        <i class="bi bi-star-fill text-warning"></i>
+                    {% endif %}
                     {{ maxfield.name }}
                 </div>
                 <div class="card-body">
-                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-toolbar" role="toolbar">
                         <div class="btn-group me-5">
                             <a class="btn btn-success"
                                href="{{ path('maxfield_play', {'path': maxfield.path}) }}">Play</a>
                             <a class="btn btn-info"
                                href="{{ path('max_fields_result', {'path': maxfield.path}) }}">View</a>
                             <a class="btn btn-primary" href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
-                            <a class="btn btn-warning" href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
+                            {% if is_granted('modify', maxfield) %}
+                                <a class="btn btn-warning"
+                                   href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
+                            {% endif %}
                         </div>
-                        <div class="btn-group">
-                            <a class="btn btn-danger"
-                               href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
-                        </div>
+                        {% if is_granted('modify', maxfield) %}
+                            <div class="btn-group">
+                                <a class="btn btn-danger"
+                                   href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -49,12 +57,16 @@
         {% for maxfield in pagerfanta %}
             <div class="row row-hover">
                 <a class="col-8" href="{{ path('maxfield_play', {'path': maxfield.path}) }}">
+                    {% if maxfield.owner == app.user %}
+                        <i class="bi bi-star-fill text-warning"></i>
+                    {% endif %}
+
                     {{ maxfield.name }}
                 </a>
                 <div class="col-4 btn-group btn-group-sm">
                     <button {{ stimulus_controller('like', {
                         toggleUrl: path('maxfield_toggle_favourite', {'id': maxfield.id})
-                    })}}
+                    }) }}
                             class="btn btn-outline-danger btn-sm"
                             data-action="like#toggle"
                     >
@@ -69,9 +81,10 @@
                     <a class="btn btn-sm btn-outline-primary"
                        href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
                     {% if is_granted('modify', maxfield) %}
-                    <a class="btn btn-sm btn-outline-warning" href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
-                    <a class="btn btn-sm btn-outline-danger"
-                       href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
+                        <a class="btn btn-sm btn-outline-warning"
+                           href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
+                        <a class="btn btn-sm btn-outline-danger"
+                           href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
                     {% endif %}
                 </div>
             </div>
