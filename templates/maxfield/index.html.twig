@@ -68,9 +68,11 @@
                        href="{{ path('max_fields_result', {'path': maxfield.path}) }}">View</a>
                     <a class="btn btn-sm btn-outline-primary"
                        href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
+                    {% if is_granted('modify', maxfield) %}
                     <a class="btn btn-sm btn-outline-warning" href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
                     <a class="btn btn-sm btn-outline-danger"
                        href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}
