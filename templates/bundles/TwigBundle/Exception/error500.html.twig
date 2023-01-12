@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Bad stuff happened :(</h1>
+
+    <div class="alert alert-danger">
+        {{ exception.message }}
+    </div>
+    <p>
+        You should <a href="{{ path('default') }}">return to the homepage</a>.
+    </p>
+{% endblock %}
