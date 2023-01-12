@@ -1,0 +1,15 @@
+{% if favourites %}
+    <div class="bg-secondary">
+        {% for row in favourites|batch(4) %}
+            <div class="row">
+                {% for maxfield in row %}
+                    <a class="btn btn-outline-success col-3"
+                       href="{{ path('maxfield_play', {'path': maxfield.path}) }}">
+                        {{ maxfield.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+    <hr>
+{% endif %}

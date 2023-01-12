@@ -8,23 +8,16 @@ export default class extends Controller {
         toggleUrl: String
     }
 
-    connect() {
-        // console.log(this.toggleUrlValue)
-    }
-
-    toggle() {
-        fetch(this.toggleUrlValue)
-            .then((response) => response.json())
-            .then((data) => console.log(data))
-
-        // @todo more stuff here...
+    async toggle() {
+        const response = await fetch(this.toggleUrlValue)
+        const data = await response.json()
+        console.log(data)
 
         if (this.heartTarget.classList.contains('bi-heart-fill')) {
             this.heartTarget.classList.replace('bi-heart-fill', 'bi-heart')
         } else {
             this.heartTarget.classList.replace('bi-heart', 'bi-heart-fill')
         }
-        // console.log(this.itemIdValue)
-
+        this.dispatch('success');
     }
 }

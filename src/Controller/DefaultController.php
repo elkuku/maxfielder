@@ -19,16 +19,16 @@ class DefaultController extends BaseController
         $favourites = $user ? $user->getFavourites() : [];
         $searchTerm = $request->query->get('q');
         $maxfields = $maxfieldRepository->search($searchTerm);
+        $template = 'index';
 
         if ($request->query->get('preview')) {
-            return $this->render('default/_searchPreview.html.twig', [
-                'maxfields' => $maxfields,
-                'searchTerm' => $searchTerm,
-            ]);
+            $template = '_searchPreview';
+        } elseif ($request->query->get('favourites')) {
+            $template = '_favourites';
         }
 
         return $this->render(
-            'default/index.html.twig',
+            "default/$template.html.twig",
             [
                 'maxfields' => $maxfields,
                 'favourites' => $favourites,
