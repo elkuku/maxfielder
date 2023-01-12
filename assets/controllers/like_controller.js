@@ -1,23 +1,20 @@
 import {Controller} from '@hotwired/stimulus'
 
 export default class extends Controller {
-    static targets = [
-        'heart'
-    ]
-    static values = {
-        toggleUrl: String
-    }
+    async toggle(event) {
+        const heart = event.currentTarget.children[0]
 
-    async toggle() {
-        const response = await fetch(this.toggleUrlValue)
+        const response = await fetch(event.params.url)
         const data = await response.json()
-        console.log(data)
+        // console.log(data)
 
-        if (this.heartTarget.classList.contains('bi-heart-fill')) {
-            this.heartTarget.classList.replace('bi-heart-fill', 'bi-heart')
+
+        if (heart.classList.contains('bi-heart-fill')) {
+            heart.classList.replace('bi-heart-fill', 'bi-heart')
         } else {
-            this.heartTarget.classList.replace('bi-heart', 'bi-heart-fill')
+            heart.classList.replace('bi-heart', 'bi-heart-fill')
         }
+
         this.dispatch('success');
     }
 }

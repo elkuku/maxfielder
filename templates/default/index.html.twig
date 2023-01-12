@@ -13,57 +13,54 @@
                 {{ include('default/_favourites.html.twig') }}
             </div>
             {{ include('_/_searchbox.html.twig') }}
-            {% for row in maxfields|batch(4) %}
-                <div class="row">
-                    {% for maxfield in row %}
-                        <div class="col-3 border border-info">
-                            <div class="row">
-                                <div class="col-1">
-                                    {% if maxfield.owner == app.user %}
-                                        <i class="bi bi-star-fill text-warning"></i>
-                                    {% endif %}
+            <div {{ stimulus_controller('like') }}>
+                {% for row in maxfields|batch(4) %}
+                    <div class="row">
+                        {% for maxfield in row %}
+                            <div class="col-3 border border-info">
+                                <div class="row">
+                                    <div class="col-1">
+                                        {% if maxfield.owner == app.user %}
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-9 text-center">
+                                        <img class="preview-thumb" src="{{ previewImage(maxfield) }}" alt="Preview">
+                                    </div>
+                                    <div class="col-2">
+                                        <button class="btn btn-outline-danger"
+                                                data-action="like#toggle"
+                                                data-like-url-param="{{ path('maxfield_toggle_favourite', {'id': maxfield.id}) }}"
+                                        >
+                                            <i class="bi bi-heart{% if maxfield in favourites %}-fill{% endif %}"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="col-9 text-center">
-                                    <img class="preview-thumb" src="{{ previewImage(maxfield) }}" alt="Preview">
-                                </div>
-                                <div class="col-2">
-                                    <button {{ stimulus_controller('like', {
-                                        toggleUrl: path('maxfield_toggle_favourite', {'id': maxfield.id})
-                                    }) }}
-                                            class="btn btn-outline-danger"
-                                            data-action="like#toggle"
-                                    >
-                                        <i class="bi bi-heart{% if maxfield in favourites %}-fill{% endif %}"
-                                           data-like-target="heart"
-                                        ></i>
-                                    </button>
-                                </div>
+
+                                <a class="btn btn-outline-success col-12"
+                                   href="{{ path('maxfield_play', {'path': maxfield.path}) }}">
+                                    {{ maxfield.name }}
+                                </a>
+
                             </div>
-
-                            <a class="btn btn-outline-success col-12"
-                               href="{{ path('maxfield_play', {'path': maxfield.path}) }}">
-
-                                {{ maxfield.name }}
-                            </a>
-
-                        </div>
-                    {% endfor %}
-                </div>
-
-            {% else %}
-                {% if searchTerm %}
-                    <div class="alert alert-primary">
-                        There are no items matching your search term :(
+                        {% endfor %}
                     </div>
+
                 {% else %}
-                    <div class="alert alert-primary">
-                        You don't have any maxfields yet. <code>:(</code><br>
-                        You may
-                        <a href="{{ path('map-maxfield') }}">Create your first maxfield</a>
-                        or <a href="{{ path('maxfields') }}">Play a maxfield from another user ;)</a>
-                    </div>
-                {% endif %}
-            {% endfor %}
+                    {% if searchTerm %}
+                        <div class="alert alert-primary">
+                            There are no items matching your search term :(
+                        </div>
+                    {% else %}
+                        <div class="alert alert-primary">
+                            You don't have any maxfields yet. <code>:(</code><br>
+                            You may
+                            <a href="{{ path('map-maxfield') }}">Create your first maxfield</a>
+                            or <a href="{{ path('maxfields') }}">Play a maxfield from another user ;)</a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
         <hr>
     {% elseif app.user %}
