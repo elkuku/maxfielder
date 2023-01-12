@@ -25,7 +25,8 @@
                                         {% endif %}
                                     </div>
                                     <div class="col-9 text-center">
-                                        <img class="preview-thumb" src="{{ previewImage(maxfield) }}" alt="Preview">
+                                        <img src="{{ previewImage(maxfield) | imagine_filter('squared_thumbnail') }}"
+                                             alt="Preview">
                                     </div>
                                     <div class="col-2">
                                         <button class="btn btn-outline-danger"
