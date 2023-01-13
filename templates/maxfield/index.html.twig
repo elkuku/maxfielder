@@ -6,90 +6,96 @@
     <h3>MaxFields</h3>
     {{ pagerfanta(pagerfanta) }}
 
-    {# This layout section is for small screens #}
-    <div class="d-sm-none">
-        {% for maxfield in pagerfanta %}
-            <div class="card mb-3">
-                <div class="card-header">
-                    <div class="float-end">
-                        <button class="btn btn-sm text-danger"
-                                data-controller="like"
+    <div {{ stimulus_controller('like') }}>
+
+        {#                                          #}
+        {# This layout section is for small screens #}
+        {#                                          #}
+        <div class="d-sm-none">
+            {% for maxfield in pagerfanta %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <div class="float-end">
+                            <button class="btn btn-sm text-danger"
+                                    data-action="like#toggle"
+                                    data-like-url-param="{{ path('maxfield_toggle_favourite', {'id': maxfield.id}) }}"
+                            >
+                                <i class="bi bi-heart{% if maxfield in favourites %}-fill{% endif %}"
+                                   data-like-target="heart"
+                                ></i>
+                            </button>
+                        </div>
+                        {% if maxfield.owner == app.user %}
+                            <i class="bi bi-star-fill text-warning"></i>
+                        {% endif %}
+                        {{ maxfield.name }}
+                    </div>
+                    <div class="card-body">
+                        <div class="btn-toolbar" role="toolbar">
+                            <div class="btn-group me-5">
+                                <a class="btn btn-success"
+                                   href="{{ path('maxfield_play', {'path': maxfield.path}) }}">Play</a>
+                                <a class="btn btn-info"
+                                   href="{{ path('max_fields_result', {'path': maxfield.path}) }}">View</a>
+                                <a class="btn btn-primary"
+                                   href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
+                                {% if is_granted('modify', maxfield) %}
+                                    <a class="btn btn-warning"
+                                       href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
+                                {% endif %}
+                            </div>
+                            {% if is_granted('modify', maxfield) %}
+                                <div class="btn-group">
+                                    <a class="btn btn-danger"
+                                       href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {#        #}
+        {# This layout section is for large screens #}
+        {#        #}
+        <div class="d-none d-sm-block">
+            {% for maxfield in pagerfanta %}
+                <div class="row row-hover">
+                    <a class="col-8" href="{{ path('maxfield_play', {'path': maxfield.path}) }}">
+                        {% if maxfield.owner == app.user %}
+                            <i class="bi bi-star-fill text-warning"></i>
+                        {% endif %}
+
+                        {{ maxfield.name }}
+                    </a>
+                    <div class="col-4 btn-group btn-group-sm">
+                        <button class="btn btn-outline-danger btn-sm"
                                 data-action="like#toggle"
-                                data-like-toggle-url-value="{{ path('maxfield_toggle_favourite', {'id': maxfield.id}) }}"
+                                data-like-url-param="{{ path('maxfield_toggle_favourite', {'id': maxfield.id}) }}"
                         >
                             <i class="bi bi-heart{% if maxfield in favourites %}-fill{% endif %}"
                                data-like-target="heart"
                             ></i>
                         </button>
-                    </div>
-                    {% if maxfield.owner == app.user %}
-                        <i class="bi bi-star-fill text-warning"></i>
-                    {% endif %}
-                    {{ maxfield.name }}
-                </div>
-                <div class="card-body">
-                    <div class="btn-toolbar" role="toolbar">
-                        <div class="btn-group me-5">
-                            <a class="btn btn-success"
-                               href="{{ path('maxfield_play', {'path': maxfield.path}) }}">Play</a>
-                            <a class="btn btn-info"
-                               href="{{ path('max_fields_result', {'path': maxfield.path}) }}">View</a>
-                            <a class="btn btn-primary" href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
-                            {% if is_granted('modify', maxfield) %}
-                                <a class="btn btn-warning"
-                                   href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
-                            {% endif %}
-                        </div>
+                        <a class="btn btn-sm btn-outline-success"
+                           href="{{ path('maxfield_play', {'path': maxfield.path}) }}">Play</a>
+                        <a class="btn btn-sm btn-outline-info"
+                           href="{{ path('max_fields_result', {'path': maxfield.path}) }}">View</a>
+                        <a class="btn btn-sm btn-outline-primary"
+                           href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
                         {% if is_granted('modify', maxfield) %}
-                            <div class="btn-group">
-                                <a class="btn btn-danger"
-                                   href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
-                            </div>
+                            <a class="btn btn-sm btn-outline-warning"
+                               href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
+                            <a class="btn btn-sm btn-outline-danger"
+                               href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
                         {% endif %}
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
 
-    {# This layout section is for large screens #}
-    <div class="d-none d-sm-block">
-        {% for maxfield in pagerfanta %}
-            <div class="row row-hover">
-                <a class="col-8" href="{{ path('maxfield_play', {'path': maxfield.path}) }}">
-                    {% if maxfield.owner == app.user %}
-                        <i class="bi bi-star-fill text-warning"></i>
-                    {% endif %}
-
-                    {{ maxfield.name }}
-                </a>
-                <div class="col-4 btn-group btn-group-sm">
-                    <button {{ stimulus_controller('like', {
-                        toggleUrl: path('maxfield_toggle_favourite', {'id': maxfield.id})
-                    }) }}
-                            class="btn btn-outline-danger btn-sm"
-                            data-action="like#toggle"
-                    >
-                        <i class="bi bi-heart{% if maxfield in favourites %}-fill{% endif %}"
-                           data-like-target="heart"
-                        ></i>
-                    </button>
-                    <a class="btn btn-sm btn-outline-success"
-                       href="{{ path('maxfield_play', {'path': maxfield.path}) }}">Play</a>
-                    <a class="btn btn-sm btn-outline-info"
-                       href="{{ path('max_fields_result', {'path': maxfield.path}) }}">View</a>
-                    <a class="btn btn-sm btn-outline-primary"
-                       href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
-                    {% if is_granted('modify', maxfield) %}
-                        <a class="btn btn-sm btn-outline-warning"
-                           href="{{ path('maxfield_edit', {'id': maxfield.id}) }}">Edit</a>
-                        <a class="btn btn-sm btn-outline-danger"
-                           href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
-                    {% endif %}
-                </div>
-            </div>
-        {% endfor %}
-    </div>
+    </div><!-- like -->
 
     {{ pagerfanta(pagerfanta) }}
 {% endblock %}
