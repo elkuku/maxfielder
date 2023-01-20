@@ -32,6 +32,7 @@ class AppExtension extends AbstractExtension
         return [
             new TwigFunction('hasImage', [$this, 'hasImage']),
             new TwigFunction('previewImage', [$this, 'previewImage']),
+            new TwigFunction('waypointCount', [$this, 'waypointCount']),
         ];
     }
 
@@ -62,5 +63,10 @@ class AppExtension extends AbstractExtension
     {
         return $this->maxFieldHelper->getPreviewImage($maxfield->getPath())
             ?: 'build/images/no-preview.jpg';
+    }
+
+    public function waypointCount(Maxfield $maxfield): int
+    {
+        return $this->maxFieldHelper->getWaypointCount($maxfield->getPath());
     }
 }

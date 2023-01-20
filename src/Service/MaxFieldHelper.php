@@ -104,4 +104,21 @@ class MaxFieldHelper
 
         return file_exists($path) ? $webPath : '';
     }
+
+    public function getWaypointCount(string $item): int
+    {
+        $path = $this->rootDir."/$item/portals.txt";
+
+        if (false === file_exists($path)) {
+            return 0;
+        }
+
+        $contents = file($path, FILE_IGNORE_NEW_LINES);
+
+        if (false === $contents) {
+            throw new \UnexpectedValueException('Can not read file in '.$path);
+        }
+
+        return count($contents);
+    }
 }

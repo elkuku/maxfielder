@@ -13,6 +13,7 @@
                         {% if maxfield.owner == app.user %}
                             <i class="bi bi-star-fill text-warning" title="This maxfield was created by YOU"></i>
                         {% endif %}
+                        <span>{{ waypointCount(maxfield) }}</span>
                     </div>
                     <div class="col-9 text-center">
                         <a href="{{ path('maxfield_play', {'path': maxfield.path}) }}">

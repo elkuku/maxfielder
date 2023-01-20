@@ -4,6 +4,7 @@
             <a class="list-group-item list-group-item-action"
                href="{{ path('maxfield_play', { path: maxfield.path }) }}"
             >
+                <span class="float-end">{{ waypointCount(maxfield) }}</span>
                 <img src="{{ previewImage(maxfield) | imagine_filter('squared_thumbnail_50') }}" alt="Preview Image">
                 {{ maxfield.name }}
             </a>
