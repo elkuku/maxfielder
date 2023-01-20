@@ -1398,9 +1398,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@symfony/webpack-encore@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "@symfony/webpack-encore@npm:4.0.0"
+"@symfony/webpack-encore@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "@symfony/webpack-encore@npm:4.2.0"
   dependencies:
     "@nuxt/friendly-errors-webpack-plugin": ^2.5.1
     assets-webpack-plugin: 7.0.*
@@ -1431,7 +1431,7 @@ __metadata:
     "@symfony/stimulus-bridge": ^3.0.0
     "@vue/babel-helper-vue-jsx-merge-props": ^1.0.0
     "@vue/babel-preset-jsx": ^1.0.0
-    "@vue/compiler-sfc": ^3.0.2
+    "@vue/compiler-sfc": ^2.6 || ^3.0.2
     eslint: ^8.0.0
     eslint-webpack-plugin: ^3.1.0
     file-loader: ^6.0.0
@@ -1448,11 +1448,11 @@ __metadata:
     stylus-loader: ^7.0.0
     ts-loader: ^9.0.0
     typescript: ^4.2.2
-    vue: ^3.2.14
-    vue-loader: ^17.0.0
+    vue: ^2.6 || ^3.2.14
+    vue-loader: ^15.0.11 || ^17.0.0
     vue-template-compiler: ^2.5
     webpack: ^5.72
-    webpack-cli: ^4.9.1
+    webpack-cli: ^4.9.1 || ^5.0.1
     webpack-notifier: ^1.15.0
   peerDependenciesMeta:
     "@babel/core":
@@ -1519,7 +1519,7 @@ __metadata:
       optional: true
   bin:
     encore: bin/encore.js
-  checksum: ac6ac44f6afb390a1b84733bcb9aa38919e0f7ed3fc3704f6ac926c91a3882ab6960b13997ba826be628e9c109611a2e8a39aab3163d0efc4c0c2c8dd10cb701
+  checksum: 41ab2848637c93cd3365b7e602f2518a253027759258818d0c4236ec149baa8d6f7f696ce78716202c93cff966b7e6c7baa308b20f6ddcdd116144d07a4b41e2
   languageName: node
   linkType: hard
 
@@ -2378,26 +2378,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bootstrap-icons@npm:^1.9.1":
-  version: 1.9.1
-  resolution: "bootstrap-icons@npm:1.9.1"
-  checksum: 0e302bead8306623204ce1784fc1d4d1348a336f2bfd3e9661a46bd265f76622a06e2bf12364cded8ae7e6e0b39de2e637a96d5b28efd9f701d0f227e7ef2081
+"bootstrap-icons@npm:^1.10.3":
+  version: 1.10.3
+  resolution: "bootstrap-icons@npm:1.10.3"
+  checksum: 3c3c2c89d5924288cfe39a58d6afbdbd2ee5259b2109d5cf8bf0fbb2e6dcaf623e13e174cff7656e4a7f93af7a99c174748588875e997b987109f0cfb897bd56
   languageName: node
   linkType: hard
 
-"bootstrap@npm:^5.2.1":
-  version: 5.2.1
-  resolution: "bootstrap@npm:5.2.1"
+"bootstrap@npm:^5.2.3":
+  version: 5.2.3
+  resolution: "bootstrap@npm:5.2.3"
   peerDependencies:
     "@popperjs/core": ^2.11.6
-  checksum: 2ee91b6f875553d28e11eeeebdf3061ee7f3d8e80ac88ba9b742e8911b37aaea7754f96846ff246a94b2c89417be18dfa5b2aa3ca4371a37e0d6f67bde5d3500
+  checksum: 817dcdeeca27148e8234f8c54193f6abe03cf4e7b0812ad17562fd772b4057ba52b6ee38e09d0cee7765d73971cec18f71a671f85f8e60a1f12a762a63112ccf
   languageName: node
   linkType: hard
 
-"bootswatch@npm:^5.2.1":
-  version: 5.2.1
-  resolution: "bootswatch@npm:5.2.1"
-  checksum: 7962d1cde6a6d0a1c0f8ad4b663a9455191abd8de2ebf530f0a4b03d9f1f4d696c92dcab47b8739cbde99629c6bc8537412577fc4f4f8383103e58d117d2a180
+"bootswatch@npm:^5.2.3":
+  version: 5.2.3
+  resolution: "bootswatch@npm:5.2.3"
+  checksum: 334e178f5f7d014801dc7b30f70385a0b427dd625ed9a895fe9dae8db0fbd284a526cb9488914ad7627f97bde39806a663e3e011afe78511205a220b7cc73605
   languageName: node
   linkType: hard
 
@@ -4438,14 +4438,14 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"leaflet.locatecontrol@npm:^0.76.1":
-  version: 0.76.1
-  resolution: "leaflet.locatecontrol@npm:0.76.1"
-  checksum: 9805c3c0952f593239e0eace1150c3d34c80ffeeefcce1609ff4adae9eacfbd8b92489bf86883c92cd37ca05375f6690fdb64ecc8a14b3813b34fae29d9ec674
+"leaflet.locatecontrol@npm:^0.79.0":
+  version: 0.79.0
+  resolution: "leaflet.locatecontrol@npm:0.79.0"
+  checksum: 7c038b4708ffa9a54dd1f3e88de4e83851691149b28e08588546a793f8e14a53e4f6ab24d490911678483d60b9ddd09fb1f2f5e98257a8f31df6f218a9f54417
   languageName: node
   linkType: hard
 
-"leaflet.markercluster@npm:^1.4.1":
+"leaflet.markercluster@npm:^1.5.3":
   version: 1.5.3
   resolution: "leaflet.markercluster@npm:1.5.3"
   peerDependencies:
@@ -4454,10 +4454,10 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"leaflet@npm:^1.6.0":
-  version: 1.9.1
-  resolution: "leaflet@npm:1.9.1"
-  checksum: 8a84fbe690c2a09cd3d7856f07ef0e32763a62af75cc4168f48900c0ca6a939cd4bb95c203be22d60c6e0a1499fe91830265734ca692d7af28b6fdcf1e0c16de
+"leaflet@npm:^1.9.3":
+  version: 1.9.3
+  resolution: "leaflet@npm:1.9.3"
+  checksum: 39cc07ce71e75f2010f5acf941d0ce763ef135db5f98b43ba3b4fcdf266fe7b826010a5c3dda0d7093f2cf367cebf25a0d2c7d75442db01d7df24a12c68442e1
   languageName: node
   linkType: hard
 
@@ -5962,20 +5962,20 @@ fsevents@~2.3.2:
     "@hotwired/stimulus": ^3.1.0
     "@popperjs/core": ^2.11.6
     "@symfony/stimulus-bridge": ^3.2.1
-    "@symfony/webpack-encore": ^4.0.0
-    bootstrap: ^5.2.1
-    bootstrap-icons: ^1.9.1
-    bootswatch: ^5.2.1
+    "@symfony/webpack-encore": ^4.2.0
+    bootstrap: ^5.2.3
+    bootstrap-icons: ^1.10.3
+    bootswatch: ^5.2.3
     core-js: ^3.25.2
     file-loader: ^6.2.0
     hotkeys-js: ^3.10.0
     jquery: ^3.6.1
-    leaflet: ^1.6.0
+    leaflet: ^1.9.3
     leaflet-draw: ^1.0.4
     leaflet-fullscreen: ^1.0.2
     leaflet-routing-machine: ^3.2.12
-    leaflet.locatecontrol: ^0.76.1
-    leaflet.markercluster: ^1.4.1
+    leaflet.locatecontrol: ^0.79.0
+    leaflet.markercluster: ^1.5.3
     open-iconic: ^1.1.1
     regenerator-runtime: ^0.13.9
     stimulus-use: ^0.51.1
