@@ -58,7 +58,7 @@ class MaxFieldHelper
             throw new FileNotFoundException();
         }
 
-        return file_get_contents($path);
+        return str_replace($this->rootDir, '...', file_get_contents($path));
     }
 
     public function filesFinished(string $item): bool
