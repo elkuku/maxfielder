@@ -1,0 +1,47 @@
+<div class="d-sm-none" data-reload-content-target="content2">
+    {% for maxfield in pagerfanta %}
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="float-end">
+                    <button class="btn btn-sm text-danger"
+                            data-action="like#toggle"
+                            data-like-url-param="{{ path('maxfield_toggle_favourite', {'id': maxfield.id}) }}"
+                    >
+                        <i class="bi bi-heart{% if maxfield in favourites %}-fill{% endif %}"
+                           data-like-target="heart"
+                        ></i>
+                    </button>
+                </div>
+                {% if maxfield.owner == app.user %}
+                    <i class="bi bi-star-fill text-warning"></i>
+                {% endif %}
+                {{ maxfield.name }}
+            </div>
+            <div class="card-body">
+                <div class="btn-toolbar" role="toolbar">
+                    <div class="btn-group me-5">
+                        <a class="btn btn-success"
+                           href="{{ path('maxfield_play', {'path': maxfield.path}) }}">Play</a>
+                        <a class="btn btn-info"
+                           href="{{ path('max_fields_result', {'path': maxfield.path}) }}">View</a>
+                        <a class="btn btn-primary"
+                           href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
+                        {% if is_granted('modify', maxfield) %}
+                            <a class="btn btn-warning"
+                                    {{ stimulus_action('modal-form', 'openModal', null, {url: path('maxfield_edit', {'id': maxfield.id}) } ) }}
+                            >
+                                Edit
+                            </a>
+                        {% endif %}
+                    </div>
+                    {% if is_granted('modify', maxfield) %}
+                        <div class="btn-group">
+                            <a class="btn btn-danger"
+                               href="{{ path('max_fields_delete', {'id': maxfield.id}) }}">Delete</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

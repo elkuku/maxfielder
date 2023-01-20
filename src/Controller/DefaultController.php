@@ -6,6 +6,7 @@ use App\Repository\MaxfieldRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use UnexpectedValueException;
 
 class DefaultController extends BaseController
 {
@@ -21,10 +22,18 @@ class DefaultController extends BaseController
         $maxfields = $maxfieldRepository->search($searchTerm);
         $template = 'index';
 
-        if ($request->query->get('preview')) {
-            $template = '_searchPreview';
-        } elseif ($request->query->get('favourites')) {
-            $template = '_favourites';
+        $partial = $request->query->get('partial');
+
+        if ($partial) {
+            if (in_array(
+                $partial,
+                ['searchPreview', 'favourites', 'contentList']
+            )
+            ) {
+                $template = "_$partial";
+            } else {
+                throw new UnexpectedValueException('Invalid partial');
+            }
         }
 
         return $this->render(

@@ -5,7 +5,8 @@
 {% block body %}
     {% if is_granted('ROLE_AGENT') %}
         <div {{ stimulus_controller('reload-content', {
-            url: path('default', { favourites: 1 })
+            url: path('default', { partial: 'favourites' }),
+            url2: path('default', { partial: 'contentList' }),
         }) }}
                 data-action="like:success->reload-content#refreshContent"
         >
@@ -13,56 +14,26 @@
                 {{ include('default/_favourites.html.twig') }}
             </div>
             {{ include('_/_searchbox.html.twig') }}
-            <div {{ stimulus_controller('like') }}>
-                {% for row in maxfields|batch(4) %}
-                    <div class="row">
-                        {% for maxfield in row %}
-                            <div class="col-3 border border-info">
-                                <div class="row">
-                                    <div class="col-1">
-                                        {% if maxfield.owner == app.user %}
-                                            <i class="bi bi-star-fill text-warning"></i>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col-9 text-center">
-                                        <img src="{{ previewImage(maxfield) | imagine_filter('squared_thumbnail') }}"
-                                             alt="Preview"
-                                            class="img-fluid"
-                                        >
-                                    </div>
-                                    <div class="col-2">
-                                        <button class="btn btn-outline-danger"
-                                                data-action="like#toggle"
-                                                data-like-url-param="{{ path('maxfield_toggle_favourite', {'id': maxfield.id}) }}"
-                                        >
-                                            <i class="bi bi-heart{% if maxfield in favourites %}-fill{% endif %}"></i>
-                                        </button>
-                                    </div>
-                                </div>
+            <div {{ stimulus_controller('like')|
+            stimulus_controller('modal-form') }}
+                    data-action="modal-form:closed->reload-content#refreshContent modal-form:closed->reload-content#refreshContent2"
+            >
+                <div {{ stimulus_controller('submit-confirm', {
+                    title: 'Remove this item?',
+                    icon: 'warning',
+                    confirmButtonText: 'Yes, remove it',
+                    submitAsync: true,
+                }) }}
+                        data-action="submit-confirm:async:submitted->reload-content#refreshContent submit-confirm:async:submitted->reload-content#refreshContent2"
+                        data-reload-content-target="content2"
 
-                                <a class="btn btn-outline-success col-12"
-                                   href="{{ path('maxfield_play', {'path': maxfield.path}) }}">
-                                    {{ maxfield.name }}
-                                </a>
+                >
+                    {{ include('default/_contentList.html.twig') }}
+                </div>
+                {{ include('_modal.html.twig', {
+                    modalTitle: 'Edit Maxfield',
+                }) }}
 
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                {% else %}
-                    {% if searchTerm %}
-                        <div class="alert alert-primary">
-                            There are no items matching your search term :(
-                        </div>
-                    {% else %}
-                        <div class="alert alert-primary">
-                            You don't have any maxfields yet. <code>:(</code><br>
-                            You may
-                            <a href="{{ path('map-maxfield') }}">Create your first maxfield</a>
-                            or <a href="{{ path('maxfields') }}">Play a maxfield from another user ;)</a>
-                        </div>
-                    {% endif %}
-                {% endfor %}
             </div>
         </div>
         <hr>

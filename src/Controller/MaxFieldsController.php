@@ -19,8 +19,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use UnexpectedValueException;
 
 #[Route(path: 'maxfield')]
 #[IsGranted('ROLE_AGENT')]
@@ -31,17 +33,35 @@ class MaxFieldsController extends BaseController
         MaxfieldRepository $maxfieldRepository,
         Request $request,
     ): Response {
+        $page = $request->query->get('page', 1);
         $pagerfanta = Pagerfanta::createForCurrentPageWithMaxPerPage(
             new QueryAdapter($maxfieldRepository->createQueryBuilderSearch()),
-            $request->query->get('page', 1),
+            $page,
             10
         );
 
+        $template = 'index';
+
+        $partial = $request->query->get('partial');
+
+        if ($partial) {
+            if (in_array(
+                $partial,
+                ['list_lg', 'list_sm']
+            )
+            ) {
+                $template = "_$partial";
+            } else {
+                throw new UnexpectedValueException('Invalid partial');
+            }
+        }
+
         return $this->render(
-            'maxfield/index.html.twig',
+            "maxfield/$template.html.twig",
             [
                 'favourites' => $this->getUser()?->getFavourites(),
                 'pagerfanta' => $pagerfanta,
+                'page' => $page,
             ]
         );
     }
@@ -166,9 +186,10 @@ class MaxFieldsController extends BaseController
         'POST',
     ])]
     public function edit(
-        Request $request,
         Maxfield $maxfield,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        Request $request,
+        RouterInterface $router,
     ): RedirectResponse|Response {
         $this->denyAccessUnlessGranted(
             'modify',
@@ -188,8 +209,10 @@ class MaxFieldsController extends BaseController
             return $this->redirectToRoute('maxfields');
         }
 
+        $template = $request->query->get('partial') ? '_form' : 'edit';
+
         return $this->render(
-            'maxfield/edit.html.twig',
+            "maxfield/$template.html.twig",
             [
                 'form' => $form->createView(),
             ]
@@ -201,13 +224,14 @@ class MaxFieldsController extends BaseController
         MaxFieldGenerator $maxFieldGenerator,
         EntityManagerInterface $entityManager,
         Maxfield $maxfield,
+        Request $request,
+        RouterInterface $router,
     ): Response {
         $this->denyAccessUnlessGranted(
             'modify',
             $maxfield,
             'You are not allowed to delete this item :('
         );
-
 
         $item = $maxfield->getPath();
         try {
@@ -216,12 +240,19 @@ class MaxFieldsController extends BaseController
             $entityManager->remove($maxfield);
             $entityManager->flush();
 
-            $this->addFlash('success', sprintf('%s has been removed.', $item));
+            $this->addFlash(
+                'success',
+                sprintf('%s has been removed.', $item)
+            );
         } catch (IOException $exception) {
             $this->addFlash('warning', $exception->getMessage());
         }
 
-        return $this->redirectToRoute('maxfields');
+        // $this->addFlash('warning', 'Temporary disabled....');
+
+        $referer = $this->getInternalReferer($request, $router);
+
+        return $this->redirectToRoute($referer ?: 'maxfields');
     }
 
     #[Route(path: '/delete-files/{item}', name: 'maxfield_delete_files', methods: ['GET'])]

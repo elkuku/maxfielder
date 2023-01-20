@@ -5979,6 +5979,7 @@ fsevents@~2.3.2:
     open-iconic: ^1.1.1
     regenerator-runtime: ^0.13.9
     stimulus-use: ^0.51.1
+    sweetalert2: ^11.7.0
     webpack: ^5.74.0
     webpack-cli: ^4.10.0
     webpack-notifier: ^1.15.0
@@ -6508,6 +6509,13 @@ fsevents@~2.3.2:
   bin:
     svgo: bin/svgo
   checksum: 778e120d57b8a7018e27a2569d0b28d0c5057358eedbbf0823f7af805ec646cf55fc59a7665fb89058d424edb76dac4347cfde1384688d0480e3e047e1375c51
+  languageName: node
+  linkType: hard
+
+"sweetalert2@npm:^11.7.0":
+  version: 11.7.0
+  resolution: "sweetalert2@npm:11.7.0"
+  checksum: b460003b06875791410f9add35435a7078782c167cfb6643cdec4068aa5afc3ed2de6709ae4c7db7983f931e1e7a21c0b1d5296c726ae2d8186d9932e496cf44
   languageName: node
   linkType: hard
 

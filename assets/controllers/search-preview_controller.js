@@ -20,19 +20,15 @@ export default class extends Controller {
     }
 
     async search(query) {
-        console.log(this.urlValue)
         const params = new URLSearchParams({
             q: query,
-            preview: 1
+            partial: 'searchPreview'
         })
         const response = await fetch(`${this.urlValue}?${params.toString()}`)
-        // console.log(await response.text())
         this.resultTarget.innerHTML = await response.text()
     }
 
     clickOutside(event) {
-        console.log('clickwee outside')
-
         this.resultTarget.innerHTML = ''
     }
 }

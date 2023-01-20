@@ -1,0 +1,42 @@
+<div class="d-none d-sm-block" data-reload-content-target="content">
+    {% for maxfield in pagerfanta %}
+        <div class="row row-hover">
+            <a class="col-8" href="{{ path('maxfield_play', {'path': maxfield.path}) }}">
+                {% if maxfield.owner == app.user %}
+                    <i class="bi bi-star-fill text-warning"></i>
+                {% endif %}
+
+                {{ maxfield.name }}
+            </a>
+            <div class="col-4 btn-group btn-group-sm">
+                <button class="btn btn-outline-danger btn-sm"
+                        data-action="like#toggle"
+                        data-like-url-param="{{ path('maxfield_toggle_favourite', {'id': maxfield.id}) }}"
+                >
+                    <i class="bi bi-heart{% if maxfield in favourites %}-fill{% endif %}"
+                       data-like-target="heart"
+                    ></i>
+                </button>
+                <a class="btn btn-sm btn-outline-success"
+                   href="{{ path('maxfield_play', {'path': maxfield.path}) }}">Play</a>
+                <a class="btn btn-sm btn-outline-info"
+                   href="{{ path('max_fields_result', {'path': maxfield.path}) }}">View</a>
+                <a class="btn btn-sm btn-outline-primary"
+                   href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
+                {% if is_granted('modify', maxfield) %}
+                    <a class="btn btn-sm btn-outline-warning"
+                        {{ stimulus_action('modal-form', 'openModal', null, {url: path('maxfield_edit', {'id': maxfield.id}) } ) }}
+                    >
+                        Edit
+                    </a>
+                    <button class="btn btn-outline-danger"
+                            title="Delete"
+                            {{ stimulus_action('submit-confirm', 'onSubmit', null, {url: path('maxfield_edit', {'id': maxfield.id}) } ) }}
+                    >
+                        Delete
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
