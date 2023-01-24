@@ -80,4 +80,31 @@ class WaypointRepository extends ServiceEntityRepository
 
         return array_column((array) $result, 'lat_lon');
     }
+
+    /**
+     * 50.140165627475554,
+     * 8.537063598632814,
+     * 49.975734392872745,
+     * 8.02207946777344
+     *
+     * @return Waypoint[]
+     */
+    public function findInBounds(
+        float $latMax,
+        float $lonMax,
+        float $latMin,
+        float $lonMin,
+    ): array {
+        return $this->createQueryBuilder('w')
+            ->andWhere('w.lat >= :latMin')
+            ->andWhere('w.lat <= :latMax')
+            ->andWhere('w.lon >= :lonMin')
+            ->andWhere('w.lon <= :lonMax')
+            ->setParameter('latMin', $latMin)
+            ->setParameter('latMax', $latMax)
+            ->setParameter('lonMin', $lonMin)
+            ->setParameter('lonMax', $lonMax)
+            ->getQuery()
+            ->getResult();
+    }
 }

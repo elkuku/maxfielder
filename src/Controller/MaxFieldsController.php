@@ -189,7 +189,6 @@ class MaxFieldsController extends BaseController
         Maxfield $maxfield,
         EntityManagerInterface $entityManager,
         Request $request,
-        RouterInterface $router,
     ): RedirectResponse|Response {
         $this->denyAccessUnlessGranted(
             'modify',

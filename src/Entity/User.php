@@ -41,6 +41,12 @@ class User implements UserInterface
     #[Column(type: Types::JSON)]
     private array $roles = [];
 
+    /**
+     * @var array<string>|null
+     */
+    #[Column(type: Types::JSON, nullable: true)]
+    private ?array $params = [];
+
     #[Column(length: 100, nullable: true)]
     private ?string $googleId = null;
 
@@ -116,6 +122,31 @@ class User implements UserInterface
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string>|null
+     */
+    public function getParams(): ?array
+    {
+        return $this->params;
+    }
+
+    public function getParam(string $name): string
+    {
+        return $this->params && array_key_exists($name, $this->params)
+            ? $this->params[$name]
+            : '';
+    }
+
+    /**
+     * @param array<string> $params
+     */
+    public function setParams(array $params): self
+    {
+        $this->params = $params;
 
         return $this;
     }

@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} - User Profile{% endblock %}
+
+{% block body %}
+    <h1>User Profile</h1>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <p>Identifier: <code>{{ app.user.userIdentifier }}</code></p>
+
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+
+            {{ form_row(form.agent_name) }}
+        </div>
+        <div class="col-sm-6">
+            <h4>Map view center</h4>
+
+            <div {{ stimulus_controller('profile', {
+                lat: app.user.param('lat'),
+                lon: app.user.param('lon'),
+                zoom: app.user.param('zoom'),
+            }) }}>
+
+                <div id="map"></div>
+
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    {{ form_widget(form.lat, { 'attr':{'readonly':true,'style':'visibility: xhidden;'} }) }}
+                </div>
+                <div class="col">
+                    {{ form_widget(form.lon, { 'attr':{'readonly':true,'style':'visibility: xhidden;'} }) }}
+                </div>
+                <div class="col">
+                    {{ form_widget(form.zoom, { 'attr':{'readonly':true,'style':'visibility: xhidden;'} }) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <button type="submit" class="btn btn-lg btn-outline-success" title="Guardar">
+        <span class="bi-check"></span>
+    </button>
+
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+
+{% endblock %}
+
+

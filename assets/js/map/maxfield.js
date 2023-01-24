@@ -1,4 +1,4 @@
-const $ = require('jquery'); // @todo remove jquery :(
+const $ = require('jquery') // @todo remove jquery :(
 
 require('leaflet')
 require('leaflet/dist/leaflet.css')
@@ -33,7 +33,7 @@ const redIcon = new LeafIcon({iconUrl: '/build/images/map-marker/marker-icon-red
 const selectedMarkers = []
 const markers = L.markerClusterGroup({disableClusteringAtZoom: 16})
 
-function initMap() {
+function initMap(lat, lon, zoom) {
     const osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
     const osmAttrib = 'Map data (C) <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
     const osm = new L.TileLayer(osmUrl, {attribution: osmAttrib})
@@ -44,8 +44,7 @@ function initMap() {
         editOptions: {}
     })
 
-    // World
-    map.setView(new L.LatLng(0, 0), 3)
+    map.setView(new L.LatLng(lat, lon), zoom)
 
     map.addLayer(osm)
 
@@ -69,12 +68,19 @@ function loadMarkers() {
     bounds = bounds._northEast.lat + ',' + bounds._northEast.lng + ',' + bounds._southWest.lat + ',' + bounds._southWest.lng
 
     $.get('/waypoints_map?bounds=' + bounds, {some_var: ''}, function (data) {
-
         $(data).each(function () {
+            let icon, selected
+            if (selectedMarkers.includes(this.id)) {
+                icon= redIcon
+                selected = true
+            } else {
+                icon= orangeIcon
+                selected = false
+            }
             const marker =
                 new L.Marker(
                     new L.LatLng(this.lat, this.lng),
-                    {icon: orangeIcon, wp_id: this.id, wp_selected: false, title: this.name}
+                    {icon: icon, wp_id: this.id, wp_selected: selected, title: this.name}
                 )
 
             marker.on('click', function (e) {
@@ -82,8 +88,8 @@ function loadMarkers() {
             })
 
             markers.addLayer(marker)
-            map.addLayer(markers)
         })
+        map.addLayer(markers)
     }, 'json')
 }
 
@@ -149,84 +155,29 @@ function doPostRequest(path, parameters) {
     form.submit()
 }
 
-function copyToClipboard(elementId) {
-    if (!navigator.clipboard) {
-        alert('Copy not possible - change browser :P')
-        return
-    }
-    const text = $('#' + elementId).val()
-    navigator.clipboard.writeText(text).then(function () {
-        alert('Content has been copied to your clipboard.')
-        // console.log('Async: Copying to clipboard was successful!')
-    }, function (err) {
-        alert('Could not copy text: ' + err)
-        // console.error('Async: Could not copy text: ', err)
-    })
-}
+const jsData = document.getElementById('js-data').dataset
 
-initMap()
+initMap(jsData.defaultLat, jsData.defaultLon, jsData.defaultZoom)
 loadMarkers()
 initControls()
 
-$('#result_maxFields').on('click', function () {
-    $.post('/export2', {points: selectedMarkers}, function (data) {
-        const options = {}
-        const modal = $('#resultModal')
-        modal.find('.modal-title').text('MaxFields')
-        modal.find('.modal-body').text(data.maxfield)
-        modal.modal(options)
-    })
-})
-
-$('#result_Gpx').on('click', function () {
-    $.post('/export2', {points: selectedMarkers}, function (data) {
-        const options = {}
-        const modal = $('#resultModal')
-        modal.find('.modal-title').text('GPX')
-        modal.find('.modal-body').text(data.gpx)
-        modal.modal(options)
-    })
-})
-
-$('#createGallery').on('click', function () {
-    const options = {}
-    const modal = $('#galleryModal')
-    modal.modal(options)
-    modal.find('.status').text('Waypoints selected: ' + selectedMarkers.length)
-})
-
-const galleryModal = $('#galleryModal')
-
-galleryModal.find('button').on('click', function () {
-    const input = galleryModal.find('input')
-
-    $.post('/collection/create', {points: selectedMarkers, name: input.val()}, function (data) {
-        console.log(data)
-
-        // const options = {}
-        // const modal = $('#resultModal')
-        // modal.find('.modal-title').text('GPX')
-        // modal.find('.modal-body').text(data.gpx)
-        // modal.modal(options)
-    })
-
-})
+map.on('dragend', function () { loadMarkers() })
+map.on('zoomend', function () { loadMarkers() })
 
 const maxfieldModal = document.getElementById('maxfieldModal')
 
 maxfieldModal.addEventListener('shown.bs.modal', () => {
-    const modal = $('#maxfieldModal')
-    console.log(modal)
-        if (!selectedMarkers.length) {
-        modal.find('.status').text('No Waypoints selected!')
-        modal.find('.controls').hide()
-        $('#build').hide()
-    } else {
-        modal.find('.status').text('Waypoints selected: ' + selectedMarkers.length)
-        modal.find('.controls').show()
-        $('#build').show()
-    }
+    const modal = document.getElementById('maxfieldModal')
 
+    if (!selectedMarkers.length) {
+        modal.querySelectorAll('.status')[0].innerText = 'No Waypoints selected!'
+        modal.querySelectorAll('.controls')[0].style.display = 'none'
+        document.getElementById('build').style.display = 'none'
+    } else {
+        modal.querySelectorAll('.status')[0].innerText = 'Waypoints selected: ' + selectedMarkers.length
+        modal.querySelectorAll('.controls')[0].style.display = ''
+        document.getElementById('build').style.display = ''
+    }
 })
 
 $('#build').on('click', function () {
@@ -275,8 +226,4 @@ $('#selectToggle').on('click', function () {
         $(this).find('span').addClass('oi-minus')
         $(this).find('span').removeClass('oi-plus')
     }
-})
-
-$('#copyToClipboard').on('click', function () {
-    copyToClipboard('resultText')
 })

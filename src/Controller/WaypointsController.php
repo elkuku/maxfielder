@@ -64,9 +64,25 @@ class WaypointsController extends AbstractController
 
     #[Route(path: '/waypoints_map', name: 'map-waypoints', methods: ['GET'])]
     #[IsGranted('ROLE_AGENT')]
-    public function map(WaypointRepository $repository): JsonResponse
-    {
-        $waypoints = $repository->findAll();
+    public function map(
+        WaypointRepository $repository,
+        Request $request
+    ): JsonResponse {
+        $bounds = $request->query->get('bounds');
+        if ($bounds) {
+            $bounds = explode(',', $bounds);
+            if (4 !== count($bounds)) {
+                throw new \UnexpectedValueException('Invalid bounds');
+            }
+            $waypoints = $repository->findInBounds(
+                (float) $bounds[0],
+                (float) $bounds[1],
+                (float) $bounds[2],
+                (float) $bounds[3]
+            );
+        } else {
+            $waypoints = $repository->findAll();
+        }
 
         $wps = [];
 

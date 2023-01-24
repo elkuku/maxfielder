@@ -12,6 +12,12 @@
 {% endblock %}
 
 {% block body %}
+    <span id="js-data"
+        data-default-lat="{{ defaultLat }}"
+        data-default-lon="{{ defaultLon }}"
+        data-default-zoom="{{ defaultZoom }}"
+    ></span>
+
     <div id="selection-count">0</div>
 
     <div id="controls-container">
@@ -30,8 +36,6 @@
             <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#maxfieldModal">
                 MaxField
             </button>
-{#            <button id="result_maxFields" class="btn btn-outline-secondary btn-sm">MaxField</button>#}
-{#            <button id="result_Gpx" class="btn btn-outline-secondary btn-sm">Gpx</button>#}
         </div>
     </div>
 
@@ -86,21 +90,6 @@
                     <div class="status"></div>
                     <button id="build" class="btn btn-outline-primary btn-sm">Create MaxField</button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="resultModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">MaxFields</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <textarea class="modal-body" rows="15" cols="150" id="resultText"></textarea>
-                <button id="copyToClipboard" class="btn btn-success">Copy</button>
             </div>
         </div>
     </div>
