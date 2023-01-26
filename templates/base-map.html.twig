@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+
     <link rel="icon" type="image/x-icon" href="
     {%- if 'dev' == app.environment -%}
         {{ asset('favicon-dev.ico') }}
@@ -13,10 +14,16 @@
     {%- endif -%}
     "/>
 
-    <title>{% block title %}MaxFielder{% endblock %}</title>
+    <title>{% block title %}Maxfielder{% endblock %}</title>
+    <meta name="og:title" content="{% block og_title %}Maxfielder Map{% endblock %}"/>
+    <meta name="og:description" content="{% block og_description %}Maxfielder Map{% endblock %}"/>
+    <meta name="og:image" content="{% block og_image %}{{ absolute_url(asset('build/images/link_map_example.png')) }}{% endblock %}"/>
 
     {{ encore_entry_link_tags('app') }}
     {% block stylesheets %}{% endblock %}
+
+    {{ encore_entry_script_tags('app') }}
+    {% block javascripts %}{% endblock %}
 </head>
 
 <body id="app-layout">
@@ -29,7 +36,5 @@
 
 {% block body %}{% endblock %}
 
-{{ encore_entry_script_tags('app') }}
-{% block javascripts %}{% endblock %}
 </body>
 </html>

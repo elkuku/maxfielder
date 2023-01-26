@@ -1,5 +1,6 @@
 import {Controller} from '@hotwired/stimulus'
 
+/* stimulusFetch: 'lazy' */
 export default class extends Controller {
     async toggle(event) {
         const heart = event.currentTarget.children[0]

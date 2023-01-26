@@ -23,7 +23,6 @@
         "leaflet-routing-machine": "^3.2.12",
         "leaflet.locatecontrol": "^0.79.0",
         "leaflet.markercluster": "^1.5.3",
-        "open-iconic": "^1.1.1",
         "regenerator-runtime": "^0.13.9",
         "stimulus-use": "^0.51.1",
         "sweetalert2": "^11.7.0",

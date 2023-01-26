@@ -5006,13 +5006,6 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"open-iconic@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "open-iconic@npm:1.1.1"
-  checksum: dcccc9a2b30b9224b9469c6d94457f51b477cabbeb91956bd3531bc4c04ae85e8b3a9d84135df6baf06331ad0e05e90420444ad23877b057efb4765ba49e0d67
-  languageName: node
-  linkType: hard
-
 "open@npm:^8.0.9":
   version: 8.2.1
   resolution: "open@npm:8.2.1"
@@ -5976,7 +5969,6 @@ fsevents@~2.3.2:
     leaflet-routing-machine: ^3.2.12
     leaflet.locatecontrol: ^0.79.0
     leaflet.markercluster: ^1.5.3
-    open-iconic: ^1.1.1
     regenerator-runtime: ^0.13.9
     stimulus-use: ^0.51.1
     sweetalert2: ^11.7.0

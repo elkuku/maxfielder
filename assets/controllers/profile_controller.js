@@ -8,6 +8,7 @@ import 'leaflet-fullscreen/dist/leaflet.fullscreen.css'
 
 import 'styles/profile.css'
 
+/* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static values = {
         lat: Number,

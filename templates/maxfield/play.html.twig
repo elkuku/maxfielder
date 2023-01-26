@@ -14,6 +14,9 @@
     {{ encore_entry_script_tags('map-play') }}
 {% endblock %}
 
+{% block og_description %}{{ maxfield.name }}{% endblock %}
+{% block og_image %}{{ absolute_url(asset('maxfields/' ~maxfield.path~'/link_map.png')) }}{% endblock %}
+
 {% block body %}
     <div
             id="map"

@@ -1,0 +1,34 @@
+html, body, #map {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    padding-top: 55px;
+}
+
+#map {
+    padding-top: 55px;
+    position: absolute;
+    /*margin-bottom: -40px;*/
+}
+
+#selection-count {
+    font-size: 3em;
+    color: #07bf05;
+    text-shadow: 2px 2px #666666;
+    /*background-color: white;*/
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+#controls-container {
+    /*background-color: white;*/
+
+}
+
+.leaflet-bar {
+    border: 0;
+
+}

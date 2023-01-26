@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Elkuku\MaxfieldParser\JsonHelper;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -139,21 +140,22 @@ class MaxFieldsController extends BaseController
         EntityManagerInterface $entityManager,
         Request $request
     ): Response {
-        $points = $request->request->all('points');
+        $points = $request->request->get('points');
+        $ids = array_map('intval', explode(',', $points));
 
-        if (!$points) {
+        if (!count($ids)) {
             throw $this->createNotFoundException('No waypoints selected.');
         }
 
-        $wayPoints = $repository->findBy(['id' => $points]);
+        $wayPoints = $repository->findBy(['id' => $ids]);
         $maxField = $maxFieldGenerator->convertWayPointsToMaxFields($wayPoints);
-        $buildName = $request->request->get('buildName');
+        $buildName = $request->request->get('build_name');
         $playersNum = (int) $request->request->get('players_num') ?: 1;
         $options = [
-            'skip_plots' => $request->request->getBoolean('skip_plots'),
-            'skip_step_plots' => $request->request->getBoolean(
-                'skip_step_plots'
-            ),
+            'skip_plots' => $request->request
+                ->getBoolean('skip_plots'),
+            'skip_step_plots' => $request->request
+                ->getBoolean('skip_step_plots'),
         ];
 
         $projectName = uniqid().'-'.(new AsciiSlugger())->slug($buildName);
@@ -309,6 +311,23 @@ class MaxFieldsController extends BaseController
 
         return $this->json([
             'new-state' => $newState,
+        ]);
+    }
+
+    #[Route(path: '/plan', name: 'app_maxfields_plan', methods: ['GET'])]
+    public function plan(
+        #[Autowire('%env(APP_DEFAULT_LAT)%')] float $defaultLat,
+        #[Autowire('%env(APP_DEFAULT_LON)%')] float $defaultLon,
+        #[Autowire('%env(APP_DEFAULT_ZOOM)%')] float $defaultZoom,
+    ): Response {
+        $lat = $this->getUser()?->getParam('lat') ?: $defaultLat;
+        $lon = $this->getUser()?->getParam('lon') ?: $defaultLon;
+        $zoom = $this->getUser()?->getParam('zoom') ?: $defaultZoom;
+
+        return $this->render('maxfield/plan.html.twig', [
+            'defaultLat' => $lat,
+            'defaultLon' => $lon,
+            'defaultZoom' => $zoom,
         ]);
     }
 }

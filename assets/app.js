@@ -12,7 +12,5 @@ import './styles/app.css'
 import './bootstrap'
 
 import '@popperjs/core'
-import 'bootstrap'
 import 'bootswatch/dist/cosmo/bootstrap.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import 'open-iconic/font/css/open-iconic-bootstrap.css'
