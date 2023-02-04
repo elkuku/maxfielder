@@ -4300,13 +4300,6 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"jquery@npm:^3.6.1":
-  version: 3.6.1
-  resolution: "jquery@npm:3.6.1"
-  checksum: 6a0ee4da577ec1f0031840ca9856ef709cfcc9712b84659d815770a23bb40a1f2747fc5bdc9a832ab1f897ddf9655a7131235ceb46558092baa5158000675c08
-  languageName: node
-  linkType: hard
-
 "js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
@@ -5962,7 +5955,6 @@ fsevents@~2.3.2:
     core-js: ^3.25.2
     file-loader: ^6.2.0
     hotkeys-js: ^3.10.0
-    jquery: ^3.6.1
     leaflet: ^1.9.3
     leaflet-draw: ^1.0.4
     leaflet-fullscreen: ^1.0.2

@@ -14,6 +14,7 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 
 import '../styles/map/play.css'
 
+/* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static values = {
         jsonData: String,

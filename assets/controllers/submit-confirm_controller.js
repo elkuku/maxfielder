@@ -1,6 +1,7 @@
 import {Controller} from '@hotwired/stimulus'
 import Swal from 'sweetalert2'
 
+/* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static values = {
         title: String,

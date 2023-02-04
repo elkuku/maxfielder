@@ -7,8 +7,6 @@ export default class extends Controller {
 
         const response = await fetch(event.params.url)
         const data = await response.json()
-        // console.log(data)
-
 
         if (heart.classList.contains('bi-heart-fill')) {
             heart.classList.replace('bi-heart-fill', 'bi-heart')

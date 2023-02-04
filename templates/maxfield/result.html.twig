@@ -9,6 +9,7 @@
     </div>
 
     <h3>MaxFields for <span id="itemId">{{ maxfield.name }}</span></h3>
+
     <div
             {{ stimulus_controller('maxfield-view', {
                 maxFrames: info.steps|length,
@@ -16,184 +17,165 @@
                 steps: info.steps|json_encode,
             }) }}
     >
-        <div class="accordion" id="accordionExample">
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="headingOne">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Maps
-                    </button>
-                </h2>
-                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
-                     data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                        <div class="row">
-                            <div class="col">
-                                <img src="/maxfields/{{ maxfield.path }}/link_map.png" width="350px" alt="Link Map">
-                            </div>
-                            <div class="col">
-                                <img src="/maxfields/{{ maxfield.path }}/portal_map.png" width="350px" alt="Portal Map">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="headingThree">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                        Movie
-                    </button>
-                </h2>
-                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
-                     data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                        <img src="/maxfields/{{ maxfield.path }}/plan_movie.gif" width="350px" alt="Link movie">
-                    </div>
-                </div>
-            </div>
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="accFrames">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseFrames">
-                        Frames
-                    </button>
-                </h2>
-                <div id="collapseFrames" class="accordion-collapse collapse"
-                     data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                        <div class="row">
-                            <div class="col">
-                                <button class="btn btn-outline-secondary" {{ stimulus_action('maxfield-view', 'frameMinus') }}>
-                                    <span class="bi-dash-lg"></span>
-                                </button>
-                                <button class="btn btn-outline-secondary" {{ stimulus_action('maxfield-view', 'framePlus') }}>
-                                    <span class="bi-plus-lg"></span>
-                                </button>
-                                <span {{ stimulus_target('maxfield-view', 'frameNum') }}>#</span>
-                                <div {{ stimulus_target('maxfield-view', 'frameLinkInfo') }}>...</div>
-                            </div>
-                            <div class="col border">
-                                <img {{ stimulus_target('maxfield-view', 'framesImage') }}
-                                        src="" alt="Frame" width="350px">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="accKeysTotal">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#collapseKeysTotal">
-                        Keys Total
-                    </button>
-                </h2>
-                <div id="collapseKeysTotal" class="accordion-collapse collapse"
-                     data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                        <div class="row">
-                            <div class="col">
-                                <h4>Key Preparation Total</h4>
-                                <table>
-                                    <tr>
-                                        <th>Map No</th>
-                                        <th>Keys</th>
-                                        <th>Name</th>
-                                    </tr>
-                                    {% for wayPoint in info.keyPrep.wayPoints %}
-                                        <tr>
-                                            <th>{{ wayPoint.mapNo }}</th>
-                                            <td>{{ wayPoint.keysNeeded }}</td>
-                                            <td>{{ wayPoint.name }}</td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    {% endfor %}
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <nav class="nav nav-pills fixed-top bg-light" id="maxfield-tab-nav">
+            <a class="nav-link active" href="#" data-id="maps"
+                    {{ stimulus_action('maxfield-view', 'showTab', 'click', {tab:'maps'}) }}
+                    {{ stimulus_target('maxfield-view', 'tabBtn') }}
+            >
+                Maps
+            </a>
+            <a class="nav-link" href="#" data-id="movie"
+                    {{ stimulus_action('maxfield-view', 'showTab', 'click', {tab:'movie'}) }}
+                    {{ stimulus_target('maxfield-view', 'tabBtn') }}
+            >
+                Movie
+            </a>
+            <a class="nav-link" href="#" data-id="frames"
+                    {{ stimulus_action('maxfield-view', 'showTab', 'click', {tab:'frames'}) }}
+                    {{ stimulus_target('maxfield-view', 'tabBtn') }}
+            >
+                Frames
+            </a>
+            <a class="nav-link" href="#" data-id="keys"
+                    {{ stimulus_action('maxfield-view', 'showTab', 'click', {tab:'keys'}) }}
+                    {{ stimulus_target('maxfield-view', 'tabBtn') }}>
+                Keys
+            </a>
 
             {% for agentInfo in info.agentsInfo %}
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="accAgent{{ agentInfo.agentNumber }}">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapseAgent{{ agentInfo.agentNumber }}">
-                            Instructions for Agent {{ agentInfo.agentNumber }}
+                <a class="nav-link" href="#" data-id="agent-{{ agentInfo.agentNumber }}"
+                        {{ stimulus_action('maxfield-view', 'showTab', 'click', {tab:'agent-'~agentInfo.agentNumber}) }}
+                        {{ stimulus_target('maxfield-view', 'tabBtn') }}
+                >
+                    Agent {{ agentInfo.agentNumber }}
+                </a>
+            {% endfor %}
+        </nav>
+
+        <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" data-id="maps">
+            <div class="row">
+                <div class="col">
+                    <img src="/maxfields/{{ maxfield.path }}/link_map.png" width="350px" alt="Link Map">
+                </div>
+                <div class="col">
+                    <img src="/maxfields/{{ maxfield.path }}/portal_map.png" width="350px" alt="Portal Map">
+                </div>
+            </div>
+        </div>
+        <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none" data-id="movie">
+            <img src="/maxfields/{{ maxfield.path }}/plan_movie.gif" width="350px" alt="Link movie">
+        </div>
+        <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none" data-id="frames">
+            <div class="row">
+                <div class="col">
+                    <button class="btn btn-outline-secondary" {{ stimulus_action('maxfield-view', 'frameMinus') }}>
+                        <span class="bi-dash-lg"></span>
+                    </button>
+                    <button class="btn btn-outline-secondary" {{ stimulus_action('maxfield-view', 'framePlus') }}>
+                        <span class="bi-plus-lg"></span>
+                    </button>
+                    <span {{ stimulus_target('maxfield-view', 'frameNum') }}>#</span>
+                    <div {{ stimulus_target('maxfield-view', 'frameLinkInfo') }}>...</div>
+                </div>
+                <div class="col border">
+                    <img {{ stimulus_target('maxfield-view', 'framesImage') }}
+                            src="" alt="Frame" width="350px">
+                </div>
+            </div>
+        </div>
+        <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none" data-id="keys">
+            <div class="row">
+                <div class="col">
+                    <h4>Key Preparation Total</h4>
+                    <table>
+                        <tr>
+                            <th>Map No</th>
+                            <th>Keys</th>
+                            <th>Name</th>
+                        </tr>
+                        {% for wayPoint in info.keyPrep.wayPoints %}
+                            <tr>
+                                <th>{{ wayPoint.mapNo }}</th>
+                                <td>{{ wayPoint.keysNeeded }}</td>
+                                <td>{{ wayPoint.name }}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {% for agentInfo in info.agentsInfo %}
+            <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none"
+                                                               data-id="agent-{{ agentInfo.agentNumber }}">
+                <div class="row">
+                    <div class="col">
+                        <label for="email-agent-{{ agentInfo.agentNumber }}">Agent {{ agentInfo.agentNumber }} - Send e-mail to </label>
+                        <input type="text" id="email-agent-{{ agentInfo.agentNumber }}">
+                        <button class="btn btn-outline-success sendMail" id="{{ agentInfo.agentNumber }}">
+                            Send
                         </button>
-                    </h2>
-                    <div id="collapseAgent{{ agentInfo.agentNumber }}" class="accordion-collapse collapse"
-                         data-bs-parent="#accordionExample">
-                        <div class="accordion-body">
-                            <div class="row">
-                                <div class="col">
-                                    Agent {{ agentInfo.agentNumber }} - Send e-mail to <input type="text">
-                                    <button class="btn btn-outline-success sendMail" id="{{ agentInfo.agentNumber }}">
-                                        Send
-                                    </button>
-                                    <span id="result-{{ agentInfo.agentNumber }}"></span>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-lg">
-                                    <h4>Keys for agent {{ agentInfo.agentNumber }}</h4>
-                                    <table class="table table-sm">
-                                        {% for point in agentInfo.keys.wayPoints %}
-                                            {% if point.agentNum + 1 == agentInfo.agentNumber %}
-                                                <tr>
-                                                    <td>{{ point.mapNo }}</td>
-                                                    <td>{{ point.name }}</td>
-                                                    <td>{{ point.keysNeeded ?: '-' }}</td>
-                                                </tr>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </table>
-                                </div>
-                                <div class="col-lg">
-                                    <h4>Links for agent {{ agentInfo.agentNumber }}</h4>
-                                    {% if info.agentsInfo|length > 1 %}
-                                        <button class="btn btn-outline-primary"
-                                                {{ stimulus_target('maxfield-view', 'btnShowForeign') }}
-                                                {{ stimulus_action('maxfield-view', 'toggleShowForeign') }}
-                                        >
-                                            Hide foreign
-                                        </button>
-                                    {% endif %}
-                                    <table class="table table-sm">
-                                        {% set origin=-1 %}
-                                        {% for link in agentInfo.links %}
-                                            <tr
-                                                    {% if agentInfo.agentNumber != link.agentNum %}
-                                                        class="foreign-link"
-                                                    {% endif %}
-                                                    style="border-bottom: 1px solid silver;{% if link.originNum != origin %}border-top: 2px solid darkblue;{% endif %}">
-                                                <td>{{ link.isEarly ? 'X' : '' }}</td>
-                                                <td>{{ link.linkNum }}</td>
-                                                <td>
-                                                    {% if agentInfo.agentNumber != link.agentNum %}
-                                                    <del>{% endif %}
-                                                        {% if link.originNum != origin %}
-                                                            <b>{{ link.originNum }} - {{ link.originName }}</b><br>
-                                                        {% endif %}
-                                                        {% set origin = link.originNum %}
-                                                        L {{ link.destinationNum }} - {{ link.destinationName }}
-                                                        {% if agentInfo.agentNumber != link.agentNum %}</del>{% endif %}
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    </table>
-                                </div>
-                            </div>
-
-                        </div>
+                        <span id="result-{{ agentInfo.agentNumber }}"></span>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
+
+                <div class="row">
+                    <div class="col-lg">
+                        <h4>Keys for agent {{ agentInfo.agentNumber }}</h4>
+                        <table class="table table-sm">
+                            {% for point in agentInfo.keys.wayPoints %}
+                                {% if point.agentNum + 1 == agentInfo.agentNumber %}
+                                    <tr>
+                                        <td>{{ point.mapNo }}</td>
+                                        <td>{{ point.name }}</td>
+                                        <td>{{ point.keysNeeded ?: '-' }}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class="col-lg">
+                        <h4>Links for agent {{ agentInfo.agentNumber }}</h4>
+                        {% if info.agentsInfo|length > 1 %}
+                            <button class="btn btn-outline-primary"
+                                    {{ stimulus_target('maxfield-view', 'btnShowForeign') }}
+                                    {{ stimulus_action('maxfield-view', 'toggleShowForeign') }}
+                            >
+                                Hide foreign
+                            </button>
+                        {% endif %}
+                        <table class="table table-sm">
+                            {% set origin=-1 %}
+                            {% for link in agentInfo.links %}
+                                <tr
+                                        {% if agentInfo.agentNumber != link.agentNum %}
+                                            class="foreign-link"
+                                        {% endif %}
+                                        style="border-bottom: 1px solid silver;{% if link.originNum != origin %}border-top: 2px solid darkblue;{% endif %}">
+                                    <td>{{ link.isEarly ? 'X' : '' }}</td>
+                                    <td>{{ link.linkNum }}</td>
+                                    <td>
+                                        {% if agentInfo.agentNumber != link.agentNum %}
+                                        <del>{% endif %}
+                                            {% if link.originNum != origin %}
+                                                <b>{{ link.originNum }} - {{ link.originName }}</b><br>
+                                            {% endif %}
+                                            {% set origin = link.originNum %}
+                                            L {{ link.destinationNum }} - {{ link.destinationName }}
+                                            {% if agentInfo.agentNumber != link.agentNum %}</del>{% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+
     </div>
 
 {% endblock %}

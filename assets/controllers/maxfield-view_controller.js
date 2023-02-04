@@ -1,5 +1,7 @@
 import {Controller} from '@hotwired/stimulus'
 
+import '../styles/maxfield/view.css'
+
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static values = {
@@ -9,12 +11,22 @@ export default class extends Controller {
         steps: Array,
     }
 
-    static targets = ['frameNum', 'framesImage', 'frameLinkInfo', 'btnShowForeign']
+    static targets = ['frameNum', 'framesImage', 'frameLinkInfo', 'btnShowForeign', 'tab', 'tabBtn']
 
     displayForeign = true
 
     connect() {
         this.changeFrame()
+
+        // const triggerTabList = [].slice.call(document.querySelectorAll('#accordionExample button'));
+        // triggerTabList.forEach(function (triggerEl) {
+        //     const tabTrigger = new Tab(triggerEl);
+        //
+        //     triggerEl.addEventListener('click', function (event) {
+        //         event.preventDefault()
+        //         tabTrigger.show()
+        //     })
+        // })
     }
 
     framePlus() {
@@ -84,6 +96,19 @@ export default class extends Controller {
         }
         for (let link of document.getElementsByClassName('foreign-link')) {
             link.style.display = this.displayForeign ? '' : 'none'
+        }
+    }
+
+    showTab(event) {
+        for (let tab of this.tabTargets) {
+            tab.style.display = (tab.dataset.id === event.params.tab) ? '' : 'none'
+        }
+        for (let btn of this.tabBtnTargets) {
+            if (btn.dataset.id === event.params.tab) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active')
+            }
         }
     }
 }

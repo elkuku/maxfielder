@@ -1,0 +1,12 @@
+.maxfield-tab {
+    border: 1px solid gray;
+    padding: 5px;
+}
+
+#maxfield-tab-nav {
+    top: 60px;
+}
+
+body > .container-fluid {
+    padding-top: 100px;
+}
