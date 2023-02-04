@@ -4,13 +4,11 @@
 
 {% block body %}
 
-    <div {{ stimulus_controller('maxfield-plan', {
+    <div id="map" {{ stimulus_controller('maxfield-plan', {
         lat:  defaultLat,
         lon:  defaultLon,
         zoom:  defaultZoom,
-    }) }}
-    >
-        <div id="map"></div>
+    }) }}>
 
         <div id="selection-count" {{ stimulus_target('maxfield-plan', 'counter') }}>0</div>
 
@@ -58,7 +56,8 @@
                                     <label for="build_name"
                                            class="col-sm-2 col-form-label col-form-label-lg">Name</label>
                                     <div class="col-sm-10">
-                                        <input type="text" class="form-control form-control-lg" name="build_name" id="build_name"
+                                        <input type="text" class="form-control form-control-lg" name="build_name"
+                                               id="build_name"
                                                placeholder="Maxfield name" required="required">
                                     </div>
                                 </div>
@@ -73,13 +72,15 @@
                                     <div class="col-sm-2">Skip</div>
                                     <div class="col-sm-10">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="skip_plots" name="skip_plots">
+                                            <input class="form-check-input" type="checkbox" id="skip_plots"
+                                                   name="skip_plots">
                                             <label class="form-check-label" for="skip_plots">
                                                 Plots
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="skip_step_plots" name="skip_step_plots">
+                                            <input class="form-check-input" type="checkbox" id="skip_step_plots"
+                                                   name="skip_step_plots">
                                             <label class="form-check-label" for="skip_step_plots">
                                                 Step Plots
                                             </label>

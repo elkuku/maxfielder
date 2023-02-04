@@ -26,22 +26,14 @@
                 <div id="map"></div>
 
             </div>
-
-            <div class="row">
-                <div class="col">
-                    {{ form_widget(form.lat, { 'attr':{'readonly':true,'style':'visibility: xhidden;'} }) }}
-                </div>
-                <div class="col">
-                    {{ form_widget(form.lon, { 'attr':{'readonly':true,'style':'visibility: xhidden;'} }) }}
-                </div>
-                <div class="col">
-                    {{ form_widget(form.zoom, { 'attr':{'readonly':true,'style':'visibility: xhidden;'} }) }}
-                </div>
-            </div>
         </div>
     </div>
 
     <hr>
+
+    {{ form_widget(form.lat, { 'attr':{'readonly':true,'style':'visibility: hidden;'} }) }}
+    {{ form_widget(form.lon, { 'attr':{'readonly':true,'style':'visibility: hidden;'} }) }}
+    {{ form_widget(form.zoom, { 'attr':{'readonly':true,'style':'visibility: hidden;'} }) }}
 
     <button type="submit" class="btn btn-lg btn-outline-success" title="Guardar">
         <span class="bi-check"></span>
@@ -51,5 +43,3 @@
     {{ form_end(form) }}
 
 {% endblock %}
-
-

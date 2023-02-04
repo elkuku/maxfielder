@@ -16,6 +16,8 @@ export default class extends Controller {
         zoom: Number,
     }
 
+    map = null
+
     connect() {
         let lat, lon, zoom
 
@@ -29,29 +31,24 @@ export default class extends Controller {
             zoom = 3
         }
 
-        const map = new L.Map('map', { fullscreenControl: true })
-        map.setView(new L.LatLng(lat, lon), zoom)
+        this.map = new L.Map('map', {fullscreenControl: true})
+        this.map.setView(new L.LatLng(lat, lon), zoom)
 
         const osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         const osmAttrib = 'Map data (C) <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
-        const osm = new L.TileLayer(osmUrl, { attribution: osmAttrib })
+        const osm = new L.TileLayer(osmUrl, {attribution: osmAttrib})
 
-        map.addLayer(osm)
+        this.map.addLayer(osm)
 
-        map.on('dragend', function (e) {
-            this.updateFields(map)
-        }.bind(this))
-
-        map.on('zoomend', function (e) {
-            this.updateFields(map)
-        }.bind(this))
+        this.map.on('dragend', () => this.updateFields())
+        this.map.on('zoomend', () => this.updateFields())
     }
 
-    updateFields(map) {
-        const center = map.getCenter()
+    updateFields() {
+        const center = this.map.getCenter()
 
         document.getElementById('user_params_lat').value = center.lat.toFixed(7)
         document.getElementById('user_params_lon').value = center.lng.toFixed(7)
-        document.getElementById('user_params_zoom').value = map.getZoom()
+        document.getElementById('user_params_zoom').value = this.map.getZoom()
     }
 }

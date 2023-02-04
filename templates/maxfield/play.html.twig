@@ -4,24 +4,13 @@
     {{ maxfield.name }}
 {% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    {{ encore_entry_link_tags('map-play') }}
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    {{ encore_entry_script_tags('map-play') }}
-{% endblock %}
-
 {% block og_description %}{{ maxfield.name }}{% endblock %}
 {% block og_image %}{{ absolute_url(asset('maxfields/' ~maxfield.path~'/link_map.png')) }}{% endblock %}
 
 {% block body %}
-    <div
-            id="map"
-            data-maxfield-data='{{ jsonData }}'
-    ></div>
+    <div id="map"
+            {{ stimulus_controller('maxfield-play', {
+                jsonData: jsonData
+            }) }}>
+    </div>
 {% endblock %}
-
-

@@ -1,4 +1,4 @@
-import $ from 'jquery'
+import {Controller} from '@hotwired/stimulus'
 
 import 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -12,16 +12,45 @@ import 'leaflet.locatecontrol/dist/L.Control.Locate.css'
 import 'leaflet-routing-machine'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 
-import '../../styles/map/play.css'
+import '../styles/map/play.css'
 
-class Map {
-    constructor(mapId, centerLat = 0, centerLon = 0, zoom = 3) {
+export default class extends Controller {
+    static values = {
+        jsonData: String,
+    }
+
+    maxfieldData = null
+
+    farmLayer = L.featureGroup()
+    linkLayer = L.layerGroup()
+    links = []
+    soundNotifier = null
+    distance = 0
+
+    map = null
+
+    connect() {
+        this.maxfieldData = JSON.parse(this.jsonDataValue)
+        this.setupMap()
+        this.displayMaxFieldData(this.maxfieldData)
+    }
+
+    displayMaxFieldData(maxField) {
+        this.links = maxField.links
+
+        this.loadFarmLayer(maxField.waypoints)
+        this.loadLinkLayer()
+
+        this.addLinkSelector()
+    }
+
+    setupMap() {
         const osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         const osmAttrib = 'Map data (C) <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
 
         const mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
                 'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+            mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw'
 
         const grayscale = L.tileLayer(mbUrl, {
                 id: 'mapbox/light-v9',
@@ -35,40 +64,37 @@ class Map {
                 zoomOffset: -1,
                 attribution: mbAttr
             }),
-            OSM = L.tileLayer(osmUrl, {attribution: osmAttrib});
+            OSM = L.tileLayer(osmUrl, {attribution: osmAttrib})
 
-        this.farmLayer = L.featureGroup()
-        this.linkLayer = L.layerGroup()
-        this.links = []
-        this.soundNotifier = null
-        this.distance = 0
-
-        this.map = L.map(mapId, {
-            center: [centerLat, centerLon],
-            zoom: zoom,
+        this.map = L.map('map', {
+            center: [0, 0],
+            zoom: 3,
             layers: [grayscale, this.farmLayer, this.linkLayer],
             fullscreenControl: true
-        });
+        })
 
         const baseLayers = {
-            "Grayscale": grayscale,
-            "Streets": streets,
-            "OSM": OSM
-        };
+            'Grayscale': grayscale,
+            'Streets': streets,
+            'OSM': OSM
+        }
 
         const overlays = {
-            "Farm": this.farmLayer,
-            "Links": this.linkLayer,
-        };
+            'Farm': this.farmLayer,
+            'Links': this.linkLayer,
+        }
 
-        L.control.layers(baseLayers, overlays).addTo(this.map);
+        L.control.layers(baseLayers, overlays).addTo(this.map)
 
         this.linkSelector = L.control({position: 'bottomleft'})
 
-        // this.linkSelector.addTo(this.map)
-
         this.destinationMarker = L.marker([0, 0])
             .bindPopup('Please load a GPX file...')
+            .setIcon(
+                L.divIcon({
+                    html: '<b>Please load a GPX file...</b>'
+                })
+            )
             .addTo(this.map)
 
         this.userDestinationLine = L.polyline([], {
@@ -96,9 +122,9 @@ class Map {
             locateOptions: {
                 enableHighAccuracy: true
             }
-        }).addTo(this.map);
+        }).addTo(this.map)
 
-        this.map.on('locationfound', this.onLocationFound.bind(this));
+        this.map.on('locationfound', this.onLocationFound.bind(this))
 
         // Routing control
         this.routingControl = L.Routing.control({
@@ -107,7 +133,7 @@ class Map {
                 return false
             }
         })
-            // .addTo(this.map);
+        // .addTo(this.map);
 
         this.routingEnabled = false
         this.soundEnabled = true
@@ -129,76 +155,9 @@ class Map {
 
         legend.addTo(this.map)
         document.getElementById('btnRoute')
-            .addEventListener('click', this.enableRouting.bind(this), false);
+            .addEventListener('click', this.enableRouting.bind(this), false)
         document.getElementById('btnSoundEnabled')
-            .addEventListener('click', this.enableSound.bind(this), false);
-    }
-
-    enableRouting(e) {
-        if (this.routingEnabled) {
-            this.routingEnabled = false
-            $(e.target).removeClass('routing-enabled')
-            this.routingControl.remove()
-        } else {
-            this.routingEnabled = true
-            $(e.target).addClass('routing-enabled')
-            this.routingControl.addTo(this.map)
-        }
-    }
-
-    enableSound(e) {
-        if (this.soundEnabled) {
-            this.soundEnabled = false
-            $(e.target).removeClass('routing-enabled')
-        } else {
-            this.soundEnabled = true
-            $(e.target).addClass('routing-enabled')
-        }
-    }
-
-    parseGpx(contents) {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(contents, "text/xml");
-
-        const wpts = xmlDoc.getElementsByTagName('wpt');
-        const trackpoints = xmlDoc.getElementsByTagName('rtept');
-
-        const waypoints = []
-        const track = []
-
-        for (let i = 0; i < wpts.length; i++) {
-            waypoints.push({
-                lat: wpts[i].getAttribute("lat"),
-                lon: wpts[i].getAttribute("lon"),
-                name: wpts[i].getElementsByTagName('name')[0].innerHTML,
-                description: wpts[i].getElementsByTagName('desc')[0].innerHTML,
-            })
-        }
-
-        for (let i = 0; i < trackpoints.length; i++) {
-            track.push({
-                lat: trackpoints[i].getAttribute("lat"),
-                lon: trackpoints[i].getAttribute("lon"),
-                name: trackpoints[i].getElementsByTagName('name')[0].innerHTML,
-                description: trackpoints[i].getElementsByTagName('desc')[0].innerHTML,
-            })
-        }
-
-        const maxfield = {
-            waypoints: waypoints,
-            links: track,
-        }
-
-        this.displayMaxFieldData(maxfield)
-    }
-
-    displayMaxFieldData(maxField) {
-        this.links = maxField.links
-
-        this.loadFarmLayer(maxField.waypoints)
-        this.loadLinkLayer()
-
-        this.addLinkSelector()
+            .addEventListener('click', this.enableSound.bind(this), false)
     }
 
     loadFarmLayer(markerObjects) {
@@ -220,7 +179,7 @@ class Map {
             this.farmLayer.addLayer(marker)
         }.bind(this))
 
-        this.map.fitBounds(this.farmLayer.getBounds());
+        this.map.fitBounds(this.farmLayer.getBounds())
     }
 
     loadLinkLayer() {
@@ -234,7 +193,9 @@ class Map {
                 description = ''
 
                 description += '<ol>'
-                link.links.forEach(link => { description += '<li>'+link+'</li>' });
+                link.links.forEach(link => {
+                    description += '<li>' + link + '</li>'
+                })
                 description += '</ol>'
 
             } else {
@@ -247,16 +208,16 @@ class Map {
                 })
             })
                 .bindPopup('<b>' + link.name + '</b><br/>' + description)
-                .addTo(this.linkLayer);
+                .addTo(this.linkLayer)
             num++
         }.bind(this))
 
-        L.polyline(pointList, {color: 'blue'}).addTo(this.linkLayer);
+        L.polyline(pointList, {color: 'blue'}).addTo(this.linkLayer)
     }
 
     addLinkSelector() {
         if (this.map.hasLayer(this.linkSelector)) {
-            this.map.removeLayer(this.linkSelector);
+            this.map.removeLayer(this.linkSelector)
         }
 
         let linkList = '<option value="-1">Start...</option>'
@@ -280,23 +241,21 @@ class Map {
 
         this.linkSelector.addTo(this.map)
 
-        $('#groupSelect')
-            .on('change', function (e) {
-                this.showDestination($(e.target).val())
-            }.bind(this))
+        document.getElementById('groupSelect').addEventListener('change', (event) => {
+            this.showDestination(event.target.value)
+        })
 
-        $('#btnNext').on('click', function () {
-            const select = $('#groupSelect')
-            const length = $('#groupSelect option').length
-            if (select.val() < length - 2) {
-                const newVal = parseInt(select.val()) + 1;
-                this.showDestination(newVal);
-
-                select.val(newVal);
+        document.getElementById('btnNext').addEventListener('click', () => {
+            const select = document.getElementById('groupSelect')
+            const length = select.length
+            if (select.value < length - 2) {
+                const newVal = parseInt(select.value) + 1
+                this.showDestination(newVal)
+                select.value = newVal
             } else {
                 alert('Finished :)')
             }
-        }.bind(this))
+        })
     }
 
     showDestination(id) {
@@ -310,7 +269,7 @@ class Map {
             return
         }
 
-        const destination = this.links[id];
+        const destination = this.links[id]
         this.destination = L.latLng(destination.lat, destination.lon)
 
         this.map.panTo(this.destination)
@@ -318,7 +277,9 @@ class Map {
         let description = ''
 
         description += '<ol>'
-        destination.links.forEach(link => { description += '<li>'+link+'</li>' });
+        destination.links.forEach(link => {
+            description += '<li>' + link + '</li>'
+        })
         description += '</ol>'
 
         this.destinationMarker.setLatLng(this.destination)
@@ -338,12 +299,11 @@ class Map {
             ]
             this.originDestinationLine.setLatLngs(points)
             if (this.routingEnabled) {
-                this.routingControl.setWaypoints(points);
+                this.routingControl.setWaypoints(points)
             }
         }
 
         // Sound
-        // this.soundNotify()
         if (!this.soundNotifier) {
             this.soundNotifier = setInterval(this.soundNotify.bind(this), 15000)
         }
@@ -362,7 +322,29 @@ class Map {
         }
     }
 
-    soundNotify(){
+    enableRouting(e) {
+        if (this.routingEnabled) {
+            this.routingEnabled = false
+            e.target.classList.remove('routing-enabled')
+            this.routingControl.remove()
+        } else {
+            this.routingEnabled = true
+            e.target.classList.add('routing-enabled')
+            this.routingControl.addTo(this.map)
+        }
+    }
+
+    enableSound(e) {
+        if (this.soundEnabled) {
+            this.soundEnabled = false
+            e.target.classList.remove('routing-enabled')
+        } else {
+            this.soundEnabled = true
+            e.target.classList.add('routing-enabled')
+        }
+    }
+
+    soundNotify() {
         if (0 === this.distance) {
             return
         }
@@ -384,33 +366,25 @@ class Map {
         console.log(this.distance)
     }
 
-    playShort(){
+    playShort() {
         this.playSound('/sounds/echo_3.mp3')
     }
-    playMid(){
+
+    playMid() {
         this.playSound('/sounds/echo_2.mp3')
     }
-    playLong(){
+
+    playLong() {
         this.playSound('/sounds/echo_1.mp3')
     }
-    playPortalInRange(){
+
+    playPortalInRange() {
         this.playSound('/sounds/portal_in_range.mp3')
     }
 
     playSound(url) {
-        const audio = new Audio(url);
-        audio.play();
+        const audio = new Audio(url)
+        audio.play()
     }
+
 }
-
-const map = new Map('map')
-
-const jsonData = JSON.parse(document.getElementById("map").dataset.maxfieldData)
-
-if (jsonData) {
-    map.displayMaxFieldData(jsonData)
-
-} else {
-    map.parseGpx(gpxString)
-}
-

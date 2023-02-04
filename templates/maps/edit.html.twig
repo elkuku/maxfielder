@@ -1,17 +1,9 @@
 {% extends 'base-map.html.twig' %}
 
-{% block title %}{{ parent() }} - Edit{% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    {{ encore_entry_link_tags('map-edit') }}
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    {{ encore_entry_script_tags('map-edit') }}
+{% block title %}
+    {{ parent() }} - Edit
 {% endblock %}
 
 {% block body %}
-    <div id="map"></div>
+    <div id="map" {{ stimulus_controller('map-edit') }}></div>
 {% endblock %}

@@ -107,11 +107,7 @@ class MaxFieldsController extends BaseController
             'maxfield/result.html.twig',
             [
                 'maxfield' => $maxfield,
-                'item' => $maxfield->getPath(),
-                'info' => $maxFieldHelper->getMaxField(
-                    $maxfield->getPath()
-                ),
-                'maxfieldVersion' => $maxFieldHelper->getMaxfieldVersion(),
+                'info' => $maxFieldHelper->getMaxField($maxfield->getPath()),
             ]
         );
     }
