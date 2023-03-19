@@ -70,3 +70,8 @@ a.routing-enabled {
 div.leaflet-popup-content ol {
     padding-left: 0;
 }
+
+div#distanceBar{
+    margin-bottom: 10px;
+    font-size: 2em;
+}

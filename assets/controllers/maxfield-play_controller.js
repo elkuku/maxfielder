@@ -88,6 +88,16 @@ export default class extends Controller {
         L.control.layers(baseLayers, overlays).addTo(this.map)
 
         this.linkSelector = L.control({position: 'bottomleft'})
+        this.distanceBar = L.control({position: 'bottomleft'})
+
+        this.distanceBar.onAdd = function () {
+            let div = L.DomUtil.create('div')
+            div.innerHTML = '<div id="distanceBar" class="vw-100"></div>'
+            
+            return div
+        }
+
+        this.distanceBar.addTo(this.map)
 
         this.destinationMarker = L.marker([0, 0])
             .bindPopup('Please load a GPX file...')
@@ -134,7 +144,6 @@ export default class extends Controller {
                 return false
             }
         })
-        // .addTo(this.map);
 
         this.routingEnabled = false
         this.soundEnabled = true
@@ -312,7 +321,7 @@ export default class extends Controller {
 
     onLocationFound(e) {
         if (this.destination) {
-            this.distance = e.latlng.distanceTo(this.destination).toFixed(1)
+            this.distance = e.latlng.distanceTo(this.destination).toFixed(0)
             this.userDestinationLine.setLatLngs([e.latlng, this.destination])
             this.userDistanceMarker
                 .setLatLng(e.latlng)
@@ -320,6 +329,24 @@ export default class extends Controller {
                     className: 'user-distance',
                     html: '<b class="circle">' + this.distance + 'm</b>'
                 }))
+
+                let dist = 0
+                let style = ''
+                if(this.distance < 100){
+                    dist = 100 - this.distance
+                    if(dist<20){
+                        style = ' bg-success'
+                    }else if(dist<50){
+                        style = ' bg-warning'
+                    }else{
+                    style = ' bg-danger'
+                }
+                }
+
+                let bar = '<div class="progress" role="progressbar" style="height: 20px">'
+                +'<div class="progress-bar progress-bar-striped progress-bar-animated'+style+'" style="width: '+dist+'%"></div>'
+              +'&nbsp;'+this.distance+' m</div>'
+                document.getElementById('distanceBar').innerHTML=bar
         }
     }
 
@@ -355,37 +382,18 @@ export default class extends Controller {
         }
 
         if (this.distance >= 200) {
-            this.playLong()
+            this.playSound('/sounds/echo_1.mp3')
         } else if (this.distance >= 100) {
-            this.playMid()
-        } else if (this.distance >= 20) {
-            this.playShort()
+            this.playSound('/sounds/echo_2.mp3')
+        } else if (this.distance >= 40) {
+            this.playSound('/sounds/echo_3.mp3')
         } else {
-            this.playPortalInRange()
+            this.playSound('/sounds/portal_in_range.mp3')
         }
-
-        console.log(this.distance)
-    }
-
-    playShort() {
-        this.playSound('/sounds/echo_3.mp3')
-    }
-
-    playMid() {
-        this.playSound('/sounds/echo_2.mp3')
-    }
-
-    playLong() {
-        this.playSound('/sounds/echo_1.mp3')
-    }
-
-    playPortalInRange() {
-        this.playSound('/sounds/portal_in_range.mp3')
     }
 
     playSound(url) {
         const audio = new Audio(url)
         audio.play()
     }
-
 }
