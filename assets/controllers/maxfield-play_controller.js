@@ -53,30 +53,54 @@ export default class extends Controller {
                 'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
             mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw'
 
-        const grayscale = L.tileLayer(mbUrl, {
-                id: 'mapbox/light-v9',
-                tileSize: 512,
-                zoomOffset: -1,
-                attribution: mbAttr
+        const
+            streets2 = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
             }),
-            streets = L.tileLayer(mbUrl, {
-                id: 'mapbox/streets-v11',
-                tileSize: 512,
-                zoomOffset: -1,
-                attribution: mbAttr
+
+            streets3 = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
             }),
+
+            streets = L.tileLayer('https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}{r}.png', {
+                maxZoom: 20,
+                attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+            }),
+
+            Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            }),
+
+            CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }),
+
+            CartoDB_PositronNoLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }),
+
             OSM = L.tileLayer(osmUrl, {attribution: osmAttrib})
 
         this.map = L.map('map', {
             center: [0, 0],
             zoom: 3,
-            layers: [grayscale, this.farmLayer, this.linkLayer],
+            layers: [CartoDB_PositronNoLabels, this.farmLayer, this.linkLayer],
             fullscreenControl: true
         })
 
         const baseLayers = {
-            'Grayscale': grayscale,
             'Streets': streets,
+            'Streets2': streets2,
+            'Streets3': streets3,
+            'CartoDB': CartoDB_Positron,
+            'CartoDB NoLabels': CartoDB_PositronNoLabels,
+            'Sattelite': Esri_WorldImagery,
             'OSM': OSM
         }
 
@@ -93,7 +117,7 @@ export default class extends Controller {
         this.distanceBar.onAdd = function () {
             let div = L.DomUtil.create('div')
             div.innerHTML = '<div id="distanceBar" class="vw-100"></div>'
-            
+
             return div
         }
 
