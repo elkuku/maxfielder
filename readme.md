@@ -13,3 +13,5 @@ Plan and Play.
 ----
 
 Happy fielding `=;)`
+
+https://leaflet-extras.github.io/leaflet-providers/preview/
