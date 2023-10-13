@@ -85,7 +85,20 @@ export default class extends Controller {
                 maxZoom: 20
             }),
 
-            OSM = L.tileLayer(osmUrl, {attribution: osmAttrib})
+            OSM = L.tileLayer(osmUrl, {attribution: osmAttrib}),
+
+             Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.{ext}', {
+                minZoom: 0,
+                maxZoom: 20,
+                attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                ext: 'png'
+            }),
+
+             CartoDB_DarkMatterNoLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20
+            });
 
         this.map = L.map('map', {
             center: [0, 0],
@@ -100,6 +113,8 @@ export default class extends Controller {
             'Streets3': streets3,
             'CartoDB': CartoDB_Positron,
             'CartoDB NoLabels': CartoDB_PositronNoLabels,
+            'CartoDB DarkMatter NoLabels': CartoDB_DarkMatterNoLabels,
+            'Stadia Dark': Stadia_AlidadeSmoothDark,
             'Sattelite': Esri_WorldImagery,
             'OSM': OSM
         }
