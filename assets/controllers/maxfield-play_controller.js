@@ -49,10 +49,6 @@ export default class extends Controller {
         const osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         const osmAttrib = 'Map data (C) <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
 
-        const mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
-                'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw'
-
         const
             streets2 = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
                 maxZoom: 19,
@@ -382,10 +378,9 @@ export default class extends Controller {
                 }
                 }
 
-                let bar = '<div class="progress" role="progressbar" style="height: 20px">'
-                +'<div class="progress-bar progress-bar-striped progress-bar-animated'+style+'" style="width: '+dist+'%"></div>'
-              +'&nbsp;'+this.distance+' m</div>'
-                document.getElementById('distanceBar').innerHTML=bar
+            document.getElementById('distanceBar').innerHTML='<div class="progress" role="progressbar" style="height: 20px">'
+                    + '<div class="progress-bar progress-bar-striped progress-bar-animated' + style + '" style="width: ' + dist + '%"></div>'
+                    + '&nbsp;' + this.distance + ' m</div>'
         }
     }
 
