@@ -40,7 +40,6 @@ phpstan.neon
 /tools/php-cs-fixer/vendor
 /.php-cs-fixer.cache
 
-public/maxfields
 public/wp_images
 
 ###> liip/imagine-bundle ###
