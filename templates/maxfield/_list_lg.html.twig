@@ -25,7 +25,7 @@
                    href="{{ path('maxfield_view_status', {'id': maxfield.id}) }}">Status</a>
                 {% if is_granted('modify', maxfield) %}
                     <a class="btn btn-sm btn-outline-warning"
-                        {{ stimulus_action('modal-form', 'openModal', null, {url: path('maxfield_edit', {'id': maxfield.id}) } ) }}
+                            {{ stimulus_action('modal-form', 'openModal', null, {url: path('maxfield_edit', {'id': maxfield.id}) } ) }}
                     >
                         Edit
                     </a>
@@ -38,5 +38,7 @@
                 {% endif %}
             </div>
         </div>
+    {% else %}
+        <h2>No Maxfields found :(</h2>
     {% endfor %}
 </div>
