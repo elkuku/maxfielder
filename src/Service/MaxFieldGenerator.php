@@ -22,6 +22,7 @@ class MaxFieldGenerator
         #[Autowire('%env(MAXFIELD_VERSION)%')] private readonly int $maxfieldVersion,
         #[Autowire('%env(GOOGLE_API_KEY)%')] private readonly string $googleApiKey,
         #[Autowire('%env(GOOGLE_API_SECRET)%')] private readonly string $googleApiSecret,
+        #[Autowire('%env(APP_DOCKER_CONTAINER)%')] private readonly string $dockerContainer,
     ) {
         $this->rootDir = $projectDir.'/public/maxfields';
     }
@@ -47,31 +48,38 @@ class MaxFieldGenerator
                 $wayPointList
             );
 
-            if ($this->maxfieldVersion < 4) {
-                $command = "python {$this->maxfieldExec} $fileName"
-                    ." -d $projectRoot -f output.pkl -n $playersNum";
+            if ($this->dockerContainer) {
+                $command = "docker run -v $projectRoot:/app/share -t {$this->dockerContainer}"
+                    . " /app/share/portals.txt"
+                    . " --outdir /app/share --num_agents $playersNum --output_csv"
+                    . ' --num_cpus 0 --num_field_iterations 10 --max_route_solutions 10';
             } else {
-                $command = "{$this->maxfieldExec} $fileName"
-                    ." --outdir $projectRoot --num_agents $playersNum --output_csv"
-                    .' --num_cpus 0 --num_field_iterations 10 --max_route_solutions 10';
-
-                if ($this->googleApiKey) {
-                    $command .= ' --google_api_key '.$this->googleApiKey;
-                    $command .= ' --google_api_secret '.$this->googleApiSecret;
+                if ($this->maxfieldVersion < 4) {
+                    $command = "python {$this->maxfieldExec} $fileName"
+                        . " -d $projectRoot -f output.pkl -n $playersNum";
+                } else {
+                    $command = "{$this->maxfieldExec} $fileName"
+                        . " --outdir $projectRoot --num_agents $playersNum --output_csv"
+                        . ' --num_cpus 0 --num_field_iterations 10 --max_route_solutions 10';
                 }
-
-                if ($options['skip_plots']) {
-                    $command .= ' --skip_plots';
-                }
-
-                if ($options['skip_step_plots']) {
-                    $command .= ' --skip_step_plots';
-                }
-
-                $command .= " --verbose > $projectRoot/log.txt 2>&1 &";
             }
 
-            $fileSystem->dumpFile($projectRoot.'/command.txt', $command);
+            if ($this->googleApiKey) {
+                $command .= ' --google_api_key ' . $this->googleApiKey;
+                $command .= ' --google_api_secret ' . $this->googleApiSecret;
+            }
+
+            if ($options['skip_plots']) {
+                $command .= ' --skip_plots';
+            }
+
+            if ($options['skip_step_plots']) {
+                $command .= ' --skip_step_plots';
+            }
+
+            $command .= " --verbose > $projectRoot/log.txt 2>&1 &";
+
+            $fileSystem->dumpFile($projectRoot . '/command.txt', $command);
 
             exec($command);
         } catch (IOExceptionInterface $exception) {

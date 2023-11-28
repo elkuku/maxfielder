@@ -46,4 +46,4 @@ public/wp_images
 /public/media/cache/
 ###< liip/imagine-bundle ###
 
-pws.txt
+/php.ini
