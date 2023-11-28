@@ -30,9 +30,9 @@ class AppExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('hasImage', [$this, 'hasImage']),
-            new TwigFunction('previewImage', [$this, 'previewImage']),
-            new TwigFunction('waypointCount', [$this, 'waypointCount']),
+            new TwigFunction('hasImage', $this->hasImage(...)),
+            new TwigFunction('previewImage', $this->previewImage(...)),
+            new TwigFunction('waypointCount', $this->waypointCount(...)),
         ];
     }
 

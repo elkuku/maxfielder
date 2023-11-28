@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class MaxfieldVoter extends Voter
 {
-    public const MODIFY = 'modify';
+    final public const MODIFY = 'modify';
 
     public function __construct(private readonly Security $security)
     {

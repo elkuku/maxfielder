@@ -21,14 +21,14 @@ class Maxfield
     private ?int $id = 0;
 
     #[Column(type: Types::STRING, length: 150)]
-    private ?string $name;
+    private ?string $name = null;
 
     #[Column(length: 255, nullable: true)]
     private ?string $path = null;
 
     #[ManyToOne(targetEntity: User::class, inversedBy: 'maxfields')]
     #[JoinColumn(nullable: false)]
-    private ?User $owner;
+    private ?User $owner = null;
 
     /**
      * @var array<string, array<Waypoint|\stdClass>>

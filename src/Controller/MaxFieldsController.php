@@ -211,7 +211,7 @@ class MaxFieldsController extends BaseController
         return $this->render(
             "maxfield/$template.html.twig",
             [
-                'form' => $form->createView(),
+                'form' => $form,
             ]
         );
     }

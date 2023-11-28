@@ -13,7 +13,7 @@ class GitHubController extends AbstractController
      * Link to this controller to start the "connect" process.
      */
     #[Route(path: '/connect/github', name: 'connect_github_start', methods: ['GET'])]
-    public function connectAction(
+    public function connect(
         ClientRegistry $clientRegistry
     ): RedirectResponse {
         return $clientRegistry
@@ -32,7 +32,7 @@ class GitHubController extends AbstractController
      * in config/packages/knpu_oauth2_client.yaml.
      */
     #[Route(path: '/connect/check/github', name: 'connect_github_check', methods: ['GET'])]
-    public function connectCheckAction(): RedirectResponse
+    public function connectCheck(): RedirectResponse
     {
         return $this->redirectToRoute('default');
     }

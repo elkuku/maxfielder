@@ -41,7 +41,7 @@ class WaypointsController extends AbstractController
         return $this->render(
             'waypoint/edit.html.twig',
             [
-                'form' => $form->createView(),
+                'form' => $form,
                 'waypoint' => $waypoint,
             ]
         );

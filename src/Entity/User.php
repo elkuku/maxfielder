@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[Entity(repositoryClass: UserRepository::class)]
 #[Table(name: 'system_user')]
 #[UniqueEntity(fields: 'identifier', message: 'This identifier is already in use')]
-class User implements UserInterface
+class User implements UserInterface, \Stringable
 {
     final public const ROLES
         = [
@@ -71,7 +71,7 @@ class User implements UserInterface
         $this->favourites = new ArrayCollection();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->identifier;
     }

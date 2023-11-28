@@ -11,7 +11,7 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 class MaxFieldHelper
 {
-    private string $rootDir;
+    private readonly string $rootDir;
 
     public function __construct(
         #[Autowire('%kernel.project_dir%')] string $projectDir,
@@ -28,9 +28,13 @@ class MaxFieldHelper
         $list = [];
 
         foreach (new DirectoryIterator($this->rootDir) as $fileInfo) {
-            if ($fileInfo->isDir() && !$fileInfo->isDot()) {
-                $list[] = $fileInfo->getFilename();
+            if (!$fileInfo->isDir()) {
+                continue;
             }
+            if ($fileInfo->isDot()) {
+                continue;
+            }
+            $list[] = $fileInfo->getFilename();
         }
 
         sort($list);
@@ -85,7 +89,7 @@ class MaxFieldHelper
             $size = filesize($path);
             $factor = floor(((strlen($size)) - 1) / 3);
 
-            return sprintf("%.{$decimals}f", $size / pow(1024, $factor))
+            return sprintf("%.{$decimals}f", $size / 1024 ** $factor)
                 .@$sz[$factor];
         }
 

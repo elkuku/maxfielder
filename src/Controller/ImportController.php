@@ -51,7 +51,7 @@ class ImportController extends AbstractController
                 return $this->render(
                     'import/index.html.twig',
                     [
-                        'form' => $form->createView(),
+                        'form' => $form,
                     ]
                 );
             }
@@ -60,7 +60,7 @@ class ImportController extends AbstractController
         return $this->render(
             'import/index.html.twig',
             [
-                'form' => $form->createView(),
+                'form' => $form,
             ]
         );
     }
