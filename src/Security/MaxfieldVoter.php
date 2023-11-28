@@ -4,10 +4,12 @@ namespace App\Security;
 
 use App\Entity\Maxfield;
 use App\Entity\User;
+use LogicException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+/** @extends Voter<string, mixed> */
 class MaxfieldVoter extends Voter
 {
     final public const MODIFY = 'modify';
@@ -50,7 +52,7 @@ class MaxfieldVoter extends Voter
 
         return match ($attribute) {
             self::MODIFY => $this->canModify($maxfield, $user),
-            default => throw new \LogicException(
+            default => throw new LogicException(
                 'This code should not be reached!'
             )
         };

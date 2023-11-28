@@ -2378,26 +2378,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bootstrap-icons@npm:^1.10.3":
-  version: 1.10.3
-  resolution: "bootstrap-icons@npm:1.10.3"
-  checksum: 3c3c2c89d5924288cfe39a58d6afbdbd2ee5259b2109d5cf8bf0fbb2e6dcaf623e13e174cff7656e4a7f93af7a99c174748588875e997b987109f0cfb897bd56
+"bootstrap-icons@npm:^1.11.2":
+  version: 1.11.2
+  resolution: "bootstrap-icons@npm:1.11.2"
+  checksum: cbe684cf69b505bd7703ad1a20efabf0c7b8cfe9b0fdcf40d45c5876e6dd95badcc4ba3c9ca2f8db428ef1215f2acc4accf4e0a074a3dd797bcfbee8ffad09a3
   languageName: node
   linkType: hard
 
-"bootstrap@npm:^5.2.3":
-  version: 5.2.3
-  resolution: "bootstrap@npm:5.2.3"
+"bootstrap@npm:^5.3.2":
+  version: 5.3.2
+  resolution: "bootstrap@npm:5.3.2"
   peerDependencies:
-    "@popperjs/core": ^2.11.6
-  checksum: 817dcdeeca27148e8234f8c54193f6abe03cf4e7b0812ad17562fd772b4057ba52b6ee38e09d0cee7765d73971cec18f71a671f85f8e60a1f12a762a63112ccf
+    "@popperjs/core": ^2.11.8
+  checksum: f01ee2a6cde4a1dab9e52080d0ca811c727c6804272e99eabc993436dd15e47f571002104d2ae9f0458b9ee3b1c72eff03037729ebdbd05bd05ac94ab21555de
   languageName: node
   linkType: hard
 
-"bootswatch@npm:^5.2.3":
-  version: 5.2.3
-  resolution: "bootswatch@npm:5.2.3"
-  checksum: 334e178f5f7d014801dc7b30f70385a0b427dd625ed9a895fe9dae8db0fbd284a526cb9488914ad7627f97bde39806a663e3e011afe78511205a220b7cc73605
+"bootswatch@npm:^5.3.2":
+  version: 5.3.2
+  resolution: "bootswatch@npm:5.3.2"
+  checksum: 75a0659d4a380a39e250118573e70ea8b4786c835df3db97867f0aabbde26ef1e2958895db2e614c89c0e2f701ae0b03fc1da70c6b8369fc74283a73158dbc83
   languageName: node
   linkType: hard
 
@@ -2815,10 +2815,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.25.2":
-  version: 3.25.2
-  resolution: "core-js@npm:3.25.2"
-  checksum: e8ee17b8c38f5f108a9b6005eefe14bea3f7485dce1df38c129accf275d423a2acb9d410119d77d59ee9ac8eb97751d0e3b9ed7c00e7736e2e231528d258545d
+"core-js@npm:^3.33.3":
+  version: 3.33.3
+  resolution: "core-js@npm:3.33.3"
+  checksum: 3a4807fcd182f00acfc31e419eb16a909c8f530cefe2f259b4bf8a2b7ac7272c63e068cafeb600345bca7b346838c144401b4d67f62282e5ed535806ad001450
   languageName: node
   linkType: hard
 
@@ -3916,10 +3916,10 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"hotkeys-js@npm:^3.10.0":
-  version: 3.10.0
-  resolution: "hotkeys-js@npm:3.10.0"
-  checksum: 9ff50a7d0d1e9d3f5bf2b512bab75cc08edefd86185cb7d88751e6af07d1cda42e337ffdea31c887ccf0a4cffc6b5561afb4b496976920235f22614b70e4b803
+"hotkeys-js@npm:^3.12.2":
+  version: 3.12.2
+  resolution: "hotkeys-js@npm:3.12.2"
+  checksum: 092cdfe3ceb042d1864136545ef9602da62ec3f21ade3cc33c765290c272dec196f97a0d0af9e1e051b5c77530006317a0f74b0954209c49798902935a913cef
   languageName: node
   linkType: hard
 
@@ -4447,10 +4447,10 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"leaflet@npm:^1.9.3":
-  version: 1.9.3
-  resolution: "leaflet@npm:1.9.3"
-  checksum: 39cc07ce71e75f2010f5acf941d0ce763ef135db5f98b43ba3b4fcdf266fe7b826010a5c3dda0d7093f2cf367cebf25a0d2c7d75442db01d7df24a12c68442e1
+"leaflet@npm:^1.9.4":
+  version: 1.9.4
+  resolution: "leaflet@npm:1.9.4"
+  checksum: ca855902799780b61478d3b986060783a46e310bfe27c4746afd4d3637ff7b28218f3ca4039c42145b4d5eb69e4acde15f455b515c10a8f7d6e4bc900ae56dbc
   languageName: node
   linkType: hard
 
@@ -5745,7 +5745,14 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:^0.13.4, regenerator-runtime@npm:^0.13.9":
+"regenerator-runtime@npm:^0.13.11":
+  version: 0.13.11
+  resolution: "regenerator-runtime@npm:0.13.11"
+  checksum: b7c850f32500838961c073b885f0b18671867e2f3626d0c6de18fc269147f57d1777fe42d045cb1b9c0dc31a69a5c456d684afeb9adb05cbd788dac521403e68
+  languageName: node
+  linkType: hard
+
+"regenerator-runtime@npm:^0.13.4":
   version: 0.13.9
   resolution: "regenerator-runtime@npm:0.13.9"
   checksum: 8587f99ed63493b9ce34375f426b8ec61bf380681a374d5f2460c14ae2c289114702bed1f565a2499e809f2ba6d8ecd25a8dfee54bc224171f20a95a249be242
@@ -5949,21 +5956,21 @@ fsevents@~2.3.2:
     "@popperjs/core": ^2.11.6
     "@symfony/stimulus-bridge": ^3.2.1
     "@symfony/webpack-encore": ^4.2.0
-    bootstrap: ^5.2.3
-    bootstrap-icons: ^1.10.3
-    bootswatch: ^5.2.3
-    core-js: ^3.25.2
+    bootstrap: ^5.3.2
+    bootstrap-icons: ^1.11.2
+    bootswatch: ^5.3.2
+    core-js: ^3.33.3
     file-loader: ^6.2.0
-    hotkeys-js: ^3.10.0
-    leaflet: ^1.9.3
+    hotkeys-js: ^3.12.2
+    leaflet: ^1.9.4
     leaflet-draw: ^1.0.4
     leaflet-fullscreen: ^1.0.2
     leaflet-routing-machine: ^3.2.12
     leaflet.locatecontrol: ^0.79.0
     leaflet.markercluster: ^1.5.3
-    regenerator-runtime: ^0.13.9
-    stimulus-use: ^0.51.1
-    sweetalert2: ^11.7.0
+    regenerator-runtime: ^0.13.11
+    stimulus-use: ^0.51.3
+    sweetalert2: ^11.10.1
     webpack: ^5.74.0
     webpack-cli: ^4.10.0
     webpack-notifier: ^1.15.0
@@ -6331,14 +6338,14 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"stimulus-use@npm:^0.51.1":
-  version: 0.51.1
-  resolution: "stimulus-use@npm:0.51.1"
+"stimulus-use@npm:^0.51.3":
+  version: 0.51.3
+  resolution: "stimulus-use@npm:0.51.3"
   dependencies:
     hotkeys-js: ">=3"
   peerDependencies:
     "@hotwired/stimulus": ">= 3"
-  checksum: e47392b8d0b1b2a25a38c369776f9e817348e16d55522077704612c07a3a6ca35094a5e97ca3d92023390c1a2a1617b2f0d2dd3d38a30adec19fb52a487d2aab
+  checksum: 55ed09e1beab2dd4bec1f5a310ac264eeb079849a91a88fe88511b9a1ff046283c17c779c23d3f5a8618800f38ae25c4ddb839d44788515df9c42f4675d300b0
   languageName: node
   linkType: hard
 
@@ -6496,10 +6503,10 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"sweetalert2@npm:^11.7.0":
-  version: 11.7.0
-  resolution: "sweetalert2@npm:11.7.0"
-  checksum: b460003b06875791410f9add35435a7078782c167cfb6643cdec4068aa5afc3ed2de6709ae4c7db7983f931e1e7a21c0b1d5296c726ae2d8186d9932e496cf44
+"sweetalert2@npm:^11.10.1":
+  version: 11.10.1
+  resolution: "sweetalert2@npm:11.10.1"
+  checksum: 5d4f8a612920f7764df8c6ebf9f6457e1d7cd369c82f81d4b0484b2c7b3fa901c308b5a23bb53a1bcb20cd92c7c49a7a0add0979f8ff843f2ba0a45c4627b9ee
   languageName: node
   linkType: hard
 

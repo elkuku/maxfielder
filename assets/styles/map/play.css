@@ -12,12 +12,12 @@ body {
     margin-bottom: -40px;
 }
 
-.link-layer h4{
+.link-layer h4 {
     color: blue;
     font-size: 1.4em;
 }
 
-.farm-layer b{
+.farm-layer b {
     color: red;
     font-size: 1.6em;
 }
@@ -53,16 +53,36 @@ button#btnNext:hover {
     text-align: center;
 }
 
+[data-bs-theme=dark] .circle {
+    background: #000;
+    border: 3px solid #666666;
+    color: #ffffa0;
+}
+
 .circle.farmalot {
     background-color: #e7e1a5;
 }
+
+[data-bs-theme=dark] .circle.farmalot {
+    background-color: #d2c11d;
+    color: #000;
+}
+
 .circle-dest {
     background: #ffd840;
     font-size: 1.6em;
+}
 
+[data-bs-theme=dark] .circle-dest {
+    background: #ffd840;
+    color: #000;
 }
 
 a.routing-enabled {
+    color: orange;
+    cursor: pointer;
+}
+[data-bs-theme=dark] .leaflet-bar a.routing-enabled {
     color: orange;
     cursor: pointer;
 }
@@ -71,7 +91,36 @@ div.leaflet-popup-content ol {
     padding-left: 0;
 }
 
-div#distanceBar{
+div#distanceBar {
     margin-bottom: 10px;
     font-size: 2em;
+}
+
+[data-bs-theme=dark] .leaflet-bar a {
+    background-color: #000;
+    color: #07bf05;
+}
+
+[data-bs-theme=dark] .leaflet-control-locate a {
+    background-color: #fff;
+}
+
+[data-bs-theme=dark] .leaflet-control-layers-toggle{
+    background-color: #000;
+
+}
+
+[data-bs-theme=dark] .leaflet-popup-content-wrapper {
+    background-color: #000;
+    color: #6db46c;
+}
+
+[data-bs-theme=dark] .leaflet-control-layers-expanded {
+    background-color: #000;
+    color: #6db46c;
+}
+
+[data-bs-theme=dark] .leaflet-routing-container{
+    background-color: #3a3333;
+
 }

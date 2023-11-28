@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Maxfielder">
+    <meta name="author" content="elkuku">
 
     <link rel="icon" type="image/x-icon" href="
     {%- if 'dev' == app.environment -%}
@@ -17,11 +17,14 @@
     <title>{% block title %}Maxfielder{% endblock %}</title>
     <meta name="og:title" content="{% block og_title %}Maxfielder{% endblock %}"/>
     <meta name="og:description" content="{% block og_description %}A Maxfield Frontend{% endblock %}"/>
-    <meta name="og:image" content="{% block og_image %}{{ absolute_url(asset('build/images/link_map_example.png')) }}{% endblock %}"/>
+    <meta name="og:image"
+          content="{% block og_image %}{{ absolute_url(asset('build/images/link_map_example.png')) }}{% endblock %}"/>
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
+
+    <script src="{{ asset('js/color-modes.js') }}"></script>
 
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}
@@ -44,15 +47,6 @@
     {% include ('_flash-messages.html.twig') %}
     {% block body %}{% endblock %}
 </main>
-
-{#<footer class="footer">#}
-{#    <div class="container">#}
-{#        <span class="float-end">{{ 'Made with {link}'|trans({'link':'<a href="https://symfony.com">Symfony</a>'})|raw }}</span>#}
-{#        <span class="text-muted">#}
-{#            Another crazy idea coded by <a href="https://github.com/elkuku">elkuku</a>#}
-{#        </span>#}
-{#    </div>#}
-{#</footer>#}
 
 </body>
 </html>
