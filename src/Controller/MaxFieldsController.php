@@ -139,10 +139,6 @@ class MaxFieldsController extends BaseController
         $points = $request->request->get('points');
         $ids = array_map('intval', explode(',', $points));
 
-        if (!count($ids)) {
-            throw $this->createNotFoundException('No waypoints selected.');
-        }
-
         $wayPoints = $repository->findBy(['id' => $ids]);
         $maxField = $maxFieldGenerator->convertWayPointsToMaxFields($wayPoints);
         $buildName = $request->request->get('build_name');
