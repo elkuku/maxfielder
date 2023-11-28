@@ -43,12 +43,8 @@ class MaxFieldGenerator
         try {
             $projectRoot = $this->rootDir . '/' . $projectName;
             $fileSystem->mkdir($projectRoot);
-            $fileName = $projectRoot . '/' . $projectName . '.waypoints';
+            $fileName = $projectRoot . '/portals.txt';
             $fileSystem->appendToFile($fileName, $wayPointList);
-            $fileSystem->appendToFile(
-                $projectRoot . '/portals.txt',
-                $wayPointList
-            );
 
             if ($this->dockerContainer) {
                 $command = "docker run -v $projectRoot:/app/share -t {$this->dockerContainer}"
