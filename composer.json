@@ -62,7 +62,7 @@
         "jetbrains/phpstorm-attributes": "^1.0",
         "phpstan/phpstan": "^1.4",
         "phpunit/phpunit": "^9.5",
-        "rector/rector": "^0.15",
+        "rector/rector": "^0.18",
         "roave/security-advisories": "dev-latest",
         "symfony/browser-kit": "6.*",
         "symfony/css-selector": "6.*",
