@@ -10,6 +10,13 @@ Plan and Play.
 * Use `symfony console user-admin` to create an admin user.
 * Use the `bin/start` and `bin/stop` scripts to start and stop the environment.
 
+```shell
+bin/start
+```
+```shell
+bin/stop
+```
+
 ----
 
 Happy fielding `=;)`
