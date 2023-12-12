@@ -12,8 +12,6 @@
         </div>
     </div>
 
-    {{ pagerfanta(pagerfanta) }}
-
     <div {{ stimulus_controller('like')|
     stimulus_controller('reload-content', {
         url: path('maxfields', { partial: 'list_lg', page: page }),
@@ -48,6 +46,4 @@
             }) }}
         </div>
     </div>
-
-    {{ pagerfanta(pagerfanta) }}
 {% endblock %}
