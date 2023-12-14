@@ -10,7 +10,8 @@
 {% block body %}
     <div id="map"
             {{ stimulus_controller('maxfield-play', {
-                jsonData: jsonData
+                jsonData: jsonData,
+                userKeys: userKeys,
             }) }}>
     </div>
 {% endblock %}

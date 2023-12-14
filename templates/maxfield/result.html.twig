@@ -18,7 +18,7 @@
             }) }}
     >
 
-        <nav class="nav nav-pills fixed-top bg-light" id="maxfield-tab-nav">
+        <nav class="nav nav-pills fixed-top bg-dark" id="maxfield-tab-nav">
             <a class="nav-link active" href="#" data-id="maps"
                     {{ stimulus_action('maxfield-view', 'showTab', 'click', {tab:'maps'}) }}
                     {{ stimulus_target('maxfield-view', 'tabBtn') }}
@@ -85,6 +85,19 @@
             </div>
         </div>
         <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none" data-id="keys">
+            <h4>Key Upload</h4>
+            <div class="row">
+                {% for agentInfo in info.agentsInfo %}
+                    <div class="col">
+                        <form method="post">
+                            <label for="keys">Agent {{ agentInfo.agentNumber }} Keys</label><br>
+                            <textarea name="keys" id="keys" cols="30" rows="3"></textarea>
+                            <input type="hidden" name="agentNum" value="{{ agentInfo.agentNumber }}">
+                            <button type="submit">Upload</button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
             <div class="row">
                 <div class="col">
                     <h4>Key Preparation Total</h4>
@@ -93,14 +106,34 @@
                             <th>Map No</th>
                             <th>Keys</th>
                             <th>Name</th>
+                            {% for agentInfo in info.agentsInfo %}
+                                <th>Agent {{ agentInfo.agentNumber }} Keys</th>
+                            {% endfor %}
                         </tr>
+                        {% set userKeys = maxfield.userKeys ?: [] %}
+
                         {% for wayPoint in info.keyPrep.wayPoints %}
                             <tr>
                                 <th>{{ wayPoint.mapNo }}</th>
                                 <td>{{ wayPoint.keysNeeded }}</td>
                                 <td>{{ wayPoint.name }}</td>
-                                <td></td>
-                                <td></td>
+                                {% for agentInfo in info.agentsInfo %}
+                                    <td>
+                                        {% set found = 0 %}
+                                        {% set keys = userKeys[agentInfo.agentNumber] is defined ? userKeys[agentInfo.agentNumber]: [] %}
+
+                                        {% for k in keys %}
+                                            {% if k.name == wayPoint.name %}
+                                                {% if found %}
+                                                    DUP:
+{#                                                    SCREEEEEEEAM ...#}
+                                                {% endif %}
+                                                {{ k.count }}
+                                                {% set found = 1 %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                {% endfor %}
                             </tr>
                         {% endfor %}
                     </table>
@@ -113,7 +146,8 @@
                                                                data-id="agent-{{ agentInfo.agentNumber }}">
                 <div class="row">
                     <div class="col">
-                        <label for="email-agent-{{ agentInfo.agentNumber }}">Agent {{ agentInfo.agentNumber }} - Send e-mail to </label>
+                        <label for="email-agent-{{ agentInfo.agentNumber }}">Agent {{ agentInfo.agentNumber }} - Send
+                            e-mail to </label>
                         <input type="text" id="email-agent-{{ agentInfo.agentNumber }}">
                         <button class="btn btn-outline-success sendMail" id="{{ agentInfo.agentNumber }}">
                             Send

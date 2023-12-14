@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\MaxfieldRepository;
+use App\Type\AgentKeyInfo;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -35,6 +36,12 @@ class Maxfield
      */
     #[Column(type: Types::JSON, nullable: true)]
     private array|stdClass|null $jsonData = null;
+
+      /**
+     * @var array<int, array<int, AgentKeyInfo>>
+     */
+    #[Column(type: Types::JSON, nullable: true)]
+    private array|stdClass|null $userKeys = null;
 
     public function getId(): ?int
     {
@@ -79,6 +86,24 @@ class Maxfield
     public function setJsonData(array|stdClass $jsonData): self
     {
         $this->jsonData = $jsonData;
+
+        return $this;
+    }
+
+    /**
+     * @return array<int, array<int, AgentKeyInfo>>
+     */
+    public function getUserKeys(): ?array
+    {
+        return $this->userKeys;
+    }
+
+    /**
+     * @param array<int, array<int, AgentKeyInfo>> $userKeys
+     */
+    public function setUserKeys(array $userKeys): self
+    {
+        $this->userKeys = $userKeys;
 
         return $this;
     }

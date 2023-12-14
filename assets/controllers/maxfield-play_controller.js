@@ -18,11 +18,13 @@ import '../styles/map/play.css'
 export default class extends Controller {
     static values = {
         jsonData: String,
+        userKeys: String,
     }
 
     maxfieldData = null
 
     farmLayer = L.featureGroup()
+    farmLayer2 = L.featureGroup()
     linkLayer = L.layerGroup()
     links = []
     soundNotifier = null
@@ -83,14 +85,14 @@ export default class extends Controller {
 
             OSM = L.tileLayer(osmUrl, {attribution: osmAttrib}),
 
-             Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.{ext}', {
+            Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.{ext}', {
                 minZoom: 0,
                 maxZoom: 20,
                 attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                 ext: 'png'
             }),
 
-             CartoDB_DarkMatterNoLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+            CartoDB_DarkMatterNoLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
                 subdomains: 'abcd',
                 maxZoom: 20
@@ -99,7 +101,7 @@ export default class extends Controller {
         this.map = L.map('map', {
             center: [0, 0],
             zoom: 3,
-            layers: [CartoDB_PositronNoLabels, this.farmLayer, this.linkLayer],
+            layers: [CartoDB_PositronNoLabels, this.farmLayer, this.farmLayer2, this.linkLayer],
             fullscreenControl: true
         })
 
@@ -117,6 +119,7 @@ export default class extends Controller {
 
         const overlays = {
             'Farm': this.farmLayer,
+            'Farm2': this.farmLayer2,
             'Links': this.linkLayer,
         }
 
@@ -207,10 +210,16 @@ export default class extends Controller {
 
     loadFarmLayer(markerObjects) {
         this.farmLayer.clearLayers()
+        this.farmLayer2.clearLayers()
+
+        const u = JSON.parse(this.userKeysValue)
+
+        const userKeys = (u && 1 in u) ? u[1] : []
 
         markerObjects.forEach(function (o) {
-            const num = o.description.replace('Farm keys:', '')
-            const css = num > 3 ? 'circle farmalot' : 'circle'
+            // console.log(o)
+            const num = o.description.replace('Farm keys: ', '')
+            let css = num > 3 ? 'circle farmalot' : 'circle'
             let marker =
                 L.marker(
                     L.latLng(o.lat, o.lon),
@@ -221,7 +230,29 @@ export default class extends Controller {
                         })
                     }
                 ).bindPopup('<b>' + o.name + '</b><br>' + o.description)
+
+            let hasKeys = 0
+            for (let i = 0; i < userKeys.length; i++) {
+                // TODO check guid not name...
+                if (userKeys[i].name === o.name) {
+                    hasKeys = userKeys[1][i].count
+                    if (hasKeys >= num) {
+                        css += ' farm-done';
+                    }
+                }
+            }
+            let marker2 =
+                L.marker(
+                    L.latLng(o.lat, o.lon),
+                    {
+                        icon: L.divIcon({
+                            className: 'farm-layer',
+                            html: '<b class="' + css + '">' + hasKeys + '/' + num + '</b>'
+                        })
+                    }
+                ).bindPopup('<b>' + o.name + '</b><br>' + o.description + ' (' + hasKeys + ')')
             this.farmLayer.addLayer(marker)
+            this.farmLayer2.addLayer(marker2)
         }.bind(this))
 
         this.map.fitBounds(this.farmLayer.getBounds())
@@ -365,22 +396,22 @@ export default class extends Controller {
                     html: '<b class="circle">' + this.distance + 'm</b>'
                 }))
 
-                let dist = 0
-                let style = ''
-                if(this.distance < 100){
-                    dist = 100 - this.distance
-                    if(dist<20){
-                        style = ' bg-success'
-                    }else if(dist<50){
-                        style = ' bg-warning'
-                    }else{
+            let dist = 0
+            let style = ''
+            if (this.distance < 100) {
+                dist = 100 - this.distance
+                if (dist < 20) {
+                    style = ' bg-success'
+                } else if (dist < 50) {
+                    style = ' bg-warning'
+                } else {
                     style = ' bg-danger'
                 }
-                }
+            }
 
-            document.getElementById('distanceBar').innerHTML='<div class="progress" role="progressbar" style="height: 20px">'
-                    + '<div class="progress-bar progress-bar-striped progress-bar-animated' + style + '" style="width: ' + dist + '%"></div>'
-                    + '&nbsp;' + this.distance + ' m</div>'
+            document.getElementById('distanceBar').innerHTML = '<div class="progress" role="progressbar" style="height: 20px">'
+                + '<div class="progress-bar progress-bar-striped progress-bar-animated' + style + '" style="width: ' + dist + '%"></div>'
+                + '&nbsp;' + this.distance + ' m</div>'
         }
     }
 
