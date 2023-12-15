@@ -20,8 +20,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -154,8 +152,7 @@ class MaxFieldsController extends BaseController
         );
     }
 
-    #[
-        Route('/play/{path}', name: 'maxfield_play', methods: ['GET'])]
+    #[Route('/play/{path}', name: 'maxfield_play', methods: ['GET'])]
     public function play(
         MaxFieldHelper $maxFieldHelper,
         Maxfield       $maxfield
@@ -169,7 +166,7 @@ class MaxFieldsController extends BaseController
             [
                 'maxfield' => $maxfield,
                 'jsonData' => $json,
-                'userKeys' => json_encode($maxfield->getUserKeys()),
+                'userKeys' => json_encode($maxfield->getUserKeys(), JSON_THROW_ON_ERROR),
             ]
         );
     }
