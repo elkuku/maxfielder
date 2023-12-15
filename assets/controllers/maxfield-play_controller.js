@@ -101,7 +101,7 @@ export default class extends Controller {
         this.map = L.map('map', {
             center: [0, 0],
             zoom: 3,
-            layers: [CartoDB_PositronNoLabels, this.farmLayer, this.farmLayer2, this.linkLayer],
+            layers: [CartoDB_PositronNoLabels, this.farmLayer],
             fullscreenControl: true
         })
 
@@ -235,7 +235,7 @@ export default class extends Controller {
             for (let i = 0; i < userKeys.length; i++) {
                 // TODO check guid not name...
                 if (userKeys[i].name === o.name) {
-                    hasKeys = userKeys[1][i].count
+                    hasKeys = userKeys[i].count
                     if (hasKeys >= num) {
                         css += ' farm-done';
                     }
