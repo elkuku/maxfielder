@@ -43,17 +43,9 @@ class ImportController extends AbstractController
                     $this->addFlash('warning', 'No Waypoints imported!');
                 }
 
-                // TODO reactivate redirect
-                // return $this->redirectToRoute('default');
+                return $this->redirectToRoute('default');
             } catch (Exception $exception) {
                 $this->addFlash('danger', $exception->getMessage());
-
-                return $this->render(
-                    'import/index.html.twig',
-                    [
-                        'form' => $form,
-                    ]
-                );
             }
         }
 
