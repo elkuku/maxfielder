@@ -12,6 +12,8 @@ import 'leaflet.locatecontrol/dist/L.Control.Locate.css'
 import 'leaflet-routing-machine'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 
+import {Modal} from "bootstrap";
+
 import '../styles/map/play.css'
 
 /* stimulusFetch: 'lazy' */
@@ -32,8 +34,11 @@ export default class extends Controller {
 
     map = null
 
+    modal = null
+
     connect() {
         this.maxfieldData = JSON.parse(this.jsonDataValue)
+        this.modal = new Modal('#exampleModal')
         this.setupMap()
         this.displayMaxFieldData(this.maxfieldData)
     }
@@ -196,6 +201,7 @@ export default class extends Controller {
             div.innerHTML =
                 '<a id="btnRoute" title="Routing">R</a>'
                 + '<a id="btnSoundEnabled" class="routing-enabled" title="Sound">S</a>'
+                + '<a id="btnUploadKeys" class="routing-enabled" title="Keys">K</a>'
             div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation
             L.DomEvent.disableClickPropagation(div)
             return div
@@ -206,6 +212,8 @@ export default class extends Controller {
             .addEventListener('click', this.enableRouting.bind(this), false)
         document.getElementById('btnSoundEnabled')
             .addEventListener('click', this.enableSound.bind(this), false)
+         document.getElementById('btnUploadKeys')
+            .addEventListener('click', this.showModal.bind(this), false)
     }
 
     loadFarmLayer(markerObjects) {
@@ -435,6 +443,16 @@ export default class extends Controller {
             this.soundEnabled = true
             e.target.classList.add('routing-enabled')
         }
+    }
+
+    showModal(){
+        this.modal.show()
+    }
+
+    uploadKeys(e) {
+        console.log('hjey')
+
+        this.modal.hide()
     }
 
     soundNotify() {
