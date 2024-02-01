@@ -42,7 +42,7 @@ class MaxFieldsController extends BaseController
             $page,
             9999
         );
-        dump($pagerfanta);
+
         $template = 'index';
 
         $partial = $request->query->get('partial');
@@ -108,17 +108,14 @@ class MaxFieldsController extends BaseController
         Request                $request,
         IngressHelper          $ingressHelper,
         EntityManagerInterface $entityManager,
-//        #[MapQueryParameter] array $keys,
     ): Response
     {
-//        dump($keys);
         $keys = $request->request->get('keys');
         $agentNum = $request->request->get('agentNum');
         $info = $maxFieldHelper->getMaxField($maxfield->getPath());
         $existingKeys = [];
 
         if ($keys) {
-            dump($keys, $agentNum);
             $parsedKeys = $ingressHelper->parseKeysString($keys);
 
             foreach ($info->keyPrep->getWayPoints() as $keyPrep) {
