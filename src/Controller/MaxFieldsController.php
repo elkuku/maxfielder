@@ -197,7 +197,7 @@ class MaxFieldsController extends BaseController
         Request                $request
     ): Response
     {
-        $points = $request->request->get('points');
+        $points = $request->request->getString('points');
         $ids = array_map('intval', explode(',', $points));
 
         $wayPoints = $repository->findBy(['id' => $ids]);
