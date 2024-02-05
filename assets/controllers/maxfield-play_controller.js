@@ -19,8 +19,8 @@ import '../styles/map/play.css'
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static values = {
+        path: String,
         jsonData: String,
-        userKeys: String,
     }
 
     maxfieldData = null
@@ -47,6 +47,7 @@ export default class extends Controller {
         this.links = maxField.links
 
         this.loadFarmLayer(maxField.waypoints)
+        this.loadFarmLayer2()
         this.loadLinkLayer()
 
         this.addLinkSelector()
@@ -212,20 +213,14 @@ export default class extends Controller {
             .addEventListener('click', this.enableRouting.bind(this), false)
         document.getElementById('btnSoundEnabled')
             .addEventListener('click', this.enableSound.bind(this), false)
-         document.getElementById('btnUploadKeys')
+        document.getElementById('btnUploadKeys')
             .addEventListener('click', this.showModal.bind(this), false)
     }
 
     loadFarmLayer(markerObjects) {
         this.farmLayer.clearLayers()
-        this.farmLayer2.clearLayers()
-
-        const u = JSON.parse(this.userKeysValue)
-
-        const userKeys = (u && 1 in u) ? u[1] : []
 
         markerObjects.forEach(function (o) {
-            // console.log(o)
             const num = o.description.replace('Farm keys: ', '')
             let css = num > 3 ? 'circle farmalot' : 'circle'
             let marker =
@@ -239,31 +234,47 @@ export default class extends Controller {
                     }
                 ).bindPopup('<b>' + o.name + '</b><br>' + o.description)
 
+            this.farmLayer.addLayer(marker)
+        }.bind(this))
+
+        this.map.fitBounds(this.farmLayer.getBounds())
+    }
+
+    async loadFarmLayer2() {
+        this.farmLayer2.clearLayers()
+
+        const response = await fetch('/maxfield/get-user-keys/' + this.pathValue)
+        const data = await response.json()
+
+        // TODO Select proper user
+        const userKeys = (data && 1 in data) ? data[1] : []
+
+        this.maxfieldData.waypoints.forEach(function (o) {
+            const numKeys = o.description.replace('Farm keys: ', '')
+            let css = numKeys > 3 ? 'circle farmalot' : 'circle'
+
             let hasKeys = 0
             for (let i = 0; i < userKeys.length; i++) {
                 // TODO check guid not name...
                 if (userKeys[i].name === o.name) {
                     hasKeys = userKeys[i].count
-                    if (hasKeys >= num) {
+                    if (hasKeys >= numKeys) {
                         css += ' farm-done';
                     }
                 }
             }
-            let marker2 =
+            let marker =
                 L.marker(
                     L.latLng(o.lat, o.lon),
                     {
                         icon: L.divIcon({
                             className: 'farm-layer',
-                            html: '<b class="' + css + '">' + hasKeys + '/' + num + '</b>'
+                            html: '<b class="' + css + '">' + hasKeys + '/' + numKeys + '</b>'
                         })
                     }
                 ).bindPopup('<b>' + o.name + '</b><br>' + o.description + ' (' + hasKeys + ')')
-            this.farmLayer.addLayer(marker)
-            this.farmLayer2.addLayer(marker2)
+            this.farmLayer2.addLayer(marker)
         }.bind(this))
-
-        this.map.fitBounds(this.farmLayer.getBounds())
     }
 
     loadLinkLayer() {
@@ -445,12 +456,28 @@ export default class extends Controller {
         }
     }
 
-    showModal(){
+    showModal() {
         this.modal.show()
     }
 
-    uploadKeys(e) {
-        console.log('hjey')
+    async uploadKeys(e) {
+        const response = await fetch('/maxfield/submit-user-keys/' + this.pathValue, {
+            method: 'POST',
+            body: JSON.stringify({
+                // TODO proper agent number
+                agentNum: 1,
+                keys: document.getElementById('keys').value,
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        });
+
+        const data = await response.json()
+
+        console.log(data)
+
+        this.loadFarmLayer2()
 
         this.modal.hide()
     }

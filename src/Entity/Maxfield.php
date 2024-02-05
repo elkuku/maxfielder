@@ -108,6 +108,20 @@ class Maxfield
         return $this;
     }
 
+    /**
+     * @param AgentKeyInfo[] $userKeys
+     */
+    public function setUserKeysWithUser(array $userKeys, int $user): self
+    {
+        if ($this->userKeys) {
+            $this->userKeys[$user] = $userKeys;
+        } else {
+            $this->userKeys = [$user => $userKeys];
+        }
+
+        return $this;
+    }
+
     public function getPath(): ?string
     {
         return $this->path;

@@ -110,30 +110,15 @@ class MaxFieldsController extends BaseController
         EntityManagerInterface $entityManager,
     ): Response
     {
-        $keys = $request->request->get('keys');
-        $agentNum = $request->request->get('agentNum');
+        $keys = (string)$request->request->get('keys');
+        $agentNum = (int)$request->request->get('agentNum');
         $info = $maxFieldHelper->getMaxField($maxfield->getPath());
         $existingKeys = [];
 
         if ($keys) {
-            $parsedKeys = $ingressHelper->parseKeysString($keys);
+            $existingKeys = $ingressHelper->getExistingKeysForMaxfield($info, $keys);
+            $maxfield->setUserKeysWithUser($existingKeys, $agentNum);
 
-            foreach ($info->keyPrep->getWayPoints() as $keyPrep) {
-                foreach ($parsedKeys as $parsedKey) {
-                    // TODO check guid to avoid dupes
-                    if ($parsedKey->name === $keyPrep->name) {
-                        $existingKeys[] = $parsedKey;
-                    }
-                }
-            }
-            $userKeys = $maxfield->getUserKeys();
-            if ($userKeys) {
-                $userKeys[$agentNum] = $existingKeys;
-            } else {
-                $userKeys = [$agentNum => $existingKeys];
-            }
-
-            $maxfield->setUserKeys($userKeys);
             $entityManager->flush();
 
             $this->addFlash('success', sprintf('%d keys added.', count($existingKeys)));
@@ -147,6 +132,35 @@ class MaxFieldsController extends BaseController
                 'existingKeys' => $existingKeys,
             ]
         );
+    }
+
+    #[Route(path: '/submit-user-keys/{path}', name: 'maxfield_submit_user_keys', methods: ['POST'])]
+    public function submitUserkeys(
+        MaxFieldHelper         $maxFieldHelper,
+        MaxField               $maxfield,
+        Request                $request,
+        IngressHelper          $ingressHelper,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse
+    {
+        $info = $maxFieldHelper->getMaxField($maxfield->getPath());
+        $existingKeys = [];
+
+        $data = json_decode($request->getContent(), true);
+
+        $keys = (string)$data['keys'];
+        $agentNum = (int)$data['agentNum'];
+
+        if ($keys) {
+            $existingKeys = $ingressHelper->getExistingKeysForMaxfield($info, $keys);
+            $maxfield->setUserKeysWithUser($existingKeys, $agentNum);
+
+            $entityManager->flush();
+
+            $this->addFlash('success', sprintf('%d keys added.', count($existingKeys)));
+        }
+
+        return $this->json($existingKeys);
     }
 
     #[Route('/play/{path}', name: 'maxfield_play', methods: ['GET'])]
@@ -163,9 +177,16 @@ class MaxFieldsController extends BaseController
             [
                 'maxfield' => $maxfield,
                 'jsonData' => $json,
-                'userKeys' => json_encode($maxfield->getUserKeys(), JSON_THROW_ON_ERROR),
             ]
         );
+    }
+
+    #[Route('/get-user-keys/{path}', name: 'maxfield_get_user_keys', methods: ['GET'])]
+    public function getUserKeys(
+        Maxfield       $maxfield
+    ):JsonResponse
+    {
+        return $this->json($maxfield->getUserKeys());
     }
 
     #[Route(path: '/export', name: 'export-maxfields', methods: ['POST'])]
