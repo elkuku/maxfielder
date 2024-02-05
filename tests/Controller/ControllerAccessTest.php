@@ -42,6 +42,16 @@ class ControllerAccessTest extends ControllerBaseTest
                     '{path}' => 'test',
                 ],
             ],
+            'maxfield_submit_user_keys' => [
+                'params' => [
+                    '{path}' => 'test',
+                ],
+            ],
+            'maxfield_get_user_keys' => [
+                'params' => [
+                    '{path}' => 'test',
+                ],
+            ],
         ];
 
     public function testAllRoutesAreProtected(): void
