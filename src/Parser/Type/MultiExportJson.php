@@ -48,7 +48,7 @@ class MultiExportJson extends AbstractParser
                 $this->wayPointHelper->checkImage($guid, $image);
             }
 
-            $waypoints[] = $this->createWayPoint($guid, $lat, $lon, $title);
+            $waypoints[] = $this->createWayPoint($guid, $lat, $lon, $title, $image);
         }
 
         return $waypoints;

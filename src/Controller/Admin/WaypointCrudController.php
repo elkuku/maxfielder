@@ -23,6 +23,7 @@ class WaypointCrudController extends AbstractCrudController
             Field::new('lat'),
             Field::new('lon'),
             Field::new('guid'),
+            Field::new('image'),
         ];
     }
 }

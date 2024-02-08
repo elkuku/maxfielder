@@ -51,12 +51,14 @@ abstract class AbstractParser
         string $guid,
         float $lat,
         float $lon,
-        string $name
+        string $name,
+        string $image,
     ): Waypoint {
         return (new Waypoint())
             ->setGuid($guid)
             ->setName($name)
             ->setLat($lat)
-            ->setLon($lon);
+            ->setLon($lon)
+            ->setImage($image);
     }
 }
