@@ -26,6 +26,9 @@ class Waypoint implements \Stringable
     #[Column(length: 100, nullable: true)]
     private ?string $guid = '';
 
+    #[Column(length: 255, nullable: true)]
+    private ?string $image = null;
+
     public function __toString(): string
     {
         return (string) $this->getName();
@@ -80,6 +83,18 @@ class Waypoint implements \Stringable
     public function setGuid(string $guid): self
     {
         $this->guid = $guid;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
 
         return $this;
     }
