@@ -30,10 +30,12 @@ class MaxFieldGenerator
 
     /**
      * @param array<string, bool> $options
+     * @param array<array<int, string>> $wayPointMap
      */
     public function generate(
         string $projectName,
         string $wayPointList,
+        array  $wayPointMap,
         int    $playersNum,
         array  $options
     ): void
@@ -45,6 +47,14 @@ class MaxFieldGenerator
             $fileSystem->mkdir($projectRoot);
             $fileName = $projectRoot . '/portals.txt';
             $fileSystem->appendToFile($fileName, $wayPointList);
+
+            $fp = fopen($projectRoot . '/portals_id_map.csv', 'w');
+
+            foreach ($wayPointMap as $fields) {
+                fputcsv($fp, $fields);
+            }
+
+            fclose($fp);
 
             if ($this->dockerContainer) {
                 $command = "docker run -v $projectRoot:/app/share -t {$this->dockerContainer}"
@@ -121,6 +131,22 @@ class MaxFieldGenerator
         }
 
         return implode("\n", $maxFields);
+    }
+
+    /**
+     * @param Waypoint[] $wayPoints
+     * @return array<array<int,string>>
+     */
+    public function getWaypointsMap(array $wayPoints): array
+    {
+        $map = [];
+
+        foreach ($wayPoints as $i => $wayPoint) {
+            $name = str_replace([';', '#', ','], '', (string)$wayPoint->getName());
+            $map[] = [$i, $wayPoint->getId(), $wayPoint->getGuid(), $name];
+        }
+
+        return $map;
     }
 
     public function getImagePath(string $item, string $image): string

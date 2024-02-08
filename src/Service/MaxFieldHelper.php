@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Type\WaypointMap;
 use DirectoryIterator;
 use Elkuku\MaxfieldParser\MaxfieldParser;
 use Elkuku\MaxfieldParser\Type\MaxField;
@@ -9,15 +10,16 @@ use FilesystemIterator;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
-class MaxFieldHelper
+readonly class MaxFieldHelper
 {
-    private readonly string $rootDir;
+    private string $rootDir;
 
     public function __construct(
-        #[Autowire('%kernel.project_dir%')] string $projectDir,
-        #[Autowire('%env(MAXFIELD_VERSION)%')] private readonly int $maxfieldVersion
-    ) {
-        $this->rootDir = $projectDir.'/public/maxfields';
+        #[Autowire('%kernel.project_dir%')] string         $projectDir,
+        #[Autowire('%env(MAXFIELD_VERSION)%')] private int $maxfieldVersion
+    )
+    {
+        $this->rootDir = $projectDir . '/public/maxfields';
     }
 
     /**
@@ -44,7 +46,7 @@ class MaxFieldHelper
 
     public function getParser(string $item = ''): MaxfieldParser
     {
-        $dir = $item ? $this->rootDir.'/'.$item : $this->rootDir;
+        $dir = $item ? $this->rootDir . '/' . $item : $this->rootDir;
 
         return new MaxfieldParser($dir);
     }
@@ -56,7 +58,7 @@ class MaxFieldHelper
 
     public function getLog(string $item): bool|string
     {
-        $path = $this->rootDir.'/'.$item.'/log.txt';
+        $path = $this->rootDir . '/' . $item . '/log.txt';
 
         if (false === file_exists($path)) {
             throw new FileNotFoundException();
@@ -67,21 +69,21 @@ class MaxFieldHelper
 
     public function filesFinished(string $item): bool
     {
-        return file_exists($this->rootDir."/$item/key_preparation.txt");
+        return file_exists($this->rootDir . "/$item/key_preparation.txt");
     }
 
     public function framesDirCount(string $item): string
     {
-        $path = $this->rootDir."/$item/frames";
+        $path = $this->rootDir . "/$item/frames";
 
         return (is_dir($path))
-            ? (string) iterator_count(new FilesystemIterator($path))
+            ? (string)iterator_count(new FilesystemIterator($path))
             : 'n/a';
     }
 
     public function getMovieSize(string $item): string
     {
-        $path = $this->rootDir."/$item/plan_movie.gif";
+        $path = $this->rootDir . "/$item/plan_movie.gif";
 
         if (file_exists($path)) {
             $sz = 'BKMGTP';
@@ -90,7 +92,7 @@ class MaxFieldHelper
             $factor = floor(((strlen($size)) - 1) / 3);
 
             return sprintf("%.{$decimals}f", $size / 1024 ** $factor)
-                .@$sz[$factor];
+                . @$sz[$factor];
         }
 
         return 'n/a';
@@ -103,7 +105,7 @@ class MaxFieldHelper
 
     public function getPreviewImage(string $item): string
     {
-        $path = $this->rootDir."/$item/link_map.png";
+        $path = $this->rootDir . "/$item/link_map.png";
         $webPath = "maxfields/$item/link_map.png";
 
         return file_exists($path) ? $webPath : '';
@@ -111,7 +113,7 @@ class MaxFieldHelper
 
     public function getWaypointCount(string $item): int
     {
-        $path = $this->rootDir."/$item/portals.txt";
+        $path = $this->rootDir . "/$item/portals.txt";
 
         if (false === file_exists($path)) {
             return 0;
@@ -120,9 +122,37 @@ class MaxFieldHelper
         $contents = file($path, FILE_IGNORE_NEW_LINES);
 
         if (false === $contents) {
-            throw new \UnexpectedValueException('Can not read file in '.$path);
+            throw new \UnexpectedValueException('Can not read file in ' . $path);
         }
 
         return count($contents);
+    }
+
+    /**
+     * TODO Move this somewhere else...
+     *
+     * @return WaypointMap[]
+     */
+    public function getWaypointsIdMap(string $item): array
+    {
+        $path = $this->rootDir . "/$item/portals_id_map.csv";
+        $map = [];
+        if (false !== ($handle = fopen($path, 'r'))) {
+            while (false !== ($data = fgetcsv($handle, 1000, ','))) {
+                $waypoint = new WaypointMap();
+
+                $waypoint->mapNo = $data[0];
+                $waypoint->dbId = $data[1];
+                $waypoint->guid = $data[2];
+                $waypoint->name = $data[3];
+
+                $map[] = $waypoint;
+            }
+            fclose($handle);
+        } else {
+            throw new \InvalidArgumentException('Can not open ' . $path);
+        }
+
+        return $map;
     }
 }

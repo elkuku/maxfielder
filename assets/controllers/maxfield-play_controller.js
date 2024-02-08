@@ -21,9 +21,11 @@ export default class extends Controller {
     static values = {
         path: String,
         jsonData: String,
+        waypointIdMap: String
     }
 
     maxfieldData = null
+    waypointIdMap = null
 
     farmLayer = L.featureGroup()
     farmLayer2 = L.featureGroup()
@@ -38,15 +40,15 @@ export default class extends Controller {
 
     connect() {
         this.maxfieldData = JSON.parse(this.jsonDataValue)
+        this.waypointIdMap = JSON.parse(this.waypointIdMapValue)
         this.modal = new Modal('#exampleModal')
+        this.links = this.maxfieldData.links
         this.setupMap()
-        this.displayMaxFieldData(this.maxfieldData)
+        this.displayMaxFieldData()
     }
 
-    displayMaxFieldData(maxField) {
-        this.links = maxField.links
-
-        this.loadFarmLayer(maxField.waypoints)
+    displayMaxFieldData() {
+        this.loadFarmLayer()
         this.loadFarmLayer2()
         this.loadLinkLayer()
 
@@ -217,10 +219,10 @@ export default class extends Controller {
             .addEventListener('click', this.showModal.bind(this), false)
     }
 
-    loadFarmLayer(markerObjects) {
+    loadFarmLayer() {
         this.farmLayer.clearLayers()
 
-        markerObjects.forEach(function (o) {
+        this.maxfieldData.waypoints.forEach(function (o) {
             const num = o.description.replace('Farm keys: ', '')
             let css = num > 3 ? 'circle farmalot' : 'circle'
             let marker =
@@ -248,15 +250,15 @@ export default class extends Controller {
 
         // TODO Select proper user
         const userKeys = (data && 1 in data) ? data[1] : []
+        let cnt = 0
 
         this.maxfieldData.waypoints.forEach(function (o) {
-            const numKeys = o.description.replace('Farm keys: ', '')
+            const numKeys = o.keys
             let css = numKeys > 3 ? 'circle farmalot' : 'circle'
 
             let hasKeys = 0
             for (let i = 0; i < userKeys.length; i++) {
-                // TODO check guid not name...
-                if (userKeys[i].name === o.name) {
+                if (userKeys[i].guid === this.waypointIdMap[cnt].guid) {
                     hasKeys = userKeys[i].count
                     if (hasKeys >= numKeys) {
                         css += ' farm-done';
@@ -274,6 +276,7 @@ export default class extends Controller {
                     }
                 ).bindPopup('<b>' + o.name + '</b><br>' + o.description + ' (' + hasKeys + ')')
             this.farmLayer2.addLayer(marker)
+            cnt++
         }.bind(this))
     }
 

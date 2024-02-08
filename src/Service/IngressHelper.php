@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Type\AgentKeyInfo;
+use App\Type\WaypointMap;
 use Elkuku\MaxfieldParser\Type\MaxField;
 
 class IngressHelper
@@ -42,17 +43,17 @@ class IngressHelper
     }
 
     /**
+     * @param WaypointMap[] $waypoints
      * @return AgentKeyInfo[]
      */
-    public function getExistingKeysForMaxfield(MaxField $maxfield, string $keys):array
+    public function getExistingKeysForMaxfield(array $waypoints, string $keys):array
     {
         $existingKeys = [];
         $parsedKeys = $this->parseKeysString($keys);
 
-        foreach ($maxfield->keyPrep->getWayPoints() as $keyPrep) {
+       foreach ($waypoints as $waypoint) {
             foreach ($parsedKeys as $parsedKey) {
-                // TODO check guid to avoid dupes
-                if ($parsedKey->name === $keyPrep->name) {
+                if ($parsedKey->guid === $waypoint->guid) {
                     $existingKeys[] = $parsedKey;
                 }
             }

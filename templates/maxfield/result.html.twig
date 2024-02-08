@@ -121,9 +121,8 @@
                                     <td>
                                         {% set found = 0 %}
                                         {% set keys = userKeys[agentInfo.agentNumber] is defined ? userKeys[agentInfo.agentNumber]: [] %}
-
                                         {% for k in keys %}
-                                            {% if k.name == wayPoint.name %}
+                                            {% if k.guid == waypointIdMap[wayPoint.mapNo].guid %}
                                                 {% if found %}
                                                     DUP:
 {#                                                    SCREEEEEEEAM ...#}

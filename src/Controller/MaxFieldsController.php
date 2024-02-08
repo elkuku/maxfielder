@@ -113,10 +113,11 @@ class MaxFieldsController extends BaseController
         $keys = (string)$request->request->get('keys');
         $agentNum = (int)$request->request->get('agentNum');
         $info = $maxFieldHelper->getMaxField($maxfield->getPath());
+        $waypointIdMap = $maxFieldHelper->getWaypointsIdMap($maxfield->getPath());
         $existingKeys = [];
 
         if ($keys) {
-            $existingKeys = $ingressHelper->getExistingKeysForMaxfield($info, $keys);
+            $existingKeys = $ingressHelper->getExistingKeysForMaxfield($waypointIdMap, $keys);
             $maxfield->setUserKeysWithUser($existingKeys, $agentNum);
 
             $entityManager->flush();
@@ -130,6 +131,7 @@ class MaxFieldsController extends BaseController
                 'maxfield' => $maxfield,
                 'info' => $info,
                 'existingKeys' => $existingKeys,
+                'waypointIdMap' => $waypointIdMap,
             ]
         );
     }
@@ -143,7 +145,6 @@ class MaxFieldsController extends BaseController
         EntityManagerInterface $entityManager,
     ): JsonResponse
     {
-        $info = $maxFieldHelper->getMaxField($maxfield->getPath());
         $existingKeys = [];
 
         $data = json_decode($request->getContent(), true);
@@ -152,7 +153,8 @@ class MaxFieldsController extends BaseController
         $agentNum = (int)$data['agentNum'];
 
         if ($keys) {
-            $existingKeys = $ingressHelper->getExistingKeysForMaxfield($info, $keys);
+            $waypointIdMap = $maxFieldHelper->getWaypointsIdMap($maxfield->getPath());
+            $existingKeys = $ingressHelper->getExistingKeysForMaxfield($waypointIdMap, $keys);
             $maxfield->setUserKeysWithUser($existingKeys, $agentNum);
 
             $entityManager->flush();
@@ -177,6 +179,7 @@ class MaxFieldsController extends BaseController
             [
                 'maxfield' => $maxfield,
                 'jsonData' => $json,
+                'waypointIdMap' => $maxFieldHelper->getWaypointsIdMap($maxfield->getPath()),
             ]
         );
     }
@@ -202,6 +205,7 @@ class MaxFieldsController extends BaseController
 
         $wayPoints = $repository->findBy(['id' => $ids]);
         $maxField = $maxFieldGenerator->convertWayPointsToMaxFields($wayPoints);
+        $waypointMap = $maxFieldGenerator->getWaypointsMap($wayPoints);
         $buildName = $request->request->get('build_name');
         $playersNum = (int)$request->request->get('players_num') ?: 1;
         $options = [
@@ -216,6 +220,7 @@ class MaxFieldsController extends BaseController
         $maxFieldGenerator->generate(
             $projectName,
             $maxField,
+            $waypointMap,
             $playersNum,
             $options
         );
