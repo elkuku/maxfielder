@@ -2,11 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Entity\Waypoint;
 use App\Form\WaypointFormType;
 use App\Repository\WaypointRepository;
+use App\Service\WayPointHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,10 +25,11 @@ class WaypointsController extends AbstractController
     ])]
     #[IsGranted('ROLE_ADMIN')]
     public function edit(
-        Request $request,
-        Waypoint $waypoint,
+        Request                $request,
+        Waypoint               $waypoint,
         EntityManagerInterface $entityManager
-    ): RedirectResponse|Response {
+    ): RedirectResponse|Response
+    {
         $form = $this->createForm(WaypointFormType::class, $waypoint);
         $form->handleRequest($request);
 
@@ -50,9 +54,10 @@ class WaypointsController extends AbstractController
     #[Route(path: '/waypoint-remove/{id}', name: 'waypoints_remove', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function remove(
-        Waypoint $waypoint,
+        Waypoint               $waypoint,
         EntityManagerInterface $entityManager
-    ): RedirectResponse {
+    ): RedirectResponse
+    {
         $entityManager->remove($waypoint);
 
         $entityManager->flush();
@@ -66,8 +71,9 @@ class WaypointsController extends AbstractController
     #[IsGranted('ROLE_AGENT')]
     public function map(
         WaypointRepository $repository,
-        Request $request
-    ): JsonResponse {
+        Request            $request
+    ): JsonResponse
+    {
         $bounds = $request->query->get('bounds');
         if ($bounds) {
             $bounds = explode(',', $bounds);
@@ -75,10 +81,10 @@ class WaypointsController extends AbstractController
                 throw new \UnexpectedValueException('Invalid bounds');
             }
             $waypoints = $repository->findInBounds(
-                (float) $bounds[0],
-                (float) $bounds[1],
-                (float) $bounds[2],
-                (float) $bounds[3]
+                (float)$bounds[0],
+                (float)$bounds[1],
+                (float)$bounds[2],
+                (float)$bounds[3]
             );
         } else {
             $waypoints = $repository->findAll();
@@ -110,5 +116,12 @@ class WaypointsController extends AbstractController
                 'waypoint' => $waypoint,
             ]
         );
+    }
+
+    #[Route(path: '/waypoint_thumb/{guid}', name: 'waypoint_thumbnail', methods: ['GET'])]
+    #[IsGranted(User::ROLES['agent'])]
+    public function getImageThumbnail(Waypoint $waypoint, WayPointHelper $wayPointHelper): BinaryFileResponse
+    {
+        return new BinaryFileResponse($wayPointHelper->getThumbnailPath($waypoint->getGuid(), $waypoint->getImage()));
     }
 }

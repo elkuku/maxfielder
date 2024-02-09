@@ -23,7 +23,11 @@ class AppFixtures extends Fixture
                 ->setRoles([User::ROLES['admin']])
         );
 
-        $manager->persist(new Waypoint());
+        $manager->persist(
+            (new Waypoint())
+                ->setGuid('test')
+        );
+
         $manager->persist(
             (new Maxfield())
                 ->setName('test')

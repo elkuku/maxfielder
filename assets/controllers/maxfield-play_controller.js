@@ -376,7 +376,7 @@ export default class extends Controller {
 
         description += '<ol>'
         destination.links.forEach(link => {
-            description += '<li>' + link + '</li>'
+            description += '<li><img src="/waypoint_thumb/' + this.waypointIdMap[link.num].guid + '" width="40px" height="40px">' + link.name + '</li>'
         })
         description += '</ol>'
 

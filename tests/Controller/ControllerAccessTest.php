@@ -52,6 +52,11 @@ class ControllerAccessTest extends ControllerBaseTest
                     '{path}' => 'test',
                 ],
             ],
+            'waypoint_thumbnail' => [
+                'params' => [
+                    '{guid}' => 'test',
+                ],
+            ],
         ];
 
     public function testAllRoutesAreProtected(): void
