@@ -134,25 +134,25 @@ class WayPointHelper
         return $name;
     }
 
-    private function makeThumb(string $src, string $dest, int $desired_width = 40): string
+    private function makeThumb(string $srcPath, string $destPath, int $desiredWidth = 60): string
     {
         /* read the source image */
-        $source_image = imagecreatefromjpeg($src);
-        $width = imagesx($source_image);
-        $height = imagesy($source_image);
+        $sourceImage = imagecreatefromjpeg($srcPath);
+        $width = imagesx($sourceImage);
+        $height = imagesy($sourceImage);
 
         /* find the "desired height" of this thumbnail, relative to the desired width  */
-        $desired_height = (int)floor($height * ($desired_width / $width));
+        $desiredHeight = (int)floor($height * ($desiredWidth / $width));
 
         /* create a new, "virtual" image */
-        $virtual_image = imagecreatetruecolor($desired_width, $desired_height);
+        $virtualImage = imagecreatetruecolor($desiredWidth, $desiredHeight);
 
         /* copy source image at a resized size */
-        imagecopyresampled($virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height);
+        imagecopyresampled($virtualImage, $sourceImage, 0, 0, 0, 0, $desiredWidth, $desiredHeight, $width, $height);
 
         /* create the physical thumbnail image to its destination */
-        imagejpeg($virtual_image, $dest);
+        imagejpeg($virtualImage, $destPath);
 
-        return $dest;
+        return $destPath;
     }
 }
