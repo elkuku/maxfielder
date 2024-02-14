@@ -14,6 +14,8 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 
 import {Modal} from "bootstrap";
 
+import Swal from 'sweetalert2'
+
 import '../styles/map/play.css'
 
 /* stimulusFetch: 'lazy' */
@@ -328,7 +330,7 @@ export default class extends Controller {
         this.linkSelector.onAdd = function () {
             let div = L.DomUtil.create('div', 'info legend')
             div.innerHTML = ''
-                + '<button id="btnNext">Next...</button><br />'
+                + '<button id="btnNext">Start...</button><br />'
                 + '<select id="groupSelect">'
                 + linkList
                 + '</select>'
@@ -343,15 +345,18 @@ export default class extends Controller {
             this.showDestination(event.target.value)
         })
 
-        document.getElementById('btnNext').addEventListener('click', () => {
+        document.getElementById('btnNext').addEventListener('click', (e) => {
             const select = document.getElementById('groupSelect')
             const length = select.length
             if (select.value < length - 2) {
+                e.target.innerText = 'Next'
                 const newVal = parseInt(select.value) + 1
                 this.showDestination(newVal)
                 select.value = newVal
             } else {
-                alert('Finished :)')
+                e.target.innerText = 'Finished!'
+
+                Swal.fire('Finished :)');
             }
         })
     }
@@ -364,8 +369,12 @@ export default class extends Controller {
             clearInterval(this.soundNotifier)
             this.soundNotifier = null
 
+            document.getElementById('btnNext').innerText = 'Start...'
+
             return
         }
+
+        document.getElementById('btnNext').innerText = 'Next'
 
         const destination = this.links[id]
         this.destination = L.latLng(destination.lat, destination.lon)
@@ -376,7 +385,12 @@ export default class extends Controller {
 
         description += '<ol>'
         destination.links.forEach(link => {
-            description += '<li><img src="/waypoint_thumb/' + this.waypointIdMap[link.num].guid + '" width="40px" height="40px">' + link.name + '</li>'
+            description +=
+                '<li>'
+                + `<img src="/waypoint_thumb/${this.waypointIdMap[link.num].guid}"`
+                + 'width="60px" height="60px" alt="thumbnail image">'
+                + '&nbsp;' + link.name
+                + '</li>'
         })
         description += '</ol>'
 
