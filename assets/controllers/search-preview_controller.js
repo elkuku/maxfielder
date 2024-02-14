@@ -10,6 +10,7 @@ export default class extends Controller {
     static targets = ['result']
 
     static debounces = ['search']
+    query = ''
 
     connect() {
         useClickOutside(this)
@@ -17,12 +18,13 @@ export default class extends Controller {
     }
 
     onSearchInput(event) {
-        this.search(event.currentTarget.value)
+        this.query = event.currentTarget.value
+        this.search()
     }
 
-    async search(query) {
+    async search() {
         const params = new URLSearchParams({
-            q: query,
+            q: this.query,
             partial: 'searchPreview'
         })
         const response = await fetch(`${this.urlValue}?${params.toString()}`)
