@@ -18,55 +18,9 @@ class ImportFormType extends AbstractType
             ->add('importImages', CheckboxType::class, [
                 'required' => false,
             ])
-            // ->add('intelLink', null, ['required' => false])
-            // ->add(
-            //     'gpxRaw',
-            //     TextareaType::class,
-            //     [
-            //         'attr'     => ['cols' => '30', 'rows' => '5'],
-            //         'required' => false,
-            //     ]
-            // )
-            // ->add(
-            //     'csvRaw',
-            //     TextareaType::class,
-            //     [
-            //         'attr'     => ['cols' => '30', 'rows' => '5'],
-            //         'required' => false,
-            //     ]
-            // )
-            // ->add(
-            //     'idmcsvRaw',
-            //     TextareaType::class,
-            //     [
-            //         'attr'     => ['cols' => '30', 'rows' => '5'],
-            //         'required' => false,
-            //     ]
-            // )
-            // ->add(
-            //     'JsonRaw',
-            //     TextareaType::class,
-            //     [
-            //         'attr'     => ['cols' => '30', 'rows' => '5'],
-            //         'required' => false,
-            //     ]
-            // )
-            // ->add(
-            //     'OffleJson',
-            //     TextareaType::class,
-            //     [
-            //         'attr'     => ['cols' => '30', 'rows' => '5'],
-            //         'required' => false,
-            //     ]
-            // )
-            // ->add(
-            //     'multiexportcsv',
-            //     TextareaType::class,
-            //     [
-            //         'attr'     => ['cols' => '30', 'rows' => '5'],
-            //         'required' => false,
-            //     ]
-            // )
+            ->add('forceUpdate', CheckboxType::class, [
+                'required' => false,
+            ])
             ->add(
                 'multiexportjson',
                 TextareaType::class,
@@ -75,9 +29,5 @@ class ImportFormType extends AbstractType
                     'required' => false,
                 ]
             );
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
     }
 }

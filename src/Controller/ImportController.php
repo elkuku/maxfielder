@@ -20,25 +20,28 @@ class ImportController extends AbstractController
 {
     #[Route(path: '/import', name: 'import', methods: ['GET', 'POST'])]
     public function index(
-        Request $request,
-        WaypointRepository $waypointRepo,
-        WayPointParser $wayPointParser,
-        WayPointHelper $wayPointHelper,
+        Request                $request,
+        WaypointRepository     $waypointRepo,
+        WayPointParser         $wayPointParser,
+        WayPointHelper         $wayPointHelper,
         EntityManagerInterface $entityManager,
-    ): Response {
+    ): Response
+    {
         $form = $this->createForm(ImportFormType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $waypoints = $wayPointParser->parse($form->getData());
+                $data = $form->getData();
+                $waypoints = $wayPointParser->parse($data);
                 $count = $this->storeWayPoints(
                     $waypoints,
                     $waypointRepo,
                     $wayPointHelper,
-                    $entityManager
+                    $entityManager,
+                    isset($data['forceUpdate']) && $data['forceUpdate'],
                 );
                 if ($count) {
-                    $this->addFlash('success', $count.' Waypoint(s) imported!');
+                    $this->addFlash('success', $count . ' Waypoint(s) imported!');
                 } else {
                     $this->addFlash('warning', 'No Waypoints imported!');
                 }
@@ -61,11 +64,13 @@ class ImportController extends AbstractController
      * @param array<Waypoint> $wayPoints
      */
     private function storeWayPoints(
-        array $wayPoints,
-        WaypointRepository $repository,
-        WayPointHelper $wayPointHelper,
-        EntityManagerInterface $entityManager
-    ): int {
+        array                  $wayPoints,
+        WaypointRepository     $repository,
+        WayPointHelper         $wayPointHelper,
+        EntityManagerInterface $entityManager,
+        bool                   $forceUpdate = false,
+    ): int
+    {
         $currentWayPoints = $repository->findAll();
 
         $cnt = 0;
@@ -76,12 +81,25 @@ class ImportController extends AbstractController
                     && $wayPoint->getLon() === $currentWayPoint->getLon()
                 ) {
                     if ($currentWayPoint->getGuid() === $wayPoint->getGuid()) {
+                        // Waypoint already in DB
+                        if ($forceUpdate) {
+                            $currentWayPoint
+                                ->setName($wayPointHelper->cleanName((string)$wayPoint->getName()))
+                                ->setLat($wayPoint->getLat())
+                                ->setLon($wayPoint->getLon())
+                                ->setImage($wayPoint->getImage());
+
+                            $entityManager->persist($currentWayPoint);
+                            ++$cnt;
+                        }
+
                         continue 2;
                     }
 
                     if (!$currentWayPoint->getGuid() && $wayPoint->getGuid()) {
                         // guid is missing
                         $currentWayPoint->setGuid($wayPoint->getGuid());
+
                         $entityManager->persist($currentWayPoint);
                     }
 
@@ -89,8 +107,9 @@ class ImportController extends AbstractController
                 }
             }
 
+            // Waypoint not in DB
             $wayPoint->setName(
-                $wayPointHelper->cleanName((string) $wayPoint->getName())
+                $wayPointHelper->cleanName((string)$wayPoint->getName())
             );
 
             $entityManager->persist($wayPoint);
