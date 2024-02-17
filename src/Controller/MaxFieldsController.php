@@ -145,7 +145,7 @@ class MaxFieldsController extends BaseController
         EntityManagerInterface $entityManager,
     ): JsonResponse
     {
-        $existingKeys = [];
+        $response = [];
 
         $data = json_decode($request->getContent(), true);
 
@@ -154,15 +154,22 @@ class MaxFieldsController extends BaseController
 
         if ($keys) {
             $waypointIdMap = $maxFieldHelper->getWaypointsIdMap($maxfield->getPath());
-            $existingKeys = $ingressHelper->getExistingKeysForMaxfield($waypointIdMap, $keys);
-            $maxfield->setUserKeysWithUser($existingKeys, $agentNum);
+            try {
+                $existingKeys = $ingressHelper->getExistingKeysForMaxfield($waypointIdMap, $keys);
+                if ($existingKeys) {
+                    $maxfield->setUserKeysWithUser($existingKeys, $agentNum);
+                    $response['result'] = sprintf('%d keys added.', count($existingKeys));
 
-            $entityManager->flush();
-
-            $this->addFlash('success', sprintf('%d keys added.', count($existingKeys)));
+                    $entityManager->flush();
+                } else {
+                    $response['error'] = 'No keys found :(';
+                }
+            } catch (\Exception $exception) {
+                $response['error'] = $exception->getMessage();
+            }
         }
 
-        return $this->json($existingKeys);
+        return $this->json($response);
     }
 
     #[Route('/play/{path}', name: 'maxfield_play', methods: ['GET'])]

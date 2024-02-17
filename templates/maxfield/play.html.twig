@@ -23,7 +23,8 @@
                     <form method="post">
                         <div class="modal-body">
                             <label for="keys" class="form-label">Keys</label>
-                            <textarea name="keys" id="keys" cols="30" rows="5" class="form-control" required></textarea>
+                            <textarea {{ stimulus_target('maxfield-play', 'keys') }} name="keys" id="keys" cols="30" rows="5" class="form-control" required></textarea>
+                            <div {{ stimulus_target('maxfield-play', 'errorMessage') }}></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

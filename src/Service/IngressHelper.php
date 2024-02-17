@@ -30,6 +30,9 @@ class IngressHelper
         for ($i = 1; $i < count($lines); $i++) {
             $k = new AgentKeyInfo;
             $data = explode("\t", $lines[$i]);
+            if (count($data) != 5) {
+                throw new \InvalidArgumentException('Invalid keys string!');
+            }
             $k->name = $this->wayPointHelper->cleanName($data[0]);
             $k->link = $data[1];
             $k->guid = $data[2];

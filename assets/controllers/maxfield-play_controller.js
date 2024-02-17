@@ -26,6 +26,8 @@ export default class extends Controller {
         waypointIdMap: String
     }
 
+    static targets = ['keys', 'errorMessage']
+
     maxfieldData = null
     waypointIdMap = null
 
@@ -478,12 +480,19 @@ export default class extends Controller {
     }
 
     async uploadKeys(e) {
+        const keys = this.keysTarget.value
+        if (!keys) {
+            this.errorMessageTarget.className = 'alert alert-danger'
+            this.errorMessageTarget.innerText = 'Where are the keys??'
+
+            return
+        }
         const response = await fetch('/maxfield/submit-user-keys/' + this.pathValue, {
             method: 'POST',
             body: JSON.stringify({
                 // TODO proper agent number
                 agentNum: 1,
-                keys: document.getElementById('keys').value,
+                keys: keys,
             }),
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
@@ -492,11 +501,20 @@ export default class extends Controller {
 
         const data = await response.json()
 
-        console.log(data)
+        this.keysTarget.value = ''
 
-        this.loadFarmLayer2()
+        if (data['error']) {
+            this.errorMessageTarget.className = 'alert alert-danger'
+            this.errorMessageTarget.innerText = data['error']
+        } else {
+            this.loadFarmLayer2();
 
-        this.modal.hide()
+            this.modal.hide()
+
+            this.errorMessageTarget.className = ''
+            this.errorMessageTarget.innerText = ''
+            Swal.fire(data['result']);
+        }
     }
 
     soundNotify() {
