@@ -261,9 +261,13 @@ export default class extends Controller {
             let css = numKeys > 3 ? 'circle farmalot' : 'circle'
 
             let hasKeys = 0
+            let capsules = ''
             for (let i = 0; i < userKeys.length; i++) {
                 if (userKeys[i].guid === this.waypointIdMap[cnt].guid) {
                     hasKeys = userKeys[i].count
+                    if (userKeys[i].capsules) {
+                        capsules = '<br><br>'+userKeys[i].capsules
+                    }
                     if (hasKeys >= numKeys) {
                         css += ' farm-done';
                     }
@@ -278,7 +282,7 @@ export default class extends Controller {
                             html: '<b class="' + css + '">' + hasKeys + '/' + numKeys + '</b>'
                         })
                     }
-                ).bindPopup('<b>' + o.name + '</b><br>' + o.description + ' (' + hasKeys + ')')
+                ).bindPopup('<b>' + o.name + '</b><br>' + o.description + ' (' + hasKeys + ')' + capsules);
             this.farmLayer2.addLayer(marker)
             cnt++
         }.bind(this))
