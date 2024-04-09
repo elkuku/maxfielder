@@ -1,16 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Asserted type mixed for \\$subject with type mixed does not narrow down the type\\.$#"
-			count: 1
-			path: src/Security/MaxfieldVoter.php
-
-		-
-			message: "#^Asserted type string for \\$attribute with type string does not narrow down the type\\.$#"
-			count: 1
-			path: src/Security/MaxfieldVoter.php
-
-		-
 			message: "#^Offset float does not exist on 'BKMGTP'\\.$#"
 			count: 1
 			path: src/Service/MaxFieldHelper.php
