@@ -27,15 +27,17 @@
 
         <div class="navbar-nav ms-auto">
             {% if app.user %}
-                <div class="dropdown dropstart">
+                <div class="dropdown bd-mode-toggle">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi-person"></i>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item" href="{{ path('app_profile') }}"><i class="bi-person"></i>
-                                Profile</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="bi-star"></i> Another action</a></li>
+                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuButton1" data-bs-popper="static">
+                        <li>
+                            <a class="dropdown-item" href="{{ path('app_profile') }}">
+                                <i class="bi-person"></i> Profile
+                            </a>
+                        </li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
