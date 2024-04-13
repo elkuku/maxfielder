@@ -48,15 +48,33 @@ button#btnNext:hover {
     height: 34px;
     padding: 10px;
     background: #fff;
-    border: 3px solid #000;
+    border: 3px solid #6e6e6e;
     color: #000;
     text-align: center;
+}
+
+.circleBig {
+    border-radius: 50%;
+    width: 54px;
+    height: 54px;
+    background: #fff;
+    border: 3px solid #ccc;
+    color: #000;
+    text-align: center;
+    font-size: 3em;
+    font-weight: bold;
 }
 
 [data-bs-theme=dark] .circle {
     background: #000;
     border: 3px solid #666666;
     color: #ffffa0;
+}
+
+[data-bs-theme=dark] .circleBig {
+    background: #000;
+    border: 3px solid #666666;
+    color: #07bf05;
 }
 
 .circle.farmalot {
@@ -82,6 +100,7 @@ a.routing-enabled {
     color: orange;
     cursor: pointer;
 }
+
 [data-bs-theme=dark] .leaflet-bar a.routing-enabled {
     color: orange;
     cursor: pointer;
@@ -102,12 +121,11 @@ div#distanceBar {
 }
 
 [data-bs-theme=dark] .leaflet-control-locate a {
-    background-color: #fff;
+    background-color: #666;
 }
 
-[data-bs-theme=dark] .leaflet-control-layers-toggle{
+[data-bs-theme=dark] .leaflet-control-layers-toggle {
     background-color: #000;
-
 }
 
 [data-bs-theme=dark] .leaflet-popup-content-wrapper {
@@ -121,11 +139,18 @@ div#distanceBar {
     color: #6db46c;
 }
 
-[data-bs-theme=dark] .leaflet-routing-container{
+[data-bs-theme=dark] .leaflet-routing-container {
     background-color: #3a3333;
-
 }
 
-.farm-done{
+.farm-done {
     opacity: 0.2;
+}
+
+.hasKeys {
+    font-size: .8em;
+}
+
+.zoomButton {
+    margin-bottom: 10px;
 }

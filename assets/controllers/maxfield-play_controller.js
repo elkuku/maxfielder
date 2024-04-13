@@ -114,7 +114,8 @@ export default class extends Controller {
             center: [0, 0],
             zoom: 3,
             layers: [CartoDB_PositronNoLabels, this.farmLayer],
-            fullscreenControl: true
+            fullscreenControl: true,
+            zoomControl: false
         })
 
         const baseLayers = {
@@ -136,6 +137,31 @@ export default class extends Controller {
         }
 
         L.control.layers(baseLayers, overlays).addTo(this.map)
+
+        const zoomControl = L.control({position: 'bottomright'})
+
+        zoomControl.onAdd = function () {
+            let div = L.DomUtil.create('div')
+            div.innerHTML =
+                '<div class="circleBig zoomButton" href="#" data-action="click->maxfield-play#zoomIn">+</div>' +
+                '<div class="circleBig zoomButton" href="#" data-action="click->maxfield-play#zoomOut">-</div>' +
+                '<div class="circleBig zoomButton" href="#" data-action="click->maxfield-play#zoomAll">A</div>'
+
+            return div
+        }
+
+        zoomControl.addTo(this.map)
+
+        // Locate control
+        L.control.locate({
+            keepCurrentZoomLevel: true,
+            position: 'bottomright',
+            locateOptions: {
+                enableHighAccuracy: true
+            }
+        }).addTo(this.map)
+
+        this.map.on('locationfound', this.onLocationFound.bind(this))
 
         this.linkSelector = L.control({position: 'bottomleft'})
         this.distanceBar = L.control({position: 'bottomleft'})
@@ -176,16 +202,6 @@ export default class extends Controller {
             color: 'red',
             dashArray: '5, 15',
         }).addTo(this.map)
-
-        // Locate control
-        L.control.locate({
-            keepCurrentZoomLevel: true,
-            locateOptions: {
-                enableHighAccuracy: true
-            }
-        }).addTo(this.map)
-
-        this.map.on('locationfound', this.onLocationFound.bind(this))
 
         // Routing control
         this.routingControl = L.Routing.control({
@@ -279,10 +295,10 @@ export default class extends Controller {
                     {
                         icon: L.divIcon({
                             className: 'farm-layer',
-                            html: '<b class="' + css + '">' + hasKeys + '/' + numKeys + '</b>'
+                            html: `<b class="${css}">${numKeys}<span class="hasKeys">&nbsp;${hasKeys}</span></b>`
                         })
                     }
-                ).bindPopup('<b>' + o.name + '</b><br>' + o.description + ' (' + hasKeys + ')' + capsules);
+                ).bindPopup(`<b>${o.name}</b><br>${o.description} (${hasKeys})${capsules}`);
             this.farmLayer2.addLayer(marker)
             cnt++
         }.bind(this))
@@ -310,10 +326,10 @@ export default class extends Controller {
             L.marker([link.lat, link.lon], {
                 icon: L.divIcon({
                     className: 'link-layer',
-                    html: '<b class="circle">' + num + '</b>'
+                    html: `<b class="circle">${num}</b>`
                 })
             })
-                .bindPopup('<b>' + link.name + '</b><br/>' + description)
+                .bindPopup(`<b>${link.name}</b><br/>${description}`)
                 .addTo(this.linkLayer)
             num++
         }.bind(this))
@@ -365,6 +381,18 @@ export default class extends Controller {
                 Swal.fire('Finished :)');
             }
         })
+    }
+
+    zoomIn() {
+        this.map.setZoom(this.map.getZoom() + 1);
+    }
+
+    zoomOut() {
+        this.map.setZoom(this.map.getZoom() - 1);
+    }
+
+    zoomAll() {
+        this.map.fitBounds(this.farmLayer.getBounds())
     }
 
     showDestination(id) {
