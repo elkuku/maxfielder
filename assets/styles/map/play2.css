@@ -1,0 +1,98 @@
+html, body, #map {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+
+#map {
+    position: absolute;
+    top: 50px;
+    bottom: 0;
+    width: 100%;
+}
+
+#map-debug {
+    background: black;
+    color: #07bf05;
+    position: absolute;
+    z-index: 1;
+    top: 60px;
+    right: 50%;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    font-family: 'monospace';
+}
+
+.mapboxgl-popup-content {
+    color: black;
+}
+
+.mapboxgl-popup-close-button {
+    display: none;
+}
+
+.circle {
+    border-radius: 50%;
+    min-width: 34px;
+    min-height: 34px;
+    padding: 10px;
+    background: #fff;
+    border: 3px solid #6e6e6e;
+    color: #000;
+    text-align: center;
+}
+
+.circle-button {
+    height: 70px;
+    width: 70px;
+    border: solid 1px;
+    border-radius: 50%;
+    font-size: 3em;
+}
+
+button#btnNext {
+    background-color: green;
+    border: 1px solid green;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+button#btnNext:hover {
+    background-color: white;
+    border: 1px solid green;
+    color: green;
+}
+
+div.destinationMarker {
+    color:black;
+    background-color: #ffd840;
+    font-size: 2em;
+}
+
+.farm-layer b {
+    color: red;
+    font-size: 1.6em;
+}
+
+.circle.farmalot {
+    background-color: #e7e1a5;
+}
+
+[data-bs-theme=dark] .circle.farmalot {
+    background-color: #d2c11d;
+    color: #000;
+}
+
+div#optionsBoxContent{
+    background-color: white;
+    border: 1px solid #6e6e6e;
+    padding: 5px;
+    display: none;
+}

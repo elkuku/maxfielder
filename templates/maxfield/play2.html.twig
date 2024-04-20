@@ -1,0 +1,103 @@
+{% extends 'base-map.html.twig' %}
+
+{% block title %}
+    {{ maxfield.name }}
+{% endblock %}
+
+{% block body %}
+    <div {{ stimulus_controller('maxfield-play2', {
+        path: maxfield.path,
+        jsonData: jsonData,
+        waypointIdMap :waypointIdMap,
+        mapboxGlToken :mapboxGlToken
+    }) }}>
+
+        <div id="map-debug" {{ stimulus_target('maxfield-play2', 'mapDebug') }}>AAA</div>
+        <div id="optionsBox" class="mapboxgl-ctrl">
+            <button
+                    data-action="mouseenter->maxfield-play2#optionsBoxShow"
+                    data-maxfield-play2-target="optionsBoxTrigger"
+            ><i class="bi-option"></i></button>
+            <div id="optionsBoxContent"
+                 data-action="mouseleave->maxfield-play2#optionsBoxHide"
+                 data-maxfield-play2-target="optionsBox"
+            >
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+                    <label class="form-check-label" for="exampleRadios1">
+                        Default radio
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+                    <label class="form-check-label" for="exampleRadios2">
+                        Second default radio
+                    </label>
+                </div>
+                <hr>
+                <form>
+                    <div class="form-check">
+                        <input type="checkbox"
+                               class="form-check-input"
+                               id="chkLayerFarm"
+                               checked=""
+                               data-action="maxfield-play2#toggleLayer"
+                               data-maxfield-play2-item-param="farm"
+                        >
+                        <label class="form-check-label" for="chkLayerFarm">Farm</label>
+                    </div>
+                    <div class="form-check">
+                        <input
+                                type="checkbox"
+                                class="form-check-input"
+                                id="chkLayerFarm2"
+                                data-action="maxfield-play2#toggleLayer"
+                                data-maxfield-play2-item-param="farm2"
+                        >
+                        <label class="form-check-label" for="chkLayerFarm2">Farm2</label>
+                    </div>
+                    <div class="form-check">
+                        <input
+                                type="checkbox"
+                                class="form-check-input"
+                                id="chkLayerLinks"
+                                data-action="maxfield-play2#toggleLayer"
+                                data-maxfield-play2-item-param="links"
+                        >
+                        <label class="form-check-label" for="chkLayerLinks">Links</label>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="map"></div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Upload Keys</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post">
+                        <div class="modal-body">
+                            <label for="keys" class="form-label">Keys</label>
+                            <textarea {{ stimulus_target('maxfield-play2', 'keys') }} name="keys" id="keys" cols="30"
+                                                                                      rows="5" class="form-control"
+                                                                                      required></textarea>
+                            <div {{ stimulus_target('maxfield-play2', 'errorMessage') }}></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" data-action="maxfield-play2#uploadKeys">Save
+                                changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+    </div>
+
+{% endblock %}

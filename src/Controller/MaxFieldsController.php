@@ -172,6 +172,26 @@ class MaxFieldsController extends BaseController
         return $this->json($response);
     }
 
+    #[Route('/play2/{path}', name: 'maxfield_play2', methods: ['GET'])]
+    public function play2(MaxFieldHelper                               $maxFieldHelper,
+                          Maxfield                                     $maxfield,
+                          #[Autowire('%env(MAPBOX_GL_TOKEN)%')] string $mapboxGlToken,
+    ): Response
+    {
+        $json = (new JsonHelper())
+            ->getJson($maxFieldHelper->getParser($maxfield->getPath()));
+
+        return $this->render(
+            'maxfield/play2.html.twig',
+            [
+                'maxfield' => $maxfield,
+                'jsonData' => $json,
+                'waypointIdMap' => $maxFieldHelper->getWaypointsIdMap($maxfield->getPath()),
+                'mapboxGlToken' => $mapboxGlToken
+            ]
+        );
+    }
+
     #[Route('/play/{path}', name: 'maxfield_play', methods: ['GET'])]
     public function play(
         MaxFieldHelper $maxFieldHelper,
@@ -193,8 +213,8 @@ class MaxFieldsController extends BaseController
 
     #[Route('/get-user-keys/{path}', name: 'maxfield_get_user_keys', methods: ['GET'])]
     public function getUserKeys(
-        Maxfield       $maxfield
-    ):JsonResponse
+        Maxfield $maxfield
+    ): JsonResponse
     {
         return $this->json($maxfield->getUserKeys());
     }
