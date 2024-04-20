@@ -42,6 +42,12 @@ html, body, #map {
     text-align: center;
 }
 
+[data-bs-theme=dark] .circle {
+    background: #000;
+    border: 3px solid #666666;
+    color: #ffffa0;
+}
+
 .circle-button {
     height: 70px;
     width: 70px;
@@ -70,7 +76,7 @@ button#btnNext:hover {
     color: green;
 }
 
-div.destinationMarker {
+div.destinationMarker ,[data-bs-theme=dark] div.destinationMarker {
     color:black;
     background-color: #ffd840;
     font-size: 2em;
@@ -90,9 +96,31 @@ div.destinationMarker {
     color: #000;
 }
 
+.farm-done {
+    opacity: 0.3;
+}
+
+.hasKeys {
+    font-size: .8em;
+}
+
 div#optionsBoxContent{
     background-color: white;
     border: 1px solid #6e6e6e;
     padding: 5px;
     display: none;
+}
+
+[data-bs-theme=dark] .mapboxgl-ctrl-group{
+    background-color: #4a4a4a;
+}
+
+[data-bs-theme=dark] .mapboxgl-ctrl{
+    color: lime;
+
+}
+
+[data-bs-theme=dark] .mapboxgl-popup-content, [data-bs-theme=dark] #optionsBoxContent{
+    background-color: #4a4a4a;
+    color: lime;
 }

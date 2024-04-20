@@ -29,7 +29,9 @@ export default class extends Controller {
     modal = null
 
     bounds = null
-    markers = []
+    markers = {}
+
+    trackHeading = false
 
     connect() {
         this.maxfieldData = JSON.parse(this.jsonDataValue)
@@ -43,11 +45,12 @@ export default class extends Controller {
     setupMap() {
         mapboxgl.accessToken = this.mapboxGlTokenValue;
         this.map = new mapboxgl.Map({
-            container: 'map', style: 'mapbox://styles/mapbox/streets-v12',
-            //style: 'mapbox://styles/mapbox/dark-v11',
-            center: [0, 0], zoom: 2,
+            container: 'map',
+            center: [0, 0],
+            zoom: 2,
         });
 
+        //this.setStyleConfig('x')
         const el = document.createElement('div');
         el.className = 'destinationMarker'
         el.innerHTML = 'O'
@@ -66,6 +69,9 @@ export default class extends Controller {
         this.map.addControl(this.getPlayControl())
 
         this.loadFarmLayer()
+        this.loadFarmLayer2()
+        //this._clearLayers()
+        //this._toggleLayer('farm', 'block')
         this.zoomAll()
     }
 
@@ -140,14 +146,14 @@ export default class extends Controller {
         });
 
         control.on('geolocate', (event) => {
-            console.log(event)
             const latitude = event.coords.latitude;
             const longitude = event.coords.longitude;
 
-            console.log(latitude, longitude);
             this.mapDebugTarget.innerHTML = `Lat: ${latitude}<br>  Bearing: ${event.coords.heading}<br>` + `Map head: ${this.map.getBearing()}`
             if (event.coords.heading) {
-                //this.map.setBearing(event.coords.heading);
+                if (this.trackHeading) {
+                    this.map.setBearing(event.coords.heading);
+                }
             }
         });
 
@@ -167,7 +173,7 @@ export default class extends Controller {
     }
 
     loadFarmLayer() {
-        this.markers['farm'] = []
+        this.markers.farm = []
         this.maxfieldData.waypoints.forEach(function (o) {
             const num = o.keys
             let css = num > 3 ? 'circle farmalot' : 'circle'
@@ -178,9 +184,50 @@ export default class extends Controller {
                 .setLngLat([o.lon, o.lat])
                 .setPopup(new mapboxgl.Popup().setHTML('<b>' + o.name + '</b><br>' + o.description))
                 .addTo(this.map)
-            this.markers['farm'].push(marker)
+            this.markers.farm.push(marker)
         }.bind(this))
         this.zoomAll()
+    }
+
+    async loadFarmLayer2() {
+        this.markers.farm2 = []
+
+        const response = await fetch('/maxfield/get-user-keys/' + this.pathValue)
+        const data = await response.json()
+
+        // TODO Select proper user
+        const userKeys = (data && 1 in data) ? data[1] : []
+        let cnt = 0
+
+        this.maxfieldData.waypoints.forEach(function (o) {
+            const numKeys = o.keys
+            let css = numKeys > 3 ? 'circle farmalot' : 'circle'
+
+            let hasKeys = 0
+            let capsules = ''
+            for (let i = 0; i < userKeys.length; i++) {
+                if (userKeys[i].guid === this.waypointIdMap[cnt].guid) {
+                    hasKeys = userKeys[i].count
+                    if (userKeys[i].capsules) {
+                        capsules = '<br><br>'+userKeys[i].capsules
+                    }
+                    if (hasKeys >= numKeys) {
+                        css += ' farm-done';
+                    }
+                }
+            }
+
+            const el = document.createElement('div');
+            el.className = 'farm-layer'
+            el.style="display:none"
+            el.innerHTML = `<b class="${css}">${numKeys}<span class="hasKeys">&nbsp;${hasKeys}</span></b>`
+            const marker = new mapboxgl.Marker(el)
+                .setLngLat([o.lon, o.lat])
+                .setPopup(new mapboxgl.Popup().setHTML(`<b>${o.name}</b><br>${o.description} (${hasKeys})${capsules}`))
+                .addTo(this.map)
+            this.markers.farm2.push(marker)
+            cnt++
+        }.bind(this))
     }
 
     nextLink(e) {
@@ -283,20 +330,48 @@ export default class extends Controller {
     optionsBoxShow(e) {
         this.optionsBoxTriggerTarget.style.display = 'none'
         this.optionsBoxTarget.style.display = 'block'
-        console.log(e)
     }
 
     optionsBoxHide(e) {
         this.optionsBoxTriggerTarget.style.display = 'block'
         this.optionsBoxTarget.style.display = 'none'
-        console.log(e)
     }
 
-    toggleLayer(e) {
-        const checked = e.target.checked
+    setStyle(event) {
+        console.log(event)
+        console.log(event.target.value)
+        this.map.setStyle('mapbox://styles/mapbox/' + event.target.value);
+    }
 
-        this.markers[e.params.item].forEach((e) => {
-            e._element.style.display = checked ? 'block' : 'none'
+    setStyleConfig(event) {
+        const x = 'showPointOfInterestLabels'
+        this.map.setConfigProperty('basemap', x, false);
+    }
+
+    toggleLayer(event) {
+        this._clearLayers()
+        if (event.target.value) {
+            this._toggleLayer(event.target.value, 'block');
+        }
+    }
+
+    followHeading(event) {
+        console.log(event)
+        console.log(event.target.checked)
+
+    }
+
+    _clearLayers() {
+        console.log(this.markers)
+        Object.keys(this.markers).forEach(function(key,index) {
+            console.log(key)
+            this._toggleLayer(key, 'none')
+        }.bind(this))
+    }
+
+    _toggleLayer(name, value) {
+        this.markers[name].forEach((e) => {
+            e._element.style.display = value
         })
     }
 }
