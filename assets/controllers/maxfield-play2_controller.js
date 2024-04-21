@@ -14,7 +14,11 @@ export default class extends Controller {
         path: String, jsonData: String, waypointIdMap: String, mapboxGlToken: String
     }
 
-    static targets = ['keys', 'errorMessage', 'linkselect', 'mapDebug', 'optionsBox', 'optionsBoxTrigger']
+    static targets = [
+        'keys', 'errorMessage', 'linkselect', 'mapDebug',
+        'optionsBox', 'optionsBoxTrigger',
+        'btnUploadKeys'
+    ]
 
     className = 'maxfield-play2'
 
@@ -32,6 +36,7 @@ export default class extends Controller {
     markers = {}
 
     trackHeading = false
+    centerLocation = false;
 
     connect() {
         this.maxfieldData = JSON.parse(this.jsonDataValue)
@@ -126,11 +131,7 @@ export default class extends Controller {
     getZoomControl() {
         return {
             onAdd: (map) => {
-                const zoomContainer = document.createElement('div');
-                zoomContainer.classList.add('mapboxgl-ctrl');
-                zoomContainer.innerHTML = '<button class="circle-button" data-action="maxfield-play2#zoomIn"><i class="bi-plus"></i></button>' + '<br>' + '<button class="circle-button" data-action="maxfield-play2#zoomOut"><i class="bi-dash"></i></button>' + '<br>' + '<button class="circle-button" data-action="maxfield-play2#zoomAll"><i class="bi-dash"></i></button>'
-
-                return zoomContainer;
+                return document.getElementById('zoomBox')
             }, getDefaultPosition: () => {
                 return 'bottom-right'
             }, onRemove: () => {
@@ -140,16 +141,30 @@ export default class extends Controller {
 
     getGeolocateControl() {
         const control = new mapboxgl.GeolocateControl({
+            fitBoundsOptions: {
+                linear: true,
+                minZoom: 18,
+                maxZoom: 18,
+            },
             positionOptions: {
                 enableHighAccuracy: true
-            }, trackUserLocation: true, showUserHeading: true
+            },
+            trackUserLocation: true,
+            showUserHeading: true
         });
 
         control.on('geolocate', (event) => {
             const latitude = event.coords.latitude;
             const longitude = event.coords.longitude;
 
-            this.mapDebugTarget.innerHTML = `Lat: ${latitude}<br>  Bearing: ${event.coords.heading}<br>` + `Map head: ${this.map.getBearing()}`
+            if (this.centerLocation) {
+                this.map.flyTo({
+                    center: [longitude, latitude],
+                    // zoom:16
+                });
+            }
+
+            this.mapDebugTarget.innerHTML = `Lat: ${latitude.toFixed(2)}<br>  Bearing: ${event.coords.heading}<br>` + `Map head: ${this.map.getBearing().toFixed(2)}`
             if (event.coords.heading) {
                 if (this.trackHeading) {
                     this.map.setBearing(event.coords.heading);
@@ -190,7 +205,12 @@ export default class extends Controller {
     }
 
     async loadFarmLayer2() {
-        this.markers.farm2 = []
+        let init = true
+        if (this.markers.farm2) {
+            this._clearLayers('farm2')
+            init = false
+        }
+        this.markers.farm2 = [];
 
         const response = await fetch('/maxfield/get-user-keys/' + this.pathValue)
         const data = await response.json()
@@ -209,7 +229,7 @@ export default class extends Controller {
                 if (userKeys[i].guid === this.waypointIdMap[cnt].guid) {
                     hasKeys = userKeys[i].count
                     if (userKeys[i].capsules) {
-                        capsules = '<br><br>'+userKeys[i].capsules
+                        capsules = '<br><br>' + userKeys[i].capsules
                     }
                     if (hasKeys >= numKeys) {
                         css += ' farm-done';
@@ -219,7 +239,9 @@ export default class extends Controller {
 
             const el = document.createElement('div');
             el.className = 'farm-layer'
-            el.style="display:none"
+            if (init) {
+                el.style = "display:none";
+            }
             el.innerHTML = `<b class="${css}">${numKeys}<span class="hasKeys">&nbsp;${hasKeys}</span></b>`
             const marker = new mapboxgl.Marker(el)
                 .setLngLat([o.lon, o.lat])
@@ -284,28 +306,10 @@ export default class extends Controller {
         this.destinationMarker.remove()
         this.destinationMarker = new mapboxgl.Marker(el)
             .setLngLat(this.destination)
-            .setPopup(new mapboxgl.Popup({offset: 25}) // add popups
+            .setPopup(new mapboxgl.Popup({offset: 25, maxWidth: '400px'}) // add popups
                 .setHTML(`<b>${destination.name}</b><hr>${description}`))
             .addTo(this.map)
-        /*
-                this.destinationMarker
-                    .setLngLat(this.destination)
-                    .setPopup(
-                        new mapboxgl.Popup({offset: 25}) // add popups
-                            .setHTML(
-                                `<b>${destination.name}</b><hr>${description}`
-                            )
-                    )
-        */
 
-        // .setPopup('<b>' + destination.name + '</b><hr>' + description)
-        /*
-        .setIcon(
-            L.divIcon({
-                html: '<b class="circle circle-dest">' + (parseInt(id) + 1) + '</b>'
-            })
-        )
-*/
         // Routing
         if (id > 0) {
             /*
@@ -348,22 +352,82 @@ export default class extends Controller {
         this.map.setConfigProperty('basemap', x, false);
     }
 
+    async uploadKeys(e) {
+        const keys = this.keysTarget.value
+        if (!keys) {
+            this.errorMessageTarget.className = 'alert alert-danger'
+            this.errorMessageTarget.innerText = 'Where are the keys??'
+
+            return
+        }
+        const response = await fetch('/maxfield/submit-user-keys/' + this.pathValue, {
+            method: 'POST',
+            body: JSON.stringify({
+                // TODO proper agent number
+                agentNum: 1,
+                keys: keys,
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        });
+
+        const data = await response.json()
+
+        this.keysTarget.value = ''
+
+        if (data['error']) {
+            this.errorMessageTarget.className = 'alert alert-danger'
+            this.errorMessageTarget.innerText = data['error']
+        } else {
+            this.loadFarmLayer2();
+
+            this.modal.hide()
+
+            this.errorMessageTarget.className = ''
+            this.errorMessageTarget.innerText = ''
+            Swal.fire(data['result']);
+        }
+    }
+
+
     toggleLayer(event) {
         this._clearLayers()
-        if (event.target.value) {
-            this._toggleLayer(event.target.value, 'block');
+        const layer = event.target.value
+        if (layer) {
+            this._toggleLayer(layer, 'block');
         }
+
+        if ('farm2' === layer) {
+            this.btnUploadKeysTarget.style.display = 'block'
+        } else {
+            this.btnUploadKeysTarget.style.display = 'none'
+        }
+    }
+
+    toggleCenter(event) {
+        this.centerLocation = !this.centerLocation
+        this._toggleButtonClass(event.target, this.centerLocation)
     }
 
     followHeading(event) {
         console.log(event)
         console.log(event.target.checked)
+        this.trackHeading = event.target.checked
+    }
 
+    toggleHeading(event) {
+        this.trackHeading = !this.trackHeading
+        this._toggleButtonClass(event.target, this.trackHeading)
+    }
+
+    showModal() {
+        this.modal.show()
     }
 
     _clearLayers() {
         console.log(this.markers)
-        Object.keys(this.markers).forEach(function(key,index) {
+        Object.keys(this.markers).forEach(function (key, index) {
             console.log(key)
             this._toggleLayer(key, 'none')
         }.bind(this))
@@ -373,5 +437,40 @@ export default class extends Controller {
         this.markers[name].forEach((e) => {
             e._element.style.display = value
         })
+    }
+
+    _removeLayer(name) {
+        this.markers[name].forEach((e) => {
+            e.remove()
+            //e._element.style.display = value
+        })
+    }
+
+    setDebug(event) {
+        console.log(event)
+        console.log(event.target.checked)
+        this.mapDebugTarget.style.display = event.target.checked ? 'block' : 'none'
+    }
+
+    toggleDebug(event) {
+        let state = ('block' === this.mapDebugTarget.style.display || '' === this.mapDebugTarget.style.display)
+
+        if (state) {
+            this.mapDebugTarget.style.display = 'none'
+        } else {
+            this.mapDebugTarget.style.display = 'block'
+        }
+        state = !state
+        this._toggleButtonClass(event.target, state)
+    }
+
+    _toggleButtonClass(button, state) {
+        if (true === state) {
+            button.classList.add('btn-info')
+            button.classList.remove('btn-outline-info')
+        } else {
+            button.classList.remove('btn-info')
+            button.classList.add('btn-outline-info')
+        }
     }
 }

@@ -12,13 +12,14 @@
         mapboxGlToken :mapboxGlToken
     }) }}>
 
-        <div id="map-debug" {{ stimulus_target('maxfield-play2', 'mapDebug') }}>AAA</div>
+        <div id="map-debug" {{ stimulus_target('maxfield-play2', 'mapDebug') }}>D3bug</div>
 
         <div id="optionsBox" class="mapboxgl-ctrl">
             <button
+                    class="optionsBoxTrigger"
                     data-action="mouseenter->maxfield-play2#optionsBoxShow"
                     data-maxfield-play2-target="optionsBoxTrigger"
-            ><i class="bi-option"></i></button>
+            ><i class="bi-list"></i></button>
             <div id="optionsBoxContent"
                  data-action="mouseleave->maxfield-play2#optionsBoxHide"
                  data-maxfield-play2-target="optionsBox"
@@ -40,12 +41,33 @@
                     <option value="">None</option>
                     <option value="farm" selected>Farm</option>
                     <option value="farm2">Farm2</option>
-                    <option value="links">Links</option>
+                    <!--<option value="links">Links</option>-->
                 </select>
+
+                <button class="btn btn-info" style="display: none" data-maxfield-play2-target="btnUploadKeys"
+                        data-action="maxfield-play2#showModal">Upload Keys
+                </button>
+
                 <hr>
-                <label for="chkFollowHeading">Heading</label>
-                <input type="checkbox" id="chkFollowHeading" data-action="maxfield-play2#followHeading">
+
+                <div class="d-grid gap-2 d-md-block">
+                    <button class="btn btn-outline-info" type="button"
+                            data-action="maxfield-play2#toggleHeading">Heading
+                    </button>
+                    <button class="btn btn-outline-info" type="button"
+                            data-action="maxfield-play2#toggleCenter">Center
+                    </button>
+                    <button class="btn btn-info" type="button"
+                            data-action="maxfield-play2#toggleDebug">Debug
+                    </button>
+                </div>
             </div>
+        </div>
+
+        <div id="zoomBox" class="mapboxgl-ctrl">
+            <button class="circle-button" data-action="maxfield-play2#zoomIn"><i class="bi-plus"></i></button>
+            <button class="circle-button" data-action="maxfield-play2#zoomOut"><i class="bi-dash"></i></button>
+            <button class="circle-button" data-action="maxfield-play2#zoomAll"><i class="bi-asterisk"></i></button>
         </div>
 
         <div id="map"></div>

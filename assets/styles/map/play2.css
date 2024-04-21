@@ -54,6 +54,8 @@ html, body, #map {
     border: solid 1px;
     border-radius: 50%;
     font-size: 3em;
+    display: block;
+    margin-bottom: 10px;
 }
 
 button#btnNext {
@@ -111,6 +113,11 @@ div#optionsBoxContent{
     display: none;
 }
 
+button.optionsBoxTrigger{
+    font-size: 2em;
+    border-radius: 5px;
+}
+
 [data-bs-theme=dark] .mapboxgl-ctrl-group{
     background-color: #4a4a4a;
 }
@@ -123,4 +130,8 @@ div#optionsBoxContent{
 [data-bs-theme=dark] .mapboxgl-popup-content, [data-bs-theme=dark] #optionsBoxContent{
     background-color: #4a4a4a;
     color: lime;
+}
+
+.mapboxgl-popup{
+    max-width: 500px;
 }
