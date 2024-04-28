@@ -58,6 +58,13 @@ html, body, #map {
     margin-bottom: 10px;
 }
 
+.button-toggle{
+}
+
+.button-toggle-selected{
+    color: orange;
+}
+
 button#btnNext {
     background-color: green;
     border: 1px solid green;

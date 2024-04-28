@@ -6,6 +6,7 @@ import '../styles/map/play2.css'
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
+import * as turf from '@turf/turf'
 import Swal from "sweetalert2";
 
 /* stimulusFetch: 'lazy' */
@@ -17,7 +18,7 @@ export default class extends Controller {
     static targets = [
         'keys', 'errorMessage', 'linkselect', 'mapDebug',
         'optionsBox', 'optionsBoxTrigger',
-        'btnUploadKeys'
+        'btnUploadKeys', 'distanceBar'
     ]
 
     className = 'maxfield-play2'
@@ -28,6 +29,8 @@ export default class extends Controller {
     links = []
     soundNotifier = null
     distance = 0
+    location = null
+    destination = null
 
     map = null
     modal = null
@@ -37,25 +40,27 @@ export default class extends Controller {
 
     trackHeading = false
     centerLocation = false;
+    isBusy = false
+
+    optimizedRoutePoints = null
 
     connect() {
         this.maxfieldData = JSON.parse(this.jsonDataValue)
         this.waypointIdMap = JSON.parse(this.waypointIdMapValue)
         this.modal = new Modal('#exampleModal')
         this.links = this.maxfieldData.links
+        this.optimizedRoutePoints = new Map()
         this.setupMap()
-        //this.loadFarmLayer()
     }
 
     setupMap() {
         mapboxgl.accessToken = this.mapboxGlTokenValue;
         this.map = new mapboxgl.Map({
             container: 'map',
-            center: [0, 0],
-            zoom: 2,
+            center: [this.maxfieldData.waypoints[0].lon, this.maxfieldData.waypoints[0].lat],
+            zoom: 14,
         });
 
-        //this.setStyleConfig('x')
         const el = document.createElement('div');
         el.className = 'destinationMarker'
         el.innerHTML = 'O'
@@ -69,15 +74,138 @@ export default class extends Controller {
             visualizePitch: true
         }), 'top-left');
         this.map.addControl(this.getZoomControl());
-        this.map.addControl(this.getGeolocateControl(), 'bottom-right');
         this.map.addControl(this.getOptionsBox())
+        this.map.addControl(this.getGeolocateControl(), 'bottom-right');
         this.map.addControl(this.getPlayControl())
 
         this.loadFarmLayer()
         this.loadFarmLayer2()
-        //this._clearLayers()
-        //this._toggleLayer('farm', 'block')
         this.zoomAll()
+
+        this.map.on('dragstart', this.startDrag.bind(this))
+        this.map.on('dragend', this.endDrag.bind(this))
+
+        this.map.on('style.load', () => {
+            this.addObjects()
+        })
+    }
+
+    addObjects() {
+        this.map.addSource('trace', {type: 'geojson', data: turf.lineString([[0, 0], [0, 0]])});
+        this.map.addLayer({
+            'id': 'trace',
+            'type': 'line',
+            'source': 'trace',
+            'paint': {
+                'line-color': 'yellow',
+                'line-opacity': 0.75,
+                'line-width': 5
+            }
+        });
+
+        this.map.addLayer({
+            "id": "circle",
+            "type": "line",
+            "source": {
+                "type": "geojson",
+                "data": turf.circle([0, 0], .04),
+                "lineMetrics": true,
+            },
+            "paint": {
+                "line-color": "red",
+                "line-width": 10,
+                "line-offset": 5,
+                "line-dasharray": [1, 1]
+            },
+            "layout": {}
+        });
+
+        const nothing = turf.featureCollection([]);
+
+        this.map.addSource('route', {
+            type: 'geojson',
+            data: nothing
+        });
+
+        this.map.addLayer(
+            {
+                id: 'routeline-active',
+                type: 'line',
+                source: 'route',
+                layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                paint: {
+                    'line-color': '#3887be',
+                    'line-width': ['interpolate', ['linear'], ['zoom'], 12, 3, 22, 12]
+                }
+            }
+        )
+
+        this.map.addLayer(
+            {
+                id: 'routearrows',
+                type: 'symbol',
+                source: 'route',
+                layout: {
+                    'symbol-placement': 'line',
+                    'text-field': '▶',
+                    'text-size': ['interpolate', ['linear'], ['zoom'], 12, 24, 22, 60],
+                    'symbol-spacing': ['interpolate', ['linear'], ['zoom'], 12, 30, 22, 160],
+                    'text-keep-upright': false
+                },
+                paint: {
+                    'text-color': '#3887be',
+                    'text-halo-color': 'hsl(55, 11%, 96%)',
+                    'text-halo-width': 3
+                }
+            }
+        )
+    }
+
+    updateObjects() {
+        if (this.location && this.destination) {
+
+            this.distance = turf.distance(this.location, this.destination).toFixed(3) * 1000;
+
+            this.mapDebugTarget.innerText = this.distance;
+
+            this.map.getSource('trace').setData(turf.lineString([this.location.geometry.coordinates, this.destination.geometry.coordinates]));
+
+            if (this.distance <= 50) {
+                this.map.getSource('circle').setData(turf.circle(this.location, .04))
+            } else {
+                this.map.getSource('circle').setData(turf.circle([0, 0], .04))
+            }
+
+            let dist = 0;
+            let style = '';
+            if (this.distance < 100) {
+                dist = 100 - this.distance
+                if (dist < 20) {
+                    style = ' bg-success'
+                } else if (dist < 50) {
+                    style = ' bg-warning'
+                } else {
+                    style = ' bg-danger'
+                }
+            }
+
+            this.distanceBarTarget.innerHTML =
+                `<div class="progress" role="progressbar" style="height: 20px">
+                   <div 
+                   class="progress-bar progress-bar-striped progress-bar-animated${style}" 
+                   style="width: ${dist}%"
+                   >
+                   </div>
+                   &nbsp;${this.distance} m
+                </div>`;
+        } else {
+            this.map.getSource('circle').setData(turf.circle([0, 0], .04))
+            this.map.getSource('trace').setData(turf.lineString([[0, 0], [0, 0]]));
+            this.distanceBarTarget.innerHTML = ''
+        }
     }
 
     getBounds() {
@@ -105,7 +233,12 @@ export default class extends Controller {
                     num++
                 })
 
-                container.innerHTML = '<div class="info legend">' + '<button id="btnNext" data-action="maxfield-play2#nextLink">Start...</button><br />' + '<select id="groupSelect" class="form-control" data-maxfield-play2-target="linkselect" data-action="maxfield-play2#jumpToLink">' + linkList + '</select>'
+                container.innerHTML = '<div class="info legend">' +
+                    '<button id="btnNext" data-action="maxfield-play2#nextLink">Start...</button><br />' +
+                    '<select id="groupSelect" class="form-control" data-maxfield-play2-target="linkselect" data-action="maxfield-play2#jumpToLink">' +
+                    linkList +
+                    '</select>' +
+                    '<div data-maxfield-play2-target="distanceBar" class="vw-100"></div>'
 
                 return container;
             }, getDefaultPosition: () => {
@@ -153,7 +286,8 @@ export default class extends Controller {
             showUserHeading: true
         });
 
-        control.on('geolocate', (event) => {
+        control.on('geolocate', this.onLocationFound.bind(this))
+        control.on('geolocatex', (event) => {
             const latitude = event.coords.latitude;
             const longitude = event.coords.longitude;
 
@@ -173,6 +307,18 @@ export default class extends Controller {
         });
 
         return control
+    }
+
+    onLocationFound(event) {
+        this.location = turf.point([event.coords.longitude, event.coords.latitude])
+
+        this.mapDebugTarget.innerText = this.isBusy
+
+        if (this.centerLocation && false === this.isBusy) {
+            this.map.flyTo({center: this.location.geometry.coordinates});
+        }
+
+        this.updateObjects()
     }
 
     zoomIn() {
@@ -242,14 +388,85 @@ export default class extends Controller {
             if (init) {
                 el.style = "display:none";
             }
-            el.innerHTML = `<b class="${css}">${numKeys}<span class="hasKeys">&nbsp;${hasKeys}</span></b>`
+            el.innerHTML = `<b class="${css}">${numKeys ? numKeys : 'X'}<span class="hasKeys">${hasKeys ? '&nbsp;' + hasKeys : ''}</span></b>`
+            const id = this.hashCode(o.lon.toString() + o.lat.toString())
+            const popup = `<b>${o.name}</b>
+                <br>${o.description} (${hasKeys})${capsules}
+                <hr>
+                <input type="checkbox" id="${id}"
+                data-action="maxfield-play2#toggleRoutePoint"
+                data-maxfield-play2-lat-param="${o.lat}"
+                data-maxfield-play2-lon-param="${o.lon}"
+                data-maxfield-play2-id-param="${cnt}"
+                > <label for="${id}">Route</label>`
             const marker = new mapboxgl.Marker(el)
                 .setLngLat([o.lon, o.lat])
-                .setPopup(new mapboxgl.Popup().setHTML(`<b>${o.name}</b><br>${o.description} (${hasKeys})${capsules}`))
+                .setPopup(new mapboxgl.Popup().setHTML(popup))
                 .addTo(this.map)
             this.markers.farm2.push(marker)
             cnt++
         }.bind(this))
+    }
+
+    async toggleRoutePoint(event) {
+        const point = [event.params.lon, event.params.lat]
+        const id = event.params.id
+        if (event.target.checked) {
+            this.optimizedRoutePoints.set(id, point)
+        } else {
+            this.optimizedRoutePoints.delete(id);
+        }
+
+        console.log(this.optimizedRoutePoints)
+        console.log(this.optimizedRoutePoints.size)
+        if (this.optimizedRoutePoints.size > 1) {
+            const url = this.assembleQueryURL()
+            console.log(url)
+            const query = await fetch(url, {method: 'GET'});
+            const response = await query.json();
+
+            console.log(response)
+
+            if (response.code !== 'Ok') {
+                const handleMessage =
+                    response.code === 'InvalidInput'
+                        ? 'Refresh to start a new route. For more information: https://docs.mapbox.com/api/navigation/optimization/#optimization-api-errors'
+                        : 'Try a different point.';
+                alert(`${response.code} - ${response.message}\n\n${handleMessage}`);
+
+                event.target.checked = false;
+                this.optimizedRoutePoints.delete(id);
+            } else {
+                const routeGeoJSON = turf.featureCollection([
+                    turf.feature(response.trips[0].geometry)
+                ]);
+                this.map.getSource('route').setData(routeGeoJSON);
+            }
+        }
+    }
+
+    assembleQueryURL() {
+        let coordinates = []
+        for (const point of this.optimizedRoutePoints.values()) {
+            coordinates.push(point)
+        }
+
+        return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/'
+            + coordinates.join(';') +
+            '?overview=full&steps=true&geometries=geojson&source=first' +
+            '&access_token=' + this.mapboxGlTokenValue
+    }
+
+    hashCode(str) {
+        // https://stackoverflow.com/posts/7616484/revisions
+        let hash = 0,
+            i, chr;
+        for (i = 0; i < str.length; i++) {
+            chr = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + chr;
+            hash |= 0; // Convert to 32bit integer
+        }
+        return hash;
     }
 
     nextLink(e) {
@@ -287,9 +504,9 @@ export default class extends Controller {
         document.getElementById('btnNext').innerText = 'Next'
 
         const destination = this.links[id]
-        this.destination = [destination.lon, destination.lat]
+        this.destination = turf.point([destination.lon, destination.lat])
 
-        this.map.panTo(this.destination)
+        this.map.panTo(this.destination.geometry.coordinates)
 
         let description = ''
 
@@ -305,7 +522,7 @@ export default class extends Controller {
 
         this.destinationMarker.remove()
         this.destinationMarker = new mapboxgl.Marker(el)
-            .setLngLat(this.destination)
+            .setLngLat(this.destination.geometry.coordinates)
             .setPopup(new mapboxgl.Popup({offset: 25, maxWidth: '400px'}) // add popups
                 .setHTML(`<b>${destination.name}</b><hr>${description}`))
             .addTo(this.map)
@@ -342,9 +559,8 @@ export default class extends Controller {
     }
 
     setStyle(event) {
-        console.log(event)
-        console.log(event.target.value)
         this.map.setStyle('mapbox://styles/mapbox/' + event.target.value);
+        this.updateObjects()
     }
 
     setStyleConfig(event) {
@@ -390,7 +606,6 @@ export default class extends Controller {
         }
     }
 
-
     toggleLayer(event) {
         this._clearLayers()
         const layer = event.target.value
@@ -407,12 +622,17 @@ export default class extends Controller {
 
     toggleCenter(event) {
         this.centerLocation = !this.centerLocation
-        this._toggleButtonClass(event.target, this.centerLocation)
+
+        if (true === this.centerLocation) {
+            event.currentTarget.classList.add('button-toggle-selected')
+            event.currentTarget.classList.remove('button-toggle')
+        } else {
+            event.currentTarget.classList.remove('button-toggle-selected')
+            event.currentTarget.classList.add('button-toggle')
+        }
     }
 
     followHeading(event) {
-        console.log(event)
-        console.log(event.target.checked)
         this.trackHeading = event.target.checked
     }
 
@@ -421,14 +641,16 @@ export default class extends Controller {
         this._toggleButtonClass(event.target, this.trackHeading)
     }
 
+    rotate() {
+        this.map.setBearing(this.map.getBearing() - 30)
+    }
+
     showModal() {
         this.modal.show()
     }
 
     _clearLayers() {
-        console.log(this.markers)
         Object.keys(this.markers).forEach(function (key, index) {
-            console.log(key)
             this._toggleLayer(key, 'none')
         }.bind(this))
     }
@@ -447,8 +669,6 @@ export default class extends Controller {
     }
 
     setDebug(event) {
-        console.log(event)
-        console.log(event.target.checked)
         this.mapDebugTarget.style.display = event.target.checked ? 'block' : 'none'
     }
 
@@ -472,5 +692,21 @@ export default class extends Controller {
             button.classList.remove('btn-info')
             button.classList.add('btn-outline-info')
         }
+    }
+
+    startDrag() {
+        this.isBusy = true
+        this.mapDebugTarget.innerText = this.isBusy
+    }
+
+    endDrag() {
+        this.isBusy = false
+        this.mapDebugTarget.innerText = this.isBusy
+        return
+        setTimeout(
+            function () {
+                this.isBusy = false
+                this.mapDebugTarget.innerText = this.isBusy
+            }.bind(this), 3000);
     }
 }
