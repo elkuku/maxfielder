@@ -42,6 +42,11 @@ class ControllerAccessTest extends ControllerBaseTest
                     '{path}' => 'test',
                 ],
             ],
+            'maxfield_play2' => [
+                'params' => [
+                    '{path}' => 'test',
+                ],
+            ],
             'maxfield_submit_user_keys' => [
                 'params' => [
                     '{path}' => 'test',
