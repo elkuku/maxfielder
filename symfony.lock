@@ -8,9 +8,6 @@
     "doctrine/collections": {
         "version": "1.6.8"
     },
-    "doctrine/common": {
-        "version": "3.2.2"
-    },
     "doctrine/data-fixtures": {
         "version": "1.5.2"
     },
@@ -121,9 +118,6 @@
     },
     "guzzlehttp/psr7": {
         "version": "2.1.0"
-    },
-    "jetbrains/phpstorm-attributes": {
-        "version": "1.0"
     },
     "knpuniversity/oauth2-client-bundle": {
         "version": "1.20",

@@ -42,10 +42,18 @@ html, body, #map {
     text-align: center;
 }
 
+div.done b.circle {
+    border: 3px dashed #6e6e6e;
+}
+
 [data-bs-theme=dark] .circle {
     background: #000;
     border: 3px solid #666666;
     color: #ffffa0;
+}
+
+[data-bs-theme=dark] .circle .done {
+    border: 3px dashed #666666;
 }
 
 .circle-button {
@@ -58,10 +66,10 @@ html, body, #map {
     margin-bottom: 10px;
 }
 
-.button-toggle{
+.button-toggle {
 }
 
-.button-toggle-selected{
+.button-toggle-selected {
     color: orange;
 }
 
@@ -85,8 +93,8 @@ button#btnNext:hover {
     color: green;
 }
 
-div.destinationMarker ,[data-bs-theme=dark] div.destinationMarker {
-    color:black;
+div.destinationMarker, [data-bs-theme=dark] div.destinationMarker {
+    color: black;
     background-color: #ffd840;
     font-size: 2em;
 }
@@ -106,39 +114,49 @@ div.destinationMarker ,[data-bs-theme=dark] div.destinationMarker {
 }
 
 .farm-done {
-    opacity: 0.3;
+    opacity: 0.4;
 }
 
 .hasKeys {
     font-size: .8em;
 }
 
-div#optionsBoxContent{
+div#optionsBoxContent {
     background-color: white;
     border: 1px solid #6e6e6e;
     padding: 5px;
     display: none;
 }
 
-button.optionsBoxTrigger{
+button.optionsBoxTrigger {
     font-size: 2em;
     border-radius: 5px;
 }
 
-[data-bs-theme=dark] .mapboxgl-ctrl-group{
+[data-bs-theme=dark] .mapboxgl-ctrl-group {
     background-color: #4a4a4a;
 }
 
-[data-bs-theme=dark] .mapboxgl-ctrl{
+[data-bs-theme=dark] .mapboxgl-ctrl {
     color: lime;
-
 }
 
-[data-bs-theme=dark] .mapboxgl-popup-content, [data-bs-theme=dark] #optionsBoxContent{
+[data-bs-theme=dark] .mapboxgl-popup-content,
+[data-bs-theme=dark] #optionsBoxContent,
+[data-bs-theme=dark] #instructions {
     background-color: #4a4a4a;
     color: lime;
 }
 
-.mapboxgl-popup{
+.mapboxgl-popup {
     max-width: 500px;
+}
+
+#instructions {
+    width: 25%;
+    padding: 20px;
+    background-color: white;
+    color: black;
+    overflow-y: scroll;
+    font-family: sans-serif;
 }

@@ -15,11 +15,13 @@
         <div id="map-debug" {{ stimulus_target('maxfield-play2', 'mapDebug') }}>D3bug</div>
 
         <div id="zoomBox" class="mapboxgl-ctrl">
-            <button class="circle-button button-toggle" data-action="maxfield-play2#toggleCenter"><i class="bi-crosshair"></i></button>
+            <button class="circle-button button-toggle" data-action="maxfield-play2#toggleCenter"><i
+                        class="bi-crosshair"></i></button>
             <button class="circle-button" data-action="maxfield-play2#zoomAll"><i class="bi-asterisk"></i></button>
             <button class="circle-button" data-action="maxfield-play2#zoomIn"><i class="bi-plus"></i></button>
             <button class="circle-button" data-action="maxfield-play2#zoomOut"><i class="bi-dash"></i></button>
-            <button class="circle-button" data-action="maxfield-play2#rotate"><i class="bi-arrow-clockwise"></i></button>
+            <button class="circle-button" data-action="maxfield-play2#rotate"><i class="bi-arrow-clockwise"></i>
+            </button>
         </div>
 
         <div id="optionsBox" class="mapboxgl-ctrl">
@@ -34,27 +36,36 @@
             >
                 <label for="selStyle">Style</label>
                 <select id="selStyle" class="form-select" data-action="maxfield-play2#setStyle">
-                    <option value="standard">Standard</option>
-                    <option value="streets-v12">Streets</option>
-                    <option value="outdoors-v12">Outdoors</option>
-                    <option value="light-v11">Light</option>
-                    <option value="dark-v11">Dark</option>
-                    <option value="satellite-v9">Satellite</option>
-                    <option value="satellite-streets-v12">Satellite Streets</option>
-                    <option value="navigation-day-v1">Navigation Day</option>
-                    <option value="navigation-night-v1">Navigation Night</option>
+                    <option value="mapbox/standard">Standard</option>
+                    <option value="nikp3h/clvm8zx18043s01ph1xmu05dd">Standard Clear</option>
+                    <option value="mapbox/streets-v12">Streets</option>
+                    <option value="mapbox/outdoors-v12">Outdoors</option>
+                    <option value="mapbox/light-v11">Light</option>
+                    <option value="mapbox/dark-v11">Dark</option>
+                    <option value="mapbox/satellite-v9">Satellite</option>
+                    <option value="mapbox/satellite-streets-v12">Satellite Streets</option>
+                    <option value="mapbox/navigation-day-v1">Navigation Day</option>
+                    <option value="mapbox/navigation-night-v1">Navigation Night</option>
                 </select>
                 <label for="selLayer">Layer</label>
-                <select id="selLayer" class="form-select" data-action="maxfield-play2#toggleLayer">
+                <select id="selLayer" class="form-select" data-action="maxfield-play2#setLayer">
                     <option value="">None</option>
-                    <option value="farm" selected>Farm</option>
-                    <option value="farm2">Farm2</option>
+                    <option value="farm">Farm</option>
+                    <option value="farm2" selected>Farm2</option>
                 </select>
 
-                <button class="btn btn-info" style="display: none" data-maxfield-play2-target="btnUploadKeys"
+                <button class="btn btn-info" data-maxfield-play2-target="btnUploadKeys"
                         data-action="maxfield-play2#showModal">Upload Keys
                 </button>
-
+                <br>
+                <label for="selProfile">Profile</label>
+                <select id="selProfile" class="form-select" data-action="maxfield-play2#setProfile"
+                        data-maxfield-play2-target="selProfile"
+                >
+                    <option value="mapbox/driving">Driving</option>
+                    <option value="mapbox/walking">Walking</option>
+                    <option value="mapbox/cycling" selected>Cycling</option>
+                </select>
                 <hr>
 
                 <div class="d-grid gap-2 d-md-block">
@@ -68,7 +79,7 @@
             </div>
         </div>
 
-       <div id="map"></div>
+        <div id="map"></div>
 
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1">

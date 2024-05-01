@@ -18,7 +18,8 @@ export default class extends Controller {
     static targets = [
         'keys', 'errorMessage', 'linkselect', 'mapDebug',
         'optionsBox', 'optionsBoxTrigger',
-        'btnUploadKeys', 'distanceBar'
+        'btnUploadKeys', 'distanceBar',
+        'selProfile'
     ]
 
     className = 'maxfield-play2'
@@ -74,16 +75,21 @@ export default class extends Controller {
             visualizePitch: true
         }), 'top-left');
         this.map.addControl(this.getZoomControl());
-        this.map.addControl(this.getOptionsBox())
         this.map.addControl(this.getGeolocateControl(), 'bottom-right');
         this.map.addControl(this.getPlayControl())
+        this.map.addControl(this.getOptionsBox())
 
         this.loadFarmLayer()
         this.loadFarmLayer2()
+        this._clearLayers()
         this.zoomAll()
 
         this.map.on('dragstart', this.startDrag.bind(this))
         this.map.on('dragend', this.endDrag.bind(this))
+
+        this.map.on('load', () => {
+            this._toggleLayer('farm2', 'block');
+        })
 
         this.map.on('style.load', () => {
             this.addObjects()
@@ -234,6 +240,7 @@ export default class extends Controller {
                 })
 
                 container.innerHTML = '<div class="info legend">' +
+                    '<div id="Xinstructions"></div>'+
                     '<button id="btnNext" data-action="maxfield-play2#nextLink">Start...</button><br />' +
                     '<select id="groupSelect" class="form-control" data-maxfield-play2-target="linkselect" data-action="maxfield-play2#jumpToLink">' +
                     linkList +
@@ -322,11 +329,11 @@ export default class extends Controller {
     }
 
     zoomIn() {
-        this.map.setZoom(this.map.getZoom() + 1);
+        this.map.zoomIn()
     }
 
     zoomOut() {
-        this.map.setZoom(this.map.getZoom() - 1);
+        this.map.zoomOut();
     }
 
     zoomAll() {
@@ -351,11 +358,6 @@ export default class extends Controller {
     }
 
     async loadFarmLayer2() {
-        let init = true
-        if (this.markers.farm2) {
-            this._clearLayers('farm2')
-            init = false
-        }
         this.markers.farm2 = [];
 
         const response = await fetch('/maxfield/get-user-keys/' + this.pathValue)
@@ -383,22 +385,30 @@ export default class extends Controller {
                 }
             }
 
+            const id = this.hashCode(o.lon.toString() + o.lat.toString())
             const el = document.createElement('div');
             el.className = 'farm-layer'
-            if (init) {
-                el.style = "display:none";
-            }
-            el.innerHTML = `<b class="${css}">${numKeys ? numKeys : 'X'}<span class="hasKeys">${hasKeys ? '&nbsp;' + hasKeys : ''}</span></b>`
-            const id = this.hashCode(o.lon.toString() + o.lat.toString())
-            const popup = `<b>${o.name}</b>
-                <br>${o.description} (${hasKeys})${capsules}
+            el.innerHTML = `<b class="${css}">${numKeys ? numKeys : '-'}<span class="hasKeys">${hasKeys ? '&nbsp;' + hasKeys : ''}</span></b>`
+            const popup = `
+                <input type="checkbox" id="${id}chkDone"
+                data-action="maxfield-play2#toggleDone"
+                data-maxfield-play2-marker-param="${cnt}"
+                > <label for="${id}chkDone">Done</label>
+                <br>
+                <b>${o.name}</b>
+                <br>${o.description} ${hasKeys ? '(' + hasKeys + ')' : ''}${capsules}
                 <hr>
                 <input type="checkbox" id="${id}"
                 data-action="maxfield-play2#toggleRoutePoint"
                 data-maxfield-play2-lat-param="${o.lat}"
                 data-maxfield-play2-lon-param="${o.lon}"
                 data-maxfield-play2-id-param="${cnt}"
-                > <label for="${id}">Route</label>`
+                > <label for="${id}">Route</label>
+                <button class="btn btn-outline-info btn-sm"
+                data-action="maxfield-play2#getRoute"
+                data-maxfield-play2-lat-param="${o.lat}"
+                data-maxfield-play2-lon-param="${o.lon}"
+                >NAV</button>`
             const marker = new mapboxgl.Marker(el)
                 .setLngLat([o.lon, o.lat])
                 .setPopup(new mapboxgl.Popup().setHTML(popup))
@@ -408,41 +418,102 @@ export default class extends Controller {
         }.bind(this))
     }
 
+    toggleDone(event) {
+        const element = this.markers['farm2'][event.params.marker]
+        element.toggleClassName('done')
+    }
+
+    async getRoute(event) {
+        if (null === this.location) {
+            alert('Get location first...')
+
+            return
+        }
+        const route = await this._getRoute([event.params.lon, event.params.lat])
+
+        const coordinates = route.geometry.coordinates
+
+        console.log(this.map.getSource('route'))
+
+        if (this.map.getSource('route')) {
+            this.map.getSource('route').setData(turf.lineString(coordinates));
+        } else {
+            this.map.addLayer({
+                id: 'route',
+                type: 'line',
+                source: {
+                    type: 'geojson',
+                    data: turf.lineString(coordinates)
+                },
+                layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                paint: {
+                    'line-color': '#3887be',
+                    'line-width': 5,
+                    'line-opacity': 0.75
+                }
+            });
+        }
+        // add turn instructions here at the end
+// get the sidebar and add the instructions
+        const instructions = document.getElementById('instructions');
+        const steps = route.legs[0].steps;
+
+        console.log(steps)
+        let tripInstructions = '';
+        for (const step of steps) {
+            tripInstructions += `<li>${step.maneuver.instruction}</li>`;
+        }
+        instructions.innerHTML = `<p><strong>Trip duration: ${Math.floor(
+            route.duration / 60
+        )} min 🚴 </strong></p><ol>${tripInstructions}</ol>`;
+
+
+    }
+
     async toggleRoutePoint(event) {
         const point = [event.params.lon, event.params.lat]
         const id = event.params.id
+
         if (event.target.checked) {
             this.optimizedRoutePoints.set(id, point)
         } else {
             this.optimizedRoutePoints.delete(id);
         }
 
-        console.log(this.optimizedRoutePoints)
-        console.log(this.optimizedRoutePoints.size)
-        if (this.optimizedRoutePoints.size > 1) {
-            const url = this.assembleQueryURL()
-            console.log(url)
-            const query = await fetch(url, {method: 'GET'});
-            const response = await query.json();
+        const result = await this._displayOptimizedRoute()
 
-            console.log(response)
-
-            if (response.code !== 'Ok') {
-                const handleMessage =
-                    response.code === 'InvalidInput'
-                        ? 'Refresh to start a new route. For more information: https://docs.mapbox.com/api/navigation/optimization/#optimization-api-errors'
-                        : 'Try a different point.';
-                alert(`${response.code} - ${response.message}\n\n${handleMessage}`);
-
-                event.target.checked = false;
-                this.optimizedRoutePoints.delete(id);
-            } else {
-                const routeGeoJSON = turf.featureCollection([
-                    turf.feature(response.trips[0].geometry)
-                ]);
-                this.map.getSource('route').setData(routeGeoJSON);
-            }
+        if ('error' === result) {
+            event.target.checked = false;
+            this.optimizedRoutePoints.delete(id);
         }
+    }
+
+    async _displayOptimizedRoute() {
+        if (this.optimizedRoutePoints.size < 2) {
+            return
+        }
+
+        const query = await fetch(this.assembleQueryURL(), {method: 'GET'});
+        const response = await query.json();
+
+        if (response.code !== 'Ok') {
+            const handleMessage =
+                response.code === 'InvalidInput'
+                    ? 'Refresh to start a new route. For more information: https://docs.mapbox.com/api/navigation/optimization/#optimization-api-errors'
+                    : 'Try a different point.';
+            alert(`${response.code} - ${response.message}\n\n${handleMessage}`);
+            return 'error'
+        } else {
+            const routeGeoJSON = turf.featureCollection([
+                turf.feature(response.trips[0].geometry)
+            ]);
+            this.map.getSource('route').setData(routeGeoJSON);
+        }
+
+        return 'ok'
     }
 
     assembleQueryURL() {
@@ -451,10 +522,30 @@ export default class extends Controller {
             coordinates.push(point)
         }
 
-        return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/'
+        return 'https://api.mapbox.com/optimized-trips/v1/'
+            + this.selProfileTarget.value + '/'
             + coordinates.join(';') +
-            '?overview=full&steps=true&geometries=geojson&source=first' +
+            '?overview=full&steps=true&geometries=geojson' +
+            '&roundtrip=false' +
+            '&source=first&destination=last' +
             '&access_token=' + this.mapboxGlTokenValue
+    }
+
+    async _getRoute(end) {
+
+        const coordinates = [this.location.geometry.coordinates, end]
+        const query = await fetch(
+            'https://api.mapbox.com/directions/v5/'
+            + this.selProfileTarget.value + '/'
+            + coordinates.join(';')
+            + '?steps=true&geometries=geojson'
+            + '&access_token=' + this.mapboxGlTokenValue
+            ,
+            {method: 'GET'}
+        )
+
+        const json = await query.json();
+        return json.routes[0]
     }
 
     hashCode(str) {
@@ -559,7 +650,7 @@ export default class extends Controller {
     }
 
     setStyle(event) {
-        this.map.setStyle('mapbox://styles/mapbox/' + event.target.value);
+        this.map.setStyle('mapbox://styles/' + event.target.value);
         this.updateObjects()
     }
 
@@ -606,7 +697,7 @@ export default class extends Controller {
         }
     }
 
-    toggleLayer(event) {
+    setLayer(event) {
         this._clearLayers()
         const layer = event.target.value
         if (layer) {
@@ -708,5 +799,9 @@ export default class extends Controller {
                 this.isBusy = false
                 this.mapDebugTarget.innerText = this.isBusy
             }.bind(this), 3000);
+    }
+
+    setProfile() {
+        console.log(this.selProfileTarget.value)
     }
 }
