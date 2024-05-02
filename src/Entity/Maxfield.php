@@ -32,16 +32,16 @@ class Maxfield
     private ?User $owner = null;
 
     /**
-     * @var array<string, array<Waypoint|\stdClass>>
+     * @var array<string, array<Waypoint|stdClass>>
      */
     #[Column(type: Types::JSON, nullable: true)]
     private array|stdClass|null $jsonData = null;
 
-      /**
+    /**
      * @var array<int, array<int, AgentKeyInfo>>
      */
     #[Column(type: Types::JSON, nullable: true)]
-    private array|stdClass|null $userKeys = null;
+    private array|stdClass|null $userData = null;
 
     public function getId(): ?int
     {
@@ -73,7 +73,7 @@ class Maxfield
     }
 
     /**
-     * @return array<string, array<Waypoint|\stdClass>>|null
+     * @return array<string, array<Waypoint|stdClass>>|null
      */
     public function getJsonData(): ?array
     {
@@ -93,17 +93,17 @@ class Maxfield
     /**
      * @return array<int, array<int, AgentKeyInfo>>
      */
-    public function getUserKeys(): ?array
+    public function getUserData(): ?array
     {
-        return $this->userKeys;
+        return $this->userData;
     }
 
     /**
-     * @param array<int, array<int, AgentKeyInfo>> $userKeys
+     * @param array<int, array<int, AgentKeyInfo>> $userData
      */
-    public function setUserKeys(array $userKeys): self
+    public function setUserData(array $userData): self
     {
-        $this->userKeys = $userKeys;
+        $this->userData = $userData;
 
         return $this;
     }
@@ -113,10 +113,10 @@ class Maxfield
      */
     public function setUserKeysWithUser(array $userKeys, int $user): self
     {
-        if ($this->userKeys) {
-            $this->userKeys[$user] = $userKeys;
+        if ($this->userData) {
+            $this->userData[$user]['keys'] = $userKeys;
         } else {
-            $this->userKeys = [$user => $userKeys];
+            $this->userData = [$user => ['keys' => $userKeys]];
         }
 
         return $this;

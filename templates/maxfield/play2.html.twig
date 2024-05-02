@@ -9,7 +9,11 @@
         path: maxfield.path,
         jsonData: jsonData,
         waypointIdMap :waypointIdMap,
-        mapboxGlToken :mapboxGlToken
+        mapboxGlToken :mapboxGlToken,
+        urls:{
+            'get_user_data': path('maxfield_get_user_data', {path:maxfield.path}),
+            'submit_user_data': path('maxfield_submit_user_data', {path:maxfield.path}),
+        }
     }) }}>
 
         <div id="map-debug" {{ stimulus_target('maxfield-play2', 'mapDebug') }}>D3bug</div>

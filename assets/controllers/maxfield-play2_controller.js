@@ -12,7 +12,11 @@ import Swal from "sweetalert2";
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static values = {
-        path: String, jsonData: String, waypointIdMap: String, mapboxGlToken: String
+        path: String,
+        jsonData: String,
+        waypointIdMap: String,
+        mapboxGlToken: String,
+        urls: Object
     }
 
     static targets = [
@@ -38,6 +42,7 @@ export default class extends Controller {
 
     bounds = null
     markers = {}
+    farmDone = []
 
     trackHeading = false
     centerLocation = false;
@@ -240,7 +245,7 @@ export default class extends Controller {
                 })
 
                 container.innerHTML = '<div class="info legend">' +
-                    '<div id="Xinstructions"></div>'+
+                    '<div id="Xinstructions"></div>' +
                     '<button id="btnNext" data-action="maxfield-play2#nextLink">Start...</button><br />' +
                     '<select id="groupSelect" class="form-control" data-maxfield-play2-target="linkselect" data-action="maxfield-play2#jumpToLink">' +
                     linkList +
@@ -360,11 +365,20 @@ export default class extends Controller {
     async loadFarmLayer2() {
         this.markers.farm2 = [];
 
-        const response = await fetch('/maxfield/get-user-keys/' + this.pathValue)
+        const response = await fetch(this.urlsValue.get_user_data)
         const data = await response.json()
 
+        let userKeys = []
+
         // TODO Select proper user
-        const userKeys = (data && 1 in data) ? data[1] : []
+        if (data) {
+            if (1 in data) {
+                if ('keys' in data[1]) {
+                    userKeys = data[1]['keys']
+                }
+            }
+        }
+
         let cnt = 0
 
         this.maxfieldData.waypoints.forEach(function (o) {
@@ -420,7 +434,18 @@ export default class extends Controller {
 
     toggleDone(event) {
         const element = this.markers['farm2'][event.params.marker]
-        element.toggleClassName('done')
+        if (event.target.checked) {
+            element.addClassName('done')
+            this.farmDone.push(event.params.marker)
+
+        } else {
+            element.removeClassName('done')
+            this.farmDone = this.farmDone.filter(item => item !== event.params.marker)
+        }
+        console.log(event);
+        console.log(event.target.checked)
+        console.log(element)
+        console.log(this.farmDone);
     }
 
     async getRoute(event) {
@@ -432,8 +457,6 @@ export default class extends Controller {
         const route = await this._getRoute([event.params.lon, event.params.lat])
 
         const coordinates = route.geometry.coordinates
-
-        console.log(this.map.getSource('route'))
 
         if (this.map.getSource('route')) {
             this.map.getSource('route').setData(turf.lineString(coordinates));
@@ -456,8 +479,8 @@ export default class extends Controller {
                 }
             });
         }
-        // add turn instructions here at the end
-// get the sidebar and add the instructions
+
+        return
         const instructions = document.getElementById('instructions');
         const steps = route.legs[0].steps;
 
@@ -469,8 +492,6 @@ export default class extends Controller {
         instructions.innerHTML = `<p><strong>Trip duration: ${Math.floor(
             route.duration / 60
         )} min 🚴 </strong></p><ol>${tripInstructions}</ol>`;
-
-
     }
 
     async toggleRoutePoint(event) {
@@ -560,16 +581,16 @@ export default class extends Controller {
         return hash;
     }
 
-    nextLink(e) {
+    nextLink(event) {
         const length = this.linkselectTarget.length
 
         if (this.linkselectTarget.value < length - 2) {
-            e.target.innerText = 'Next'
+            event.target.innerText = 'Next'
             const newVal = parseInt(this.linkselectTarget.value) + 1
             this.showDestination(newVal)
             this.linkselectTarget.value = newVal
         } else {
-            e.target.innerText = 'Finished!'
+            event.target.innerText = 'Finished!'
 
             Swal.fire('Finished :)');
         }
@@ -607,15 +628,25 @@ export default class extends Controller {
         })
         description += '</ol>'
 
+        const popup =
+            `<b>${destination.name}</b>
+             <button 
+                class="btn btn-sm btn-outline-info"
+                data-action="maxfield-play2#getRoute"
+                data-maxfield-play2-lat-param="${destination.lat}"
+                data-maxfield-play2-lon-param="${destination.lon}"
+             >Nav</button>
+            <hr>${description}`
+
         const el = document.createElement('div');
         el.className = 'circle destinationMarker'
-        el.innerHTML = parseInt(id) + 1
+        el.innerHTML = (parseInt(id) + 1).toString()
 
         this.destinationMarker.remove()
         this.destinationMarker = new mapboxgl.Marker(el)
             .setLngLat(this.destination.geometry.coordinates)
             .setPopup(new mapboxgl.Popup({offset: 25, maxWidth: '400px'}) // add popups
-                .setHTML(`<b>${destination.name}</b><hr>${description}`))
+                .setHTML(popup))
             .addTo(this.map)
 
         // Routing
@@ -639,12 +670,12 @@ export default class extends Controller {
         }
     }
 
-    optionsBoxShow(e) {
+    optionsBoxShow(event) {
         this.optionsBoxTriggerTarget.style.display = 'none'
         this.optionsBoxTarget.style.display = 'block'
     }
 
-    optionsBoxHide(e) {
+    optionsBoxHide(event) {
         this.optionsBoxTriggerTarget.style.display = 'block'
         this.optionsBoxTarget.style.display = 'none'
     }
@@ -659,7 +690,7 @@ export default class extends Controller {
         this.map.setConfigProperty('basemap', x, false);
     }
 
-    async uploadKeys(e) {
+    async uploadKeys(event) {
         const keys = this.keysTarget.value
         if (!keys) {
             this.errorMessageTarget.className = 'alert alert-danger'
@@ -667,7 +698,7 @@ export default class extends Controller {
 
             return
         }
-        const response = await fetch('/maxfield/submit-user-keys/' + this.pathValue, {
+        const response = await fetch(this.urlsValue.submit_user_data, {
             method: 'POST',
             body: JSON.stringify({
                 // TODO proper agent number
@@ -755,7 +786,6 @@ export default class extends Controller {
     _removeLayer(name) {
         this.markers[name].forEach((e) => {
             e.remove()
-            //e._element.style.display = value
         })
     }
 

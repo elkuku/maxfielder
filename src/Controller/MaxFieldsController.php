@@ -136,8 +136,8 @@ class MaxFieldsController extends BaseController
         );
     }
 
-    #[Route(path: '/submit-user-keys/{path}', name: 'maxfield_submit_user_keys', methods: ['POST'])]
-    public function submitUserkeys(
+    #[Route(path: '/submit-user-data/{path}', name: 'maxfield_submit_user_data', methods: ['POST'])]
+    public function submitUserData(
         MaxFieldHelper         $maxFieldHelper,
         MaxField               $maxfield,
         Request                $request,
@@ -149,8 +149,8 @@ class MaxFieldsController extends BaseController
 
         $data = json_decode($request->getContent(), true);
 
-        $keys = (string)$data['keys'];
         $agentNum = (int)$data['agentNum'];
+        $keys = (string)$data['keys'];
 
         if ($keys) {
             $waypointIdMap = $maxFieldHelper->getWaypointsIdMap($maxfield->getPath());
@@ -167,6 +167,8 @@ class MaxFieldsController extends BaseController
             } catch (\Exception $exception) {
                 $response['error'] = $exception->getMessage();
             }
+        } else {
+            $response['error'] = 'No keys found :(';
         }
 
         return $this->json($response);
@@ -211,12 +213,12 @@ class MaxFieldsController extends BaseController
         );
     }
 
-    #[Route('/get-user-keys/{path}', name: 'maxfield_get_user_keys', methods: ['GET'])]
+    #[Route('/get-user-data/{path}', name: 'maxfield_get_user_data', methods: ['GET'])]
     public function getUserKeys(
         Maxfield $maxfield
     ): JsonResponse
     {
-        return $this->json($maxfield->getUserKeys());
+        return $this->json($maxfield->getUserData());
     }
 
     #[Route(path: '/export', name: 'export-maxfields', methods: ['POST'])]
