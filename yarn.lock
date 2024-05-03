@@ -8222,7 +8222,7 @@ resolve@^1.20.0:
     mapbox-gl: ^3.3.0
     regenerator-runtime: ^0.14.1
     stimulus-use: ^0.52.2
-    sweetalert2: ^11.10.7
+    sweetalert2: ^11.10.8
     webpack: ^5.91.0
     webpack-cli: ^5.1.4
     webpack-notifier: ^1.15.0
@@ -8838,10 +8838,10 @@ resolve@^1.20.0:
   languageName: node
   linkType: hard
 
-"sweetalert2@npm:^11.10.7":
-  version: 11.10.7
-  resolution: "sweetalert2@npm:11.10.7"
-  checksum: e7f8880df44d9bdaf38b8dbb1b931b82fa3cabb1dcb39f5d0493d8c470a9c13b736342f72f55490ac3d19dd51bd99cbbdf7735a17340381d656b377828053f32
+"sweetalert2@npm:^11.10.8":
+  version: 11.10.8
+  resolution: "sweetalert2@npm:11.10.8"
+  checksum: 4c1196851f6d94042b774a9f905532ed5c69a3960cb200a61ea9c073c744d4c586ccacc857837d0d0f9b729888307ad10cd22b09746242eafaccf58faa4a5ee1
   languageName: node
   linkType: hard
 
