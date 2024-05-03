@@ -136,6 +136,32 @@ class MaxFieldsController extends BaseController
         );
     }
 
+    #[Route(path: '/clear-user-data/{path}', name: 'maxfield_clear_user_data', methods: ['POST'])]
+    public function clearUserData(
+        MaxField               $maxfield,
+        EntityManagerInterface $entityManager,
+        Request                $request,
+    ): JsonResponse
+    {
+        $response = [];
+        try {
+            $data = json_decode($request->getContent(), true);
+
+            $agentNum = (int)$data['agentNum'];
+
+            $maxfield->setCurrentPointWithUser('-1', $agentNum);
+            $maxfield->setFarmDoneWithUser([], $agentNum);
+            $maxfield->setUserKeysWithUser([], $agentNum);
+
+            $entityManager->flush();
+            $response ['result'] = 'cleared';
+        } catch (\Exception $exception) {
+            $response['error'] = $exception->getMessage();
+        }
+
+        return $this->json($response);
+    }
+
     #[Route(path: '/submit-user-data/{path}', name: 'maxfield_submit_user_data', methods: ['POST'])]
     public function submitUserData(
         MaxFieldHelper         $maxFieldHelper,
@@ -150,7 +176,20 @@ class MaxFieldsController extends BaseController
         $data = json_decode($request->getContent(), true);
 
         $agentNum = (int)$data['agentNum'];
-        $keys = (string)$data['keys'];
+
+        $keys = isset($data['keys']) ? (string)$data['keys'] : null;
+        $currentPoint = isset($data['current_point']) ? (string)$data['current_point'] : null;
+        $farmDone = isset($data['farm_done']) ? (array)$data['farm_done'] : null;
+
+        if ($currentPoint !== null) {
+            $maxfield->setCurrentPointWithUser($currentPoint, $agentNum);
+            $entityManager->flush();
+        }
+
+        if ($farmDone !== null) {
+            $maxfield->setFarmDoneWithUser($farmDone, $agentNum);
+            $entityManager->flush();
+        }
 
         if ($keys) {
             $waypointIdMap = $maxFieldHelper->getWaypointsIdMap($maxfield->getPath());
@@ -167,8 +206,6 @@ class MaxFieldsController extends BaseController
             } catch (\Exception $exception) {
                 $response['error'] = $exception->getMessage();
             }
-        } else {
-            $response['error'] = 'No keys found :(';
         }
 
         return $this->json($response);
@@ -214,7 +251,7 @@ class MaxFieldsController extends BaseController
     }
 
     #[Route('/get-user-data/{path}', name: 'maxfield_get_user_data', methods: ['GET'])]
-    public function getUserKeys(
+    public function getUserData(
         Maxfield $maxfield
     ): JsonResponse
     {

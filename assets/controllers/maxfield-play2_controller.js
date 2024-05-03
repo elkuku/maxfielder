@@ -42,13 +42,15 @@ export default class extends Controller {
 
     bounds = null
     markers = {}
-    farmDone = []
 
     trackHeading = false
-    centerLocation = false;
+    centerLocation = false
     isBusy = false
+    isFullscreen = false
 
     optimizedRoutePoints = null
+
+    userData = {}
 
     connect() {
         this.maxfieldData = JSON.parse(this.jsonDataValue)
@@ -59,7 +61,14 @@ export default class extends Controller {
         this.setupMap()
     }
 
-    setupMap() {
+    async setupMap() {
+        try {
+            await this._loadUserData()
+        } catch (error) {
+            console.error(error);
+            alert(error)
+        }
+
         mapboxgl.accessToken = this.mapboxGlTokenValue;
         this.map = new mapboxgl.Map({
             container: 'map',
@@ -67,38 +76,47 @@ export default class extends Controller {
             zoom: 14,
         });
 
-        const el = document.createElement('div');
-        el.className = 'destinationMarker'
-        el.innerHTML = 'O'
-
-        this.destinationMarker = new mapboxgl.Marker(el)
-            .setLngLat([0, 0])
-            .addTo(this.map)
-
-        this.map.addControl(new mapboxgl.FullscreenControl(), 'top-left');
-        this.map.addControl(new mapboxgl.NavigationControl({
-            visualizePitch: true
-        }), 'top-left');
-        this.map.addControl(this.getZoomControl());
-        this.map.addControl(this.getGeolocateControl(), 'bottom-right');
-        this.map.addControl(this.getPlayControl())
-        this.map.addControl(this.getOptionsBox())
-
-        this.loadFarmLayer()
-        this.loadFarmLayer2()
-        this._clearLayers()
-        this.zoomAll()
-
         this.map.on('dragstart', this.startDrag.bind(this))
         this.map.on('dragend', this.endDrag.bind(this))
 
         this.map.on('load', () => {
-            this._toggleLayer('farm2', 'block');
+            const el = document.createElement('div');
+            el.className = 'destinationMarker'
+            el.innerHTML = 'O'
+
+            this.destinationMarker = new mapboxgl.Marker(el)
+                .setLngLat([0, 0])
+                .addTo(this.map)
+
+            this.map.addControl(new mapboxgl.FullscreenControl(), 'top-left');
+            this.map.addControl(new mapboxgl.NavigationControl({
+                visualizePitch: true
+            }), 'top-left');
+            this.map.addControl(this.getZoomControl());
+            this.map.addControl(this.getGeolocateControl(), 'bottom-right');
+            this.map.addControl(this.getPlayControl())
+            this.map.addControl(this.getOptionsBox())
+
+            this.loadFarmLayer()
+            this.loadFarmLayer2()
+            this._clearLayers()
+            this.zoomAll()
+
+            if (this.userData.current_point >= 0) {
+                this.showDestination(this.userData.current_point)
+                this.linkselectTarget.value = this.userData.current_point
+            } else {
+                this._toggleLayer('farm2', 'block');
+            }
         })
 
         this.map.on('style.load', () => {
             this.addObjects()
         })
+
+        this.map.on('resize', () => {
+            this.isFullscreen = !!document.fullscreenElement
+        });
     }
 
     addObjects() {
@@ -364,34 +382,18 @@ export default class extends Controller {
 
     async loadFarmLayer2() {
         this.markers.farm2 = [];
-
-        const response = await fetch(this.urlsValue.get_user_data)
-        const data = await response.json()
-
-        let userKeys = []
-
-        // TODO Select proper user
-        if (data) {
-            if (1 in data) {
-                if ('keys' in data[1]) {
-                    userKeys = data[1]['keys']
-                }
-            }
-        }
-
         let cnt = 0
-
         this.maxfieldData.waypoints.forEach(function (o) {
             const numKeys = o.keys
             let css = numKeys > 3 ? 'circle farmalot' : 'circle'
 
             let hasKeys = 0
             let capsules = ''
-            for (let i = 0; i < userKeys.length; i++) {
-                if (userKeys[i].guid === this.waypointIdMap[cnt].guid) {
-                    hasKeys = userKeys[i].count
-                    if (userKeys[i].capsules) {
-                        capsules = '<br><br>' + userKeys[i].capsules
+            for (let i = 0; i < this.userData.keys.length; i++) {
+                if (this.userData.keys[i].guid === this.waypointIdMap[cnt].guid) {
+                    hasKeys = this.userData.keys[i].count
+                    if (this.userData.keys[i].capsules) {
+                        capsules = '<br><br>' + this.userData.keys[i].capsules
                     }
                     if (hasKeys >= numKeys) {
                         css += ' farm-done';
@@ -402,6 +404,7 @@ export default class extends Controller {
             const id = this.hashCode(o.lon.toString() + o.lat.toString())
             const el = document.createElement('div');
             el.className = 'farm-layer'
+            el.className += this.userData.farm_done.includes(cnt) ? ' done' : ''
             el.innerHTML = `<b class="${css}">${numKeys ? numKeys : '-'}<span class="hasKeys">${hasKeys ? '&nbsp;' + hasKeys : ''}</span></b>`
             const popup = `
                 <input type="checkbox" id="${id}chkDone"
@@ -436,16 +439,34 @@ export default class extends Controller {
         const element = this.markers['farm2'][event.params.marker]
         if (event.target.checked) {
             element.addClassName('done')
-            this.farmDone.push(event.params.marker)
-
+            this.userData.farm_done.push(event.params.marker)
         } else {
             element.removeClassName('done')
-            this.farmDone = this.farmDone.filter(item => item !== event.params.marker)
+            this.userData.farm_done = this.userData.farm_done.filter(item => item !== event.params.marker)
         }
-        console.log(event);
-        console.log(event.target.checked)
-        console.log(element)
-        console.log(this.farmDone);
+        this._uploadDone()
+    }
+
+    async _uploadDone() {
+        const response = await fetch(this.urlsValue.submit_user_data, {
+            method: 'POST',
+            body: JSON.stringify({
+                // TODO proper agent number
+                agentNum: 1,
+                farm_done: this.userData.farm_done,
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        })
+
+        const data = await response.json()
+
+        console.log(data)
+
+        if (data['error']) {
+            alert(data['error'])
+        }
     }
 
     async getRoute(event) {
@@ -484,7 +505,6 @@ export default class extends Controller {
         const instructions = document.getElementById('instructions');
         const steps = route.legs[0].steps;
 
-        console.log(steps)
         let tripInstructions = '';
         for (const step of steps) {
             tripInstructions += `<li>${step.maneuver.instruction}</li>`;
@@ -581,23 +601,48 @@ export default class extends Controller {
         return hash;
     }
 
-    nextLink(event) {
+    async nextLink(event) {
         const length = this.linkselectTarget.length
+        const newVal = parseInt(this.linkselectTarget.value) + 1
+        await this._uploadCurrentPoint(newVal)
 
         if (this.linkselectTarget.value < length - 2) {
             event.target.innerText = 'Next'
-            const newVal = parseInt(this.linkselectTarget.value) + 1
             this.showDestination(newVal)
             this.linkselectTarget.value = newVal
         } else {
             event.target.innerText = 'Finished!'
 
-            Swal.fire('Finished :)');
+            this.swal('Finished :)')
         }
     }
 
     jumpToLink(e) {
+        this._uploadCurrentPoint(this.linkselectTarget.value)
         this.showDestination(this.linkselectTarget.value)
+    }
+
+    async _uploadCurrentPoint(number) {
+        const response = await fetch(this.urlsValue.submit_user_data, {
+            method: 'POST',
+            body: JSON.stringify({
+                // TODO proper agent number
+                agentNum: 1,
+                current_point: number,
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        })
+
+        const data = await response.json()
+
+        console.log(data)
+
+        if (data['error']) {
+            alert(data['error'])
+        }
+
     }
 
     showDestination(id) {
@@ -724,7 +769,7 @@ export default class extends Controller {
 
             this.errorMessageTarget.className = ''
             this.errorMessageTarget.innerText = ''
-            Swal.fire(data['result']);
+            this.swal(data['result'])
         }
     }
 
@@ -833,5 +878,51 @@ export default class extends Controller {
 
     setProfile() {
         console.log(this.selProfileTarget.value)
+    }
+
+    async _loadUserData() {
+        const response = await fetch(this.urlsValue.get_user_data)
+        const data = await response.json()
+
+        // TODO Select proper user
+        if (data && 1 in data) {
+            this.userData.keys = 'keys' in data[1] ? data[1]['keys'] : []
+            this.userData.current_point = 'current_point' in data[1] ? data[1]['current_point'] : null
+            this.userData.farm_done = 'farm_done' in data[1] ? data[1]['farm_done'] : []
+        } else {
+            this.userData.keys = []
+            this.userData.current_point = null
+            this.userData.farm_done = []
+        }
+    }
+
+    async clearUserData() {
+        const response = await fetch(this.urlsValue.clear_user_data, {
+            method: 'POST',
+            body: JSON.stringify({
+                // TODO proper agent number
+                agentNum: 1,
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        })
+
+        const data = await response.json()
+
+        console.log(data)
+
+        if (data['error']) {
+            alert(data['error'])
+        } else {
+            this.swal('User data have been cleared!')
+        }
+    }
+
+    swal(message) {
+        if (this.isFullscreen) {
+            document.exitFullscreen()
+        }
+        Swal.fire(message);
     }
 }

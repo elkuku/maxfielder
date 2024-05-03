@@ -38,10 +38,10 @@ class Maxfield
     private array|stdClass|null $jsonData = null;
 
     /**
-     * @var array<int, array<int, AgentKeyInfo>>
+     * @var mixed[]
      */
     #[Column(type: Types::JSON, nullable: true)]
-    private array|stdClass|null $userData = null;
+    private ?array $userData = null;
 
     public function getId(): ?int
     {
@@ -130,6 +130,31 @@ class Maxfield
     public function setPath(?string $path): self
     {
         $this->path = $path;
+
+        return $this;
+    }
+
+    public function setCurrentPointWithUser(string $currentPoint, int $user): self
+    {
+        if ($this->userData) {
+            $this->userData[$user]['current_point'] = $currentPoint;
+        } else {
+            $this->userData = [$user => ['current_point' => $currentPoint]];
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param array<int> $farmDone
+     */
+    public function setFarmDoneWithUser(array $farmDone, int $user): self
+    {
+        if ($this->userData) {
+            $this->userData[$user]['farm_done'] = $farmDone;
+        } else {
+            $this->userData = [$user => ['farm_done' => $farmDone]];
+        }
 
         return $this;
     }
