@@ -1,13 +1,13 @@
-import {Controller} from '@hotwired/stimulus';
-import {Modal} from "bootstrap";
+import {Controller} from '@hotwired/stimulus'
+import {Modal} from "bootstrap"
 
 import '../styles/map/play2.css'
 
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import mapboxgl from 'mapbox-gl'
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 import * as turf from '@turf/turf'
-import Swal from "sweetalert2";
+import Swal from "sweetalert2"
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -65,22 +65,22 @@ export default class extends Controller {
         try {
             await this._loadUserData()
         } catch (error) {
-            console.error(error);
+            console.error(error)
             alert(error)
         }
 
-        mapboxgl.accessToken = this.mapboxGlTokenValue;
+        mapboxgl.accessToken = this.mapboxGlTokenValue
         this.map = new mapboxgl.Map({
             container: 'map',
             center: [this.maxfieldData.waypoints[0].lon, this.maxfieldData.waypoints[0].lat],
             zoom: 14,
-        });
+        })
 
         this.map.on('dragstart', this.startDrag.bind(this))
         this.map.on('dragend', this.endDrag.bind(this))
 
         this.map.on('load', () => {
-            const el = document.createElement('div');
+            const el = document.createElement('div')
             el.className = 'destinationMarker'
             el.innerHTML = 'O'
 
@@ -88,12 +88,12 @@ export default class extends Controller {
                 .setLngLat([0, 0])
                 .addTo(this.map)
 
-            this.map.addControl(new mapboxgl.FullscreenControl(), 'top-left');
+            this.map.addControl(new mapboxgl.FullscreenControl(), 'top-left')
             this.map.addControl(new mapboxgl.NavigationControl({
                 visualizePitch: true
-            }), 'top-left');
-            this.map.addControl(this.getZoomControl());
-            this.map.addControl(this.getGeolocateControl(), 'bottom-right');
+            }), 'top-left')
+            this.map.addControl(this.getZoomControl())
+            this.map.addControl(this.getGeolocateControl(), 'bottom-right')
             this.map.addControl(this.getPlayControl())
             this.map.addControl(this.getOptionsBox())
 
@@ -106,7 +106,7 @@ export default class extends Controller {
                 this.showDestination(this.userData.current_point)
                 this.linkselectTarget.value = this.userData.current_point
             } else {
-                this._toggleLayer('farm2', 'block');
+                this._toggleLayer('farm2', 'block')
             }
         })
 
@@ -116,11 +116,11 @@ export default class extends Controller {
 
         this.map.on('resize', () => {
             this.isFullscreen = !!document.fullscreenElement
-        });
+        })
     }
 
     addObjects() {
-        this.map.addSource('trace', {type: 'geojson', data: turf.lineString([[0, 0], [0, 0]])});
+        this.map.addSource('trace', {type: 'geojson', data: turf.lineString([[0, 0], [0, 0]])})
         this.map.addLayer({
             'id': 'trace',
             'type': 'line',
@@ -130,7 +130,7 @@ export default class extends Controller {
                 'line-opacity': 0.75,
                 'line-width': 5
             }
-        });
+        })
 
         this.map.addLayer({
             "id": "circle",
@@ -147,14 +147,14 @@ export default class extends Controller {
                 "line-dasharray": [1, 1]
             },
             "layout": {}
-        });
+        })
 
-        const nothing = turf.featureCollection([]);
+        const nothing = turf.featureCollection([])
 
         this.map.addSource('route', {
             type: 'geojson',
             data: nothing
-        });
+        })
 
         this.map.addLayer(
             {
@@ -196,11 +196,11 @@ export default class extends Controller {
     updateObjects() {
         if (this.location && this.destination) {
 
-            this.distance = turf.distance(this.location, this.destination).toFixed(3) * 1000;
+            this.distance = turf.distance(this.location, this.destination).toFixed(3) * 1000
 
-            this.mapDebugTarget.innerText = this.distance;
+            this.mapDebugTarget.innerText = this.distance
 
-            this.map.getSource('trace').setData(turf.lineString([this.location.geometry.coordinates, this.destination.geometry.coordinates]));
+            this.map.getSource('trace').setData(turf.lineString([this.location.geometry.coordinates, this.destination.geometry.coordinates]))
 
             if (this.distance <= 50) {
                 this.map.getSource('circle').setData(turf.circle(this.location, .04))
@@ -208,8 +208,8 @@ export default class extends Controller {
                 this.map.getSource('circle').setData(turf.circle([0, 0], .04))
             }
 
-            let dist = 0;
-            let style = '';
+            let dist = 0
+            let style = ''
             if (this.distance < 100) {
                 dist = 100 - this.distance
                 if (dist < 20) {
@@ -229,21 +229,21 @@ export default class extends Controller {
                    >
                    </div>
                    &nbsp;${this.distance} m
-                </div>`;
+                </div>`
         } else {
             this.map.getSource('circle').setData(turf.circle([0, 0], .04))
-            this.map.getSource('trace').setData(turf.lineString([[0, 0], [0, 0]]));
+            this.map.getSource('trace').setData(turf.lineString([[0, 0], [0, 0]]))
             this.distanceBarTarget.innerHTML = ''
         }
     }
 
     getBounds() {
         if (!this.bounds) {
-            this.bounds = new mapboxgl.LngLatBounds();
+            this.bounds = new mapboxgl.LngLatBounds()
 
             this.maxfieldData.waypoints.forEach(function (o) {
-                this.bounds.extend([o.lon, o.lat]);
-            }.bind(this));
+                this.bounds.extend([o.lon, o.lat])
+            }.bind(this))
         }
 
         return this.bounds
@@ -252,8 +252,8 @@ export default class extends Controller {
     getPlayControl() {
         return {
             onAdd: (map) => {
-                const container = document.createElement('div');
-                container.classList.add('mapboxgl-ctrl');
+                const container = document.createElement('div')
+                container.classList.add('mapboxgl-ctrl')
 
                 let linkList = '<option value="-1">Start...</option>'
                 let num = 1
@@ -267,16 +267,28 @@ export default class extends Controller {
                     '<button id="btnNext" data-action="maxfield-play2#nextLink">Start...</button><br />' +
                     '<select id="groupSelect" class="form-control" data-maxfield-play2-target="linkselect" data-action="maxfield-play2#jumpToLink">' +
                     linkList +
-                    '</select>' +
-                    '<div data-maxfield-play2-target="distanceBar" class="vw-100"></div>'
+                    '</select>'
 
-                return container;
+                return container
             }, getDefaultPosition: () => {
                 return 'bottom-left'
             }, onRemove: () => {
-                //this.map.off('moveend', updateLatLon);
             }
         }
+    }
+
+    getDistanceBar() {
+        return {
+            onAdd: (map) => {
+                const container = document.createElement('div')
+                container.classList.add('mapboxgl-ctrl')
+                container.innerHTML =                    '<div data-maxfield-play2-target="distanceBar" class="vw-100"></div>'
+                return container
+            }, getDefaultPosition: () => {
+                return 'top-left'
+            }, onRemove: () => {
+            }
+            }
     }
 
     getOptionsBox() {
@@ -286,7 +298,7 @@ export default class extends Controller {
             }, getDefaultPosition: () => {
                 return 'top-right'
             }, onRemove: () => {
-                //this.map.off('moveend', updateLatLon);
+                //this.map.off('moveend', updateLatLon)
             }
         }
     }
@@ -314,27 +326,27 @@ export default class extends Controller {
             },
             trackUserLocation: true,
             showUserHeading: true
-        });
+        })
 
         control.on('geolocate', this.onLocationFound.bind(this))
         control.on('geolocatex', (event) => {
-            const latitude = event.coords.latitude;
-            const longitude = event.coords.longitude;
+            const latitude = event.coords.latitude
+            const longitude = event.coords.longitude
 
             if (this.centerLocation) {
                 this.map.flyTo({
                     center: [longitude, latitude],
                     // zoom:16
-                });
+                })
             }
 
             this.mapDebugTarget.innerHTML = `Lat: ${latitude.toFixed(2)}<br>  Bearing: ${event.coords.heading}<br>` + `Map head: ${this.map.getBearing().toFixed(2)}`
             if (event.coords.heading) {
                 if (this.trackHeading) {
-                    this.map.setBearing(event.coords.heading);
+                    this.map.setBearing(event.coords.heading)
                 }
             }
-        });
+        })
 
         return control
     }
@@ -345,7 +357,7 @@ export default class extends Controller {
         this.mapDebugTarget.innerText = this.isBusy
 
         if (this.centerLocation && false === this.isBusy) {
-            this.map.flyTo({center: this.location.geometry.coordinates});
+            this.map.flyTo({center: this.location.geometry.coordinates})
         }
 
         this.updateObjects()
@@ -356,7 +368,7 @@ export default class extends Controller {
     }
 
     zoomOut() {
-        this.map.zoomOut();
+        this.map.zoomOut()
     }
 
     zoomAll() {
@@ -368,7 +380,7 @@ export default class extends Controller {
         this.maxfieldData.waypoints.forEach(function (o) {
             const num = o.keys
             let css = num > 3 ? 'circle farmalot' : 'circle'
-            const el = document.createElement('div');
+            const el = document.createElement('div')
             el.className = 'farm-layer'
             el.innerHTML = '<b class="' + css + '">' + num + '</b>'
             const marker = new mapboxgl.Marker(el)
@@ -381,7 +393,7 @@ export default class extends Controller {
     }
 
     async loadFarmLayer2() {
-        this.markers.farm2 = [];
+        this.markers.farm2 = []
         let cnt = 0
         this.maxfieldData.waypoints.forEach(function (o) {
             const numKeys = o.keys
@@ -396,13 +408,13 @@ export default class extends Controller {
                         capsules = '<br><br>' + this.userData.keys[i].capsules
                     }
                     if (hasKeys >= numKeys) {
-                        css += ' farm-done';
+                        css += ' farm-done'
                     }
                 }
             }
 
             const id = this.hashCode(o.lon.toString() + o.lat.toString())
-            const el = document.createElement('div');
+            const el = document.createElement('div')
             el.className = 'farm-layer'
             el.className += this.userData.farm_done.includes(cnt) ? ' done' : ''
             el.innerHTML = `<b class="${css}">${numKeys ? numKeys : '-'}<span class="hasKeys">${hasKeys ? '&nbsp;' + hasKeys : ''}</span></b>`
@@ -480,7 +492,7 @@ export default class extends Controller {
         const coordinates = route.geometry.coordinates
 
         if (this.map.getSource('route')) {
-            this.map.getSource('route').setData(turf.lineString(coordinates));
+            this.map.getSource('route').setData(turf.lineString(coordinates))
         } else {
             this.map.addLayer({
                 id: 'route',
@@ -498,20 +510,20 @@ export default class extends Controller {
                     'line-width': 5,
                     'line-opacity': 0.75
                 }
-            });
+            })
         }
 
         return
-        const instructions = document.getElementById('instructions');
-        const steps = route.legs[0].steps;
+        const instructions = document.getElementById('instructions')
+        const steps = route.legs[0].steps
 
-        let tripInstructions = '';
+        let tripInstructions = ''
         for (const step of steps) {
-            tripInstructions += `<li>${step.maneuver.instruction}</li>`;
+            tripInstructions += `<li>${step.maneuver.instruction}</li>`
         }
         instructions.innerHTML = `<p><strong>Trip duration: ${Math.floor(
             route.duration / 60
-        )} min 🚴 </strong></p><ol>${tripInstructions}</ol>`;
+        )} min 🚴 </strong></p><ol>${tripInstructions}</ol>`
     }
 
     async toggleRoutePoint(event) {
@@ -521,14 +533,14 @@ export default class extends Controller {
         if (event.target.checked) {
             this.optimizedRoutePoints.set(id, point)
         } else {
-            this.optimizedRoutePoints.delete(id);
+            this.optimizedRoutePoints.delete(id)
         }
 
         const result = await this._displayOptimizedRoute()
 
         if ('error' === result) {
-            event.target.checked = false;
-            this.optimizedRoutePoints.delete(id);
+            event.target.checked = false
+            this.optimizedRoutePoints.delete(id)
         }
     }
 
@@ -537,21 +549,21 @@ export default class extends Controller {
             return
         }
 
-        const query = await fetch(this.assembleQueryURL(), {method: 'GET'});
-        const response = await query.json();
+        const query = await fetch(this.assembleQueryURL(), {method: 'GET'})
+        const response = await query.json()
 
         if (response.code !== 'Ok') {
             const handleMessage =
                 response.code === 'InvalidInput'
                     ? 'Refresh to start a new route. For more information: https://docs.mapbox.com/api/navigation/optimization/#optimization-api-errors'
-                    : 'Try a different point.';
-            alert(`${response.code} - ${response.message}\n\n${handleMessage}`);
+                    : 'Try a different point.'
+            alert(`${response.code} - ${response.message}\n\n${handleMessage}`)
             return 'error'
         } else {
             const routeGeoJSON = turf.featureCollection([
                 turf.feature(response.trips[0].geometry)
-            ]);
-            this.map.getSource('route').setData(routeGeoJSON);
+            ])
+            this.map.getSource('route').setData(routeGeoJSON)
         }
 
         return 'ok'
@@ -585,20 +597,20 @@ export default class extends Controller {
             {method: 'GET'}
         )
 
-        const json = await query.json();
+        const json = await query.json()
         return json.routes[0]
     }
 
     hashCode(str) {
         // https://stackoverflow.com/posts/7616484/revisions
         let hash = 0,
-            i, chr;
+            i, chr
         for (i = 0; i < str.length; i++) {
-            chr = str.charCodeAt(i);
-            hash = ((hash << 5) - hash) + chr;
-            hash |= 0; // Convert to 32bit integer
+            chr = str.charCodeAt(i)
+            hash = ((hash << 5) - hash) + chr
+            hash |= 0 // Convert to 32bit integer
         }
-        return hash;
+        return hash
     }
 
     async nextLink(event) {
@@ -683,7 +695,7 @@ export default class extends Controller {
              >Nav</button>
             <hr>${description}`
 
-        const el = document.createElement('div');
+        const el = document.createElement('div')
         el.className = 'circle destinationMarker'
         el.innerHTML = (parseInt(id) + 1).toString()
 
@@ -726,13 +738,13 @@ export default class extends Controller {
     }
 
     setStyle(event) {
-        this.map.setStyle('mapbox://styles/' + event.target.value);
+        this.map.setStyle('mapbox://styles/' + event.target.value)
         this.updateObjects()
     }
 
     setStyleConfig(event) {
         const x = 'showPointOfInterestLabels'
-        this.map.setConfigProperty('basemap', x, false);
+        this.map.setConfigProperty('basemap', x, false)
     }
 
     async uploadKeys(event) {
@@ -753,7 +765,7 @@ export default class extends Controller {
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             }
-        });
+        })
 
         const data = await response.json()
 
@@ -763,7 +775,7 @@ export default class extends Controller {
             this.errorMessageTarget.className = 'alert alert-danger'
             this.errorMessageTarget.innerText = data['error']
         } else {
-            this.loadFarmLayer2();
+            this.loadFarmLayer2()
 
             this.modal.hide()
 
@@ -777,7 +789,7 @@ export default class extends Controller {
         this._clearLayers()
         const layer = event.target.value
         if (layer) {
-            this._toggleLayer(layer, 'block');
+            this._toggleLayer(layer, 'block')
         }
 
         if ('farm2' === layer) {
@@ -873,7 +885,7 @@ export default class extends Controller {
             function () {
                 this.isBusy = false
                 this.mapDebugTarget.innerText = this.isBusy
-            }.bind(this), 3000);
+            }.bind(this), 3000)
     }
 
     setProfile() {
@@ -923,6 +935,6 @@ export default class extends Controller {
         if (this.isFullscreen) {
             document.exitFullscreen()
         }
-        Swal.fire(message);
+        Swal.fire(message)
     }
 }
