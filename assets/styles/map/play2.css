@@ -74,23 +74,7 @@ div.done b.circle {
 }
 
 button#btnNext {
-    background-color: green;
-    border: 1px solid green;
-    color: white;
-    padding: 8px 16px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    transition-duration: 0.4s;
-    cursor: pointer;
-}
-
-button#btnNext:hover {
-    background-color: white;
-    border: 1px solid green;
-    color: green;
+    font-size: 2rem;
 }
 
 div.destinationMarker, [data-bs-theme=dark] div.destinationMarker {
@@ -159,4 +143,10 @@ button.optionsBoxTrigger {
     color: black;
     overflow-y: scroll;
     font-family: sans-serif;
+}
+
+.progress-big {
+    height: 35px;
+    line-height: 35px;
+    font-size: 2rem;
 }

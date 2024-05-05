@@ -4,5 +4,10 @@ parameters:
 		- src
 		- tests
 #	editorUrl: 'phpstorm://open?file=%%file%%&line=%%line%%'
+	type_coverage:
+		return: 100
+		param: 100
+		property: 100
+#		declare: 5
 includes:
 	- phpstan-baseline.neon

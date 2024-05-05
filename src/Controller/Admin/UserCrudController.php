@@ -25,7 +25,7 @@ class UserCrudController extends AbstractCrudController
                 ->hideOnForm()
                 ->setSortable(false)
                 ->setLabel('Social')
-                ->formatValue(static function ($value, ?User $user) {
+                ->formatValue(static function (string $value, ?User $user):string|bool {
                     if (!$user) {
                         return false;
                     }

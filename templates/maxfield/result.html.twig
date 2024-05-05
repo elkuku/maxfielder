@@ -110,7 +110,7 @@
                                 <th>Agent {{ agentInfo.agentNumber }} Keys</th>
                             {% endfor %}
                         </tr>
-                        {% set userKeys = maxfield.userKeys ?: [] %}
+                        {% set userKeys = maxfield.userData[1].keys ?: [] %}
 
                         {% for wayPoint in info.keyPrep.wayPoints %}
                             <tr>

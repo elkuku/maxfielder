@@ -88,13 +88,14 @@ export default class extends Controller {
                 .setLngLat([0, 0])
                 .addTo(this.map)
 
+            this.map.addControl(this.getDistanceBar())
             this.map.addControl(new mapboxgl.FullscreenControl(), 'top-left')
             this.map.addControl(new mapboxgl.NavigationControl({
                 visualizePitch: true
             }), 'top-left')
             this.map.addControl(this.getZoomControl())
             this.map.addControl(this.getGeolocateControl(), 'bottom-right')
-            this.map.addControl(this.getPlayControl())
+            this.map.addControl(this.getPlayControl(), 'bottom-left')
             this.map.addControl(this.getOptionsBox())
 
             this.loadFarmLayer()
@@ -222,7 +223,7 @@ export default class extends Controller {
             }
 
             this.distanceBarTarget.innerHTML =
-                `<div class="progress" role="progressbar" style="height: 20px">
+                `<div class="progress progress-big" role="progressbar">
                    <div 
                    class="progress-bar progress-bar-striped progress-bar-animated${style}" 
                    style="width: ${dist}%"
@@ -257,17 +258,19 @@ export default class extends Controller {
 
                 let linkList = '<option value="-1">Start...</option>'
                 let num = 1
-                this.links.forEach(function (link, i) {
+                this.maxfieldData.links.forEach(function (link, i) {
                     linkList += '<option value="' + i + '">' + num + ' - ' + link.name + '</option>'
                     num++
                 })
 
-                container.innerHTML = '<div class="info legend">' +
-                    '<div id="Xinstructions"></div>' +
-                    '<button id="btnNext" data-action="maxfield-play2#nextLink">Start...</button><br />' +
-                    '<select id="groupSelect" class="form-control" data-maxfield-play2-target="linkselect" data-action="maxfield-play2#jumpToLink">' +
-                    linkList +
-                    '</select>'
+                container.innerHTML =
+                  ''//  '<div class="info legend">'
+                    //+'<div id="instructions"></div>'
+                    + '<select id="groupSelect" class="form-control" data-maxfield-play2-target="linkselect" data-action="maxfield-play2#jumpToLink">'
+                    + linkList
+                    + '</select>'
+                    + '<button class="btn btn-outline-success" id="btnNext" data-action="maxfield-play2#nextLink">Start...('+this.maxfieldData.links.length+')</button><br />'
+               //     + '</div>'
 
                 return container
             }, getDefaultPosition: () => {
@@ -282,13 +285,13 @@ export default class extends Controller {
             onAdd: (map) => {
                 const container = document.createElement('div')
                 container.classList.add('mapboxgl-ctrl')
-                container.innerHTML =                    '<div data-maxfield-play2-target="distanceBar" class="vw-100"></div>'
+                container.innerHTML = '<div data-maxfield-play2-target="distanceBar" class="vw-100" id="distanceBar"></div>'
                 return container
             }, getDefaultPosition: () => {
                 return 'top-left'
             }, onRemove: () => {
             }
-            }
+        }
     }
 
     getOptionsBox() {
@@ -298,7 +301,6 @@ export default class extends Controller {
             }, getDefaultPosition: () => {
                 return 'top-right'
             }, onRemove: () => {
-                //this.map.off('moveend', updateLatLon)
             }
         }
     }
@@ -619,9 +621,14 @@ export default class extends Controller {
         await this._uploadCurrentPoint(newVal)
 
         if (this.linkselectTarget.value < length - 2) {
-            event.target.innerText = 'Next'
             this.showDestination(newVal)
             this.linkselectTarget.value = newVal
+            const missing = length - newVal - 2
+            if (0 === missing) {
+                event.target.innerText = "LAST!!!";
+            } else {
+                event.target.innerText = `Next (${length - newVal - 2})`
+            }
         } else {
             event.target.innerText = 'Finished!'
 
@@ -670,9 +677,10 @@ export default class extends Controller {
             return
         }
 
-        document.getElementById('btnNext').innerText = 'Next'
+        //document.getElementById('btnNext').innerText = 'Next'
 
-        const destination = this.links[id]
+        const destination = this.maxfieldData.links[id]
+        console.log(id,this.maxfieldData.links[id])
         this.destination = turf.point([destination.lon, destination.lat])
 
         this.map.panTo(this.destination.geometry.coordinates)
@@ -709,7 +717,7 @@ export default class extends Controller {
         // Routing
         if (id > 0) {
             /*
-            const previous = this.links[id - 1]
+            const previous = this.maxfieldData.links[id - 1]
             const points = [
                 L.latLng(previous.lat, previous.lon),
                 L.latLng(destination.lat, destination.lon)
@@ -825,6 +833,9 @@ export default class extends Controller {
     }
 
     showModal() {
+        if (this.isFullscreen) {
+            document.exitFullscreen()
+        }
         this.modal.show()
     }
 
