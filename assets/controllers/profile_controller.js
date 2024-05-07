@@ -16,6 +16,8 @@ export default class extends Controller {
         zoom: Number,
     }
 
+    static targets = ['lat', 'lon', 'zoom']
+
     map = null
 
     connect() {
@@ -47,8 +49,8 @@ export default class extends Controller {
     updateFields() {
         const center = this.map.getCenter()
 
-        document.getElementById('user_params_lat').value = center.lat.toFixed(7)
-        document.getElementById('user_params_lon').value = center.lng.toFixed(7)
-        document.getElementById('user_params_zoom').value = this.map.getZoom()
+        this.latTarget.value = center.lat.toFixed(7)
+        this.lonTarget.value = center.lng.toFixed(7)
+        this.zoomTarget.value = this.map.getZoom()
     }
 }

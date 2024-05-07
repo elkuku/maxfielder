@@ -3,8 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\UserParamsType;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Settings\UserSettings;
+use Jbtronics\SettingsBundle\Form\SettingsFormFactoryInterface;
+use Jbtronics\SettingsBundle\Manager\SettingsManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -15,17 +16,18 @@ class UserController extends BaseController
     #[Route('/profile', name: 'app_profile', methods: ['GET', 'POST'])]
     #[IsGranted(User::ROLES['user'])]
     public function profile(
-        Request $request,
-        EntityManagerInterface $entityManager
-    ): Response {
-        $user = $this->getUser();
-        $form = $this->createForm(UserParamsType::class, $user?->getParams());
+        SettingsFormFactoryInterface $settingsFormFactory,
+        SettingsManagerInterface     $settingsManager,
+        Request                      $request,
+        UserSettings                 $userSettings,
+    ): Response
+    {
+        $form = $settingsFormFactory->createSettingsFormBuilder($userSettings)
+            ->getForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user?->setParams($form->getData());
-
-            $entityManager->flush();
+            $settingsManager->save($userSettings);
 
             $this->addFlash('success', 'User data have been saved.');
 

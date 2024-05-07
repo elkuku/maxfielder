@@ -5,35 +5,30 @@
 {% block body %}
     <h1>User Profile</h1>
 
-    <div class="row">
+    <div class="row" {{ stimulus_controller('profile', {
+        lat: app.user.param('lat'),
+        lon: app.user.param('lon'),
+        zoom: app.user.param('zoom'),
+    }) }}>
         <div class="col-sm-6">
             <p>Identifier: <code>{{ app.user.userIdentifier }}</code></p>
 
             {{ form_start(form) }}
             {{ form_errors(form) }}
 
-            {{ form_row(form.agent_name) }}
+            {{ form_row(form.agentName) }}
         </div>
         <div class="col-sm-6">
             <h4>Map view center</h4>
 
-            <div {{ stimulus_controller('profile', {
-                lat: app.user.param('lat'),
-                lon: app.user.param('lon'),
-                zoom: app.user.param('zoom'),
-            }) }}>
-
-                <div id="map"></div>
-
-            </div>
+            <div id="map"></div>
         </div>
+        {{ form_widget(form.lat, { 'attr':{'readonly':true,'style':'visibility: hidden;', 'data-profile-target':'lat'} }) }}
+        {{ form_widget(form.lon, { 'attr':{'readonly':true,'style':'visibility: hidden;', 'data-profile-target':'lon'} }) }}
+        {{ form_widget(form.zoom, { 'attr':{'readonly':true,'style':'visibility: hidden;', 'data-profile-target':'zoom'} }) }}
     </div>
 
     <hr>
-
-    {{ form_widget(form.lat, { 'attr':{'readonly':true,'style':'visibility: hidden;'} }) }}
-    {{ form_widget(form.lon, { 'attr':{'readonly':true,'style':'visibility: hidden;'} }) }}
-    {{ form_widget(form.zoom, { 'attr':{'readonly':true,'style':'visibility: hidden;'} }) }}
 
     <button type="submit" class="btn btn-lg btn-outline-success" title="Guardar">
         <span class="bi-check"></span>
