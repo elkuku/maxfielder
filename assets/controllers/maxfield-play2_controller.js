@@ -331,24 +331,6 @@ export default class extends Controller {
         })
 
         control.on('geolocate', this.onLocationFound.bind(this))
-        control.on('geolocatex', (event) => {
-            const latitude = event.coords.latitude
-            const longitude = event.coords.longitude
-
-            if (this.centerLocation) {
-                this.map.flyTo({
-                    center: [longitude, latitude],
-                    // zoom:16
-                })
-            }
-
-            this.mapDebugTarget.innerHTML = `Lat: ${latitude.toFixed(2)}<br>  Bearing: ${event.coords.heading}<br>` + `Map head: ${this.map.getBearing().toFixed(2)}`
-            if (event.coords.heading) {
-                if (this.trackHeading) {
-                    this.map.setBearing(event.coords.heading)
-                }
-            }
-        })
 
         return control
     }
@@ -677,10 +659,7 @@ export default class extends Controller {
             return
         }
 
-        //document.getElementById('btnNext').innerText = 'Next'
-
         const destination = this.maxfieldData.links[id]
-        console.log(id,this.maxfieldData.links[id])
         this.destination = turf.point([destination.lon, destination.lat])
 
         this.map.panTo(this.destination.geometry.coordinates)
