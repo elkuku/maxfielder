@@ -16,7 +16,8 @@ export default class extends Controller {
         jsonData: String,
         waypointIdMap: String,
         mapboxGlToken: String,
-        urls: Object
+        urls: Object,
+        defaultStyle: String,
     }
 
     static targets = [
@@ -75,6 +76,8 @@ export default class extends Controller {
             center: [this.maxfieldData.waypoints[0].lon, this.maxfieldData.waypoints[0].lat],
             zoom: 14,
         })
+
+        this.map.setStyle('mapbox://styles/' + this.defaultStyleValue)
 
         this.map.on('dragstart', this.startDrag.bind(this))
         this.map.on('dragend', this.endDrag.bind(this))

@@ -2,6 +2,8 @@
 
 namespace App\Settings;
 
+use App\Enum\MapBoxProfilesEnum;
+use App\Enum\MapBoxStylesEnum;
 use App\Service\UserSettingsStorageAdapter;
 use Jbtronics\SettingsBundle\Settings\Settings;
 use Jbtronics\SettingsBundle\Settings\SettingsParameter;
@@ -20,4 +22,10 @@ class UserSettings
 
     #[SettingsParameter]
     public int $zoom = 0;
+
+    #[SettingsParameter(label: 'Default Map Style')]
+    public MapBoxStylesEnum $defaultStyle = MapBoxStylesEnum::Standard;
+
+    #[SettingsParameter(label: 'Default Navigation Profile')]
+    public MapBoxProfilesEnum $defaultProfile = MapBoxProfilesEnum::Driving;
 }

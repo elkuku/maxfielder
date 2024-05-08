@@ -17,18 +17,23 @@
             {{ form_errors(form) }}
 
             {{ form_row(form.agentName) }}
+            <div class="row">
+                <div class="col">{{ form_row(form.defaultStyle) }}</div>
+                <div class="col">{{ form_row(form.defaultProfile) }}</div>
+            </div>
+
+
         </div>
         <div class="col-sm-6">
             <h4>Map view center</h4>
-
+            Default view for Maxfield plan map
             <div id="map"></div>
         </div>
-        {{ form_widget(form.lat, { 'attr':{'readonly':true,'style':'visibility: hidden;', 'data-profile-target':'lat'} }) }}
-        {{ form_widget(form.lon, { 'attr':{'readonly':true,'style':'visibility: hidden;', 'data-profile-target':'lon'} }) }}
-        {{ form_widget(form.zoom, { 'attr':{'readonly':true,'style':'visibility: hidden;', 'data-profile-target':'zoom'} }) }}
+        {{ form_widget(form.lat, { 'attr':{'readonly':true,'style':'display: none;', 'data-profile-target':'lat'} }) }}
+        {{ form_widget(form.lon, { 'attr':{'readonly':true,'style':'display: none;', 'data-profile-target':'lon'} }) }}
+        {{ form_widget(form.zoom, { 'attr':{'readonly':true,'style':'display: none;', 'data-profile-target':'zoom'} }) }}
     </div>
 
-    <hr>
 
     <button type="submit" class="btn btn-lg btn-outline-success" title="Guardar">
         <span class="bi-check"></span>

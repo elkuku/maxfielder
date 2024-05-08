@@ -10,6 +10,7 @@
         jsonData: jsonData,
         waypointIdMap :waypointIdMap,
         mapboxGlToken :mapboxGlToken,
+        defaultStyle: defaultStyle.value,
         urls:{
             'get_user_data': path('maxfield_get_user_data', {path:maxfield.path}),
             'submit_user_data': path('maxfield_submit_user_data', {path:maxfield.path}),
@@ -41,16 +42,9 @@
             >
                 <label for="selStyle">Style</label>
                 <select id="selStyle" class="form-select" data-action="maxfield-play2#setStyle">
-                    <option value="mapbox/standard">Standard</option>
-                    <option value="nikp3h/clvm8zx18043s01ph1xmu05dd">Standard Clear</option>
-                    <option value="mapbox/streets-v12">Streets</option>
-                    <option value="mapbox/outdoors-v12">Outdoors</option>
-                    <option value="mapbox/light-v11">Light</option>
-                    <option value="mapbox/dark-v11">Dark</option>
-                    <option value="mapbox/satellite-v9">Satellite</option>
-                    <option value="mapbox/satellite-streets-v12">Satellite Streets</option>
-                    <option value="mapbox/navigation-day-v1">Navigation Day</option>
-                    <option value="mapbox/navigation-night-v1">Navigation Night</option>
+                    {% for key, value in mapboxStylesOptions %}
+                        <option value="{{ key }}" {{ value == defaultStyle.name ? 'selected':'' }}>{{ value }}</option>
+                    {% endfor %}
                 </select>
                 <label for="selLayer">Layer</label>
                 <select id="selLayer" class="form-select" data-action="maxfield-play2#setLayer">
@@ -67,9 +61,9 @@
                 <select id="selProfile" class="form-select" data-action="maxfield-play2#setProfile"
                         data-maxfield-play2-target="selProfile"
                 >
-                    <option value="mapbox/driving">Driving</option>
-                    <option value="mapbox/walking">Walking</option>
-                    <option value="mapbox/cycling" selected>Cycling</option>
+                    {% for key, value in mapboxProfilesOptions %}
+                        <option value="{{ key }}" {{ value == defaultProfile.name ? 'selected':'' }}>{{ value }}</option>
+                    {% endfor %}
                 </select>
                 <hr>
 

@@ -3,12 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Maxfield;
+use App\Enum\MapBoxProfilesEnum;
+use App\Enum\MapBoxStylesEnum;
 use App\Form\MaxfieldFormType;
 use App\Repository\MaxfieldRepository;
 use App\Repository\WaypointRepository;
 use App\Service\IngressHelper;
 use App\Service\MaxFieldGenerator;
 use App\Service\MaxFieldHelper;
+use App\Settings\UserSettings;
 use App\Type\MaxfieldStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Elkuku\MaxfieldParser\JsonHelper;
@@ -214,19 +217,23 @@ class MaxFieldsController extends BaseController
     #[Route('/play2/{path}', name: 'maxfield_play2', methods: ['GET'])]
     public function play2(MaxFieldHelper                               $maxFieldHelper,
                           Maxfield                                     $maxfield,
+                          UserSettings $userSettings,
                           #[Autowire('%env(MAPBOX_GL_TOKEN)%')] string $mapboxGlToken,
     ): Response
     {
         $json = (new JsonHelper())
             ->getJson($maxFieldHelper->getParser($maxfield->getPath()));
-
         return $this->render(
             'maxfield/play2.html.twig',
             [
                 'maxfield' => $maxfield,
                 'jsonData' => $json,
                 'waypointIdMap' => $maxFieldHelper->getWaypointsIdMap($maxfield->getPath()),
-                'mapboxGlToken' => $mapboxGlToken
+                'mapboxGlToken' => $mapboxGlToken,
+                'mapboxStylesOptions' => MapBoxStylesEnum::forSelect(),
+                'mapboxProfilesOptions' => MapBoxProfilesEnum::forSelect(),
+                'defaultStyle' => $userSettings->defaultStyle,
+                'defaultProfile' => $userSettings->defaultProfile,
             ]
         );
     }
