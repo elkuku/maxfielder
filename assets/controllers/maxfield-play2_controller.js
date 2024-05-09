@@ -46,8 +46,9 @@ export default class extends Controller {
 
     trackHeading = false
     centerLocation = false
-    isBusy = false
     isFullscreen = false
+    isBusy = false
+    dragHandle = null
 
     optimizedRoutePoints = null
 
@@ -267,13 +268,11 @@ export default class extends Controller {
                 })
 
                 container.innerHTML =
-                  ''//  '<div class="info legend">'
                     //+'<div id="instructions"></div>'
                     + '<select id="groupSelect" class="form-control" data-maxfield-play2-target="linkselect" data-action="maxfield-play2#jumpToLink">'
                     + linkList
                     + '</select>'
-                    + '<button class="btn btn-outline-success" id="btnNext" data-action="maxfield-play2#nextLink">Start...('+this.maxfieldData.links.length+')</button><br />'
-               //     + '</div>'
+                    + '<button class="btn btn-outline-success" id="btnNext" data-action="maxfield-play2#nextLink">Start...(' + this.maxfieldData.links.length + ')</button><br />'
 
                 return container
             }, getDefaultPosition: () => {
@@ -605,20 +604,14 @@ export default class extends Controller {
         const newVal = parseInt(this.linkselectTarget.value) + 1
         await this._uploadCurrentPoint(newVal)
 
-        if (this.linkselectTarget.value < length - 2) {
+        if (newVal < length - 1) {
             this.showDestination(newVal)
             this.linkselectTarget.value = newVal
-            const missing = length - newVal - 2
-            if (0 === missing) {
-                event.target.innerText = "LAST!!!";
-            } else {
-                event.target.innerText = `Next (${length - newVal - 2})`
-            }
         } else {
-            event.target.innerText = 'Finished!'
-
             this.swal('Finished :)')
         }
+
+        this._updateNextButtonText(newVal)
     }
 
     jumpToLink(e) {
@@ -646,7 +639,6 @@ export default class extends Controller {
         if (data['error']) {
             alert(data['error'])
         }
-
     }
 
     showDestination(id) {
@@ -656,8 +648,7 @@ export default class extends Controller {
             this.destination = null
             clearInterval(this.soundNotifier)
             this.soundNotifier = null
-
-            document.getElementById('btnNext').innerText = 'Start...'
+            this._updateNextButtonText(id)
 
             return
         }
@@ -695,6 +686,8 @@ export default class extends Controller {
             .setPopup(new mapboxgl.Popup({offset: 25, maxWidth: '400px'}) // add popups
                 .setHTML(popup))
             .addTo(this.map)
+
+        this._updateNextButtonText(id)
 
         // Routing
         if (id > 0) {
@@ -871,14 +864,17 @@ export default class extends Controller {
     }
 
     endDrag() {
-        this.isBusy = false
-        this.mapDebugTarget.innerText = this.isBusy
-        return
-        setTimeout(
+        if (null !== this.dragHandle) {
+            clearTimeout(this.dragHandle)
+        }
+
+        this.dragHandle = setTimeout(
             function () {
                 this.isBusy = false
                 this.mapDebugTarget.innerText = this.isBusy
-            }.bind(this), 3000)
+            }.bind(this),
+            3000
+        )
     }
 
     setProfile() {
@@ -929,5 +925,23 @@ export default class extends Controller {
             document.exitFullscreen()
         }
         Swal.fire(message)
+    }
+
+    _updateNextButtonText(newVal) {
+        const element = document.getElementById('btnNext')
+
+        if (newVal < 0) {
+            element.innerText = 'Start...';
+        } else {
+            const length = this.linkselectTarget.length
+            const missing = length - newVal - 2
+            if (-1 === missing) {
+                element.innerText = 'Finished!'
+            } else if (0 === missing) {
+                element.innerText = "LAST!!!";
+            } else {
+                element.innerText = `Next (${length - newVal - 2})`
+            }
+        }
     }
 }
