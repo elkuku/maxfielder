@@ -57,11 +57,11 @@ div.done b.circle {
 }
 
 .circle-button {
-    height: 70px;
-    width: 70px;
+    height: 50px;
+    width: 50px;
     border: solid 1px;
     border-radius: 50%;
-    font-size: 3em;
+    font-size: 2em;
     display: block;
     margin-bottom: 10px;
 }

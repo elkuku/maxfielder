@@ -267,7 +267,7 @@ export default class extends Controller {
                     num++
                 })
 
-                container.innerHTML =
+                container.innerHTML = ''
                     //+'<div id="instructions"></div>'
                     + '<select id="groupSelect" class="form-control" data-maxfield-play2-target="linkselect" data-action="maxfield-play2#jumpToLink">'
                     + linkList
@@ -379,7 +379,10 @@ export default class extends Controller {
     }
 
     async loadFarmLayer2() {
-        this.markers.farm2 = []
+        if (this.markers.farm2 && this.markers.farm2.length) {
+            this._removeLayer('farm2')
+        }
+        this.markers.farm2 = [];
         let cnt = 0
         this.maxfieldData.waypoints.forEach(function (o) {
             const numKeys = o.keys
@@ -758,6 +761,7 @@ export default class extends Controller {
             this.errorMessageTarget.className = 'alert alert-danger'
             this.errorMessageTarget.innerText = data['error']
         } else {
+            await this._loadUserData()
             this.loadFarmLayer2()
 
             this.modal.hide()
@@ -916,6 +920,8 @@ export default class extends Controller {
         if (data['error']) {
             alert(data['error'])
         } else {
+            await this._loadUserData()
+            await this.loadFarmLayer2()
             this.swal('User data have been cleared!')
         }
     }
