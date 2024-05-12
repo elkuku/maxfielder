@@ -9,6 +9,8 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import * as turf from '@turf/turf'
 import Swal from "sweetalert2"
 
+import MapboxAPI from '../lib/MapboxAPI.js'
+
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
     static values = {
@@ -54,12 +56,15 @@ export default class extends Controller {
 
     userData = {}
 
+    MapboxApi = null
+
     connect() {
         this.maxfieldData = JSON.parse(this.jsonDataValue)
         this.waypointIdMap = JSON.parse(this.waypointIdMapValue)
         this.modal = new Modal('#exampleModal')
         this.links = this.maxfieldData.links
         this.optimizedRoutePoints = new Map()
+        this.MapboxAPI = new MapboxAPI(this.mapboxGlTokenValue)
         this.setupMap()
     }
 
@@ -127,10 +132,10 @@ export default class extends Controller {
     addObjects() {
         this.map.addSource('trace', {type: 'geojson', data: turf.lineString([[0, 0], [0, 0]])})
         this.map.addLayer({
-            'id': 'trace',
-            'type': 'line',
-            'source': 'trace',
-            'paint': {
+            id: 'trace',
+            type: 'line',
+            source: 'trace',
+            paint: {
                 'line-color': 'yellow',
                 'line-opacity': 0.75,
                 'line-width': 5
@@ -138,64 +143,58 @@ export default class extends Controller {
         })
 
         this.map.addLayer({
-            "id": "circle",
-            "type": "line",
-            "source": {
+            id: "circle",
+            type: "line",
+            source: {
                 "type": "geojson",
                 "data": turf.circle([0, 0], .04),
                 "lineMetrics": true,
             },
-            "paint": {
+            paint: {
                 "line-color": "red",
                 "line-width": 10,
                 "line-offset": 5,
                 "line-dasharray": [1, 1]
             },
-            "layout": {}
+            layout: {}
         })
-
-        const nothing = turf.featureCollection([])
 
         this.map.addSource('route', {
             type: 'geojson',
-            data: nothing
+            data: turf.featureCollection([])
         })
 
-        this.map.addLayer(
-            {
-                id: 'routeline-active',
-                type: 'line',
-                source: 'route',
-                layout: {
-                    'line-join': 'round',
-                    'line-cap': 'round'
-                },
-                paint: {
-                    'line-color': '#3887be',
-                    'line-width': ['interpolate', ['linear'], ['zoom'], 12, 3, 22, 12]
-                }
+        this.map.addLayer({
+            id: 'routeline-active',
+            type: 'line',
+            source: 'route',
+            layout: {
+                'line-join': 'round',
+                'line-cap': 'round'
+            },
+            paint: {
+                'line-color': '#3887be',
+                'line-width': ['interpolate', ['linear'], ['zoom'], 12, 3, 22, 12]
             }
-        )
+        })
 
-        this.map.addLayer(
-            {
-                id: 'routearrows',
-                type: 'symbol',
-                source: 'route',
-                layout: {
-                    'symbol-placement': 'line',
-                    'text-field': '▶',
-                    'text-size': ['interpolate', ['linear'], ['zoom'], 12, 24, 22, 60],
-                    'symbol-spacing': ['interpolate', ['linear'], ['zoom'], 12, 30, 22, 160],
-                    'text-keep-upright': false
-                },
-                paint: {
-                    'text-color': '#3887be',
-                    'text-halo-color': 'hsl(55, 11%, 96%)',
-                    'text-halo-width': 3
-                }
+        this.map.addLayer({
+            id: 'routearrows',
+            type: 'symbol',
+            source: 'route',
+            layout: {
+                'symbol-placement': 'line',
+                'text-field': '▶',
+                'text-size': ['interpolate', ['linear'], ['zoom'], 12, 24, 22, 60],
+                'symbol-spacing': ['interpolate', ['linear'], ['zoom'], 12, 30, 22, 160],
+                'text-keep-upright': false
+            },
+            paint: {
+                'text-color': '#3887be',
+                'text-halo-color': 'hsl(55, 11%, 96%)',
+                'text-halo-width': 3
             }
-        )
+        })
     }
 
     updateObjects() {
@@ -476,7 +475,11 @@ export default class extends Controller {
 
             return
         }
-        const route = await this._getRoute([event.params.lon, event.params.lat])
+        const route = await this.MapboxAPI.getRoute(
+            this.location.geometry.coordinates,
+            [event.params.lon, event.params.lat],
+            this.selProfileTarget.value
+        )
 
         const coordinates = route.geometry.coordinates
 
@@ -538,8 +541,7 @@ export default class extends Controller {
             return
         }
 
-        const query = await fetch(this.assembleQueryURL(), {method: 'GET'})
-        const response = await query.json()
+        const response = await this.MapboxAPI.getOptimizedRoute(this.optimizedRoutePoints.values(), this.selProfileTarget.value)
 
         if (response.code !== 'Ok') {
             const handleMessage =
@@ -556,38 +558,6 @@ export default class extends Controller {
         }
 
         return 'ok'
-    }
-
-    assembleQueryURL() {
-        let coordinates = []
-        for (const point of this.optimizedRoutePoints.values()) {
-            coordinates.push(point)
-        }
-
-        return 'https://api.mapbox.com/optimized-trips/v1/'
-            + this.selProfileTarget.value + '/'
-            + coordinates.join(';') +
-            '?overview=full&steps=true&geometries=geojson' +
-            '&roundtrip=false' +
-            '&source=first&destination=last' +
-            '&access_token=' + this.mapboxGlTokenValue
-    }
-
-    async _getRoute(end) {
-
-        const coordinates = [this.location.geometry.coordinates, end]
-        const query = await fetch(
-            'https://api.mapbox.com/directions/v5/'
-            + this.selProfileTarget.value + '/'
-            + coordinates.join(';')
-            + '?steps=true&geometries=geojson'
-            + '&access_token=' + this.mapboxGlTokenValue
-            ,
-            {method: 'GET'}
-        )
-
-        const json = await query.json()
-        return json.routes[0]
     }
 
     hashCode(str) {
