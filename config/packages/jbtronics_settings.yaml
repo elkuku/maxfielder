@@ -1,3 +1,3 @@
 jbtronics:
-  settings:
-    proxy_dir:
+    settings:
+        proxy_dir: ""
