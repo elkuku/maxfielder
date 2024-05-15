@@ -177,8 +177,6 @@
       <path value="$PROJECT_DIR$/vendor/nette/utils" />
       <path value="$PROJECT_DIR$/vendor/tomasvotruba/type-coverage" />
       <path value="$PROJECT_DIR$/vendor/phpstan/extension-installer" />
-      <path value="$PROJECT_DIR$/vendor/ergebnis/classy" />
-      <path value="$PROJECT_DIR$/vendor/jbtronics/settings-bundle" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />
