@@ -17,15 +17,15 @@ class UserController extends BaseController
     #[Route('/profile', name: 'app_profile', methods: ['GET', 'POST'])]
     #[IsGranted(User::ROLES['user'])]
     public function profile(
-        Request $request,
+        Request                $request,
         EntityManagerInterface $entityManager,
     ): Response
     {
         $user = $this->getUser();
         $params = $user?->getParams();
         if ($params) {
-            $params['default_style'] = MapBoxStylesEnum::from($params['default_style']);
-            $params['default_profile'] = MapBoxProfilesEnum::from($params['default_profile']);
+            $params['default_style'] = isset($params['default_style']) ? MapBoxStylesEnum::tryFrom($params['default_style']) : MapBoxStylesEnum::Standard;
+            $params['default_profile'] = isset($params['default_profile']) ? MapBoxProfilesEnum::from($params['default_profile']) : MapBoxProfilesEnum::Driving;
         }
         $form = $this->createForm(ProfileFormType::class, $params);
         $form->handleRequest($request);
