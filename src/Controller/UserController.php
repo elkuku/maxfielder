@@ -3,9 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Settings\UserSettings;
-use Jbtronics\SettingsBundle\Form\SettingsFormFactoryInterface;
-use Jbtronics\SettingsBundle\Manager\SettingsManagerInterface;
+use App\Enum\MapBoxProfilesEnum;
+use App\Enum\MapBoxStylesEnum;
+use App\Form\ProfileFormType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -16,18 +17,23 @@ class UserController extends BaseController
     #[Route('/profile', name: 'app_profile', methods: ['GET', 'POST'])]
     #[IsGranted(User::ROLES['user'])]
     public function profile(
-        SettingsFormFactoryInterface $settingsFormFactory,
-        SettingsManagerInterface     $settingsManager,
-        Request                      $request,
-        UserSettings                 $userSettings,
+        Request $request,
+        EntityManagerInterface $entityManager,
     ): Response
     {
-        $form = $settingsFormFactory->createSettingsFormBuilder($userSettings)
-            ->getForm();
+        $user = $this->getUser();
+        $params = $user?->getParams();
+        if ($params) {
+            $params['default_style'] = MapBoxStylesEnum::from($params['default_style']);
+            $params['default_profile'] = MapBoxProfilesEnum::from($params['default_profile']);
+        }
+        $form = $this->createForm(ProfileFormType::class, $params);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $settingsManager->save($userSettings);
+            $user?->setParams($form->getData());
+
+            $entityManager->flush();
 
             $this->addFlash('success', 'User data have been saved.');
 

@@ -119,9 +119,6 @@
     "guzzlehttp/psr7": {
         "version": "2.1.0"
     },
-    "jbtronics/settings-bundle": {
-        "version": "2.0.2"
-    },
     "knpuniversity/oauth2-client-bundle": {
         "version": "1.20",
         "recipe": {
