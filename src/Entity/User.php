@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use App\Enum\MapBoxProfilesEnum;
+use App\Enum\MapBoxStylesEnum;
 use App\Repository\UserRepository;
+use App\Settings\UserSettings;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -99,7 +102,7 @@ class User implements UserInterface, \Stringable
     public function __unserialize(array $data): void
     {
         $this->id = $data['id'] ?? null;
-        $this->identifier = (string) ($data['identifier'] ?? null);
+        $this->identifier = (string)($data['identifier'] ?? null);
     }
 
     public function eraseCredentials(): void
@@ -139,6 +142,30 @@ class User implements UserInterface, \Stringable
         return $this->params && array_key_exists($name, $this->params)
             ? $this->params[$name]
             : '';
+    }
+
+    public function getUserParams(): UserSettings
+    {
+        static $settings;
+
+        if ($settings) {
+            return $settings;
+        }
+
+        $settings = new UserSettings();
+
+        $settings->agentName = $this->getParam('agentName');
+        $settings->lat = (float)$this->getParam('lat');
+        $settings->lon = (float)$this->getParam('lon');
+        $settings->zoom = (int)$this->getParam('zoom');
+        $settings->defaultStyle = $this->getParam('defaultStyle')
+            ? MapBoxStylesEnum::tryFrom($this->getParam('defaultStyle'))
+            : MapBoxStylesEnum::Standard;
+        $settings->defaultProfile = $this->getParam('defaultProfile')
+            ? MapBoxProfilesEnum::tryFrom($this->getParam('defaultProfile'))
+            : MapBoxProfilesEnum::Driving;
+
+        return $settings;
     }
 
     /**

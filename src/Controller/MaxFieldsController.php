@@ -223,6 +223,9 @@ class MaxFieldsController extends BaseController
     {
         $json = (new JsonHelper())
             ->getJson($maxFieldHelper->getParser($maxfield->getPath()));
+        $user = $this->getUser();
+        $userSettings = $user?->getUserParams();
+
         return $this->render(
             'maxfield/play2.html.twig',
             [

@@ -16,7 +16,7 @@ class ProfileFormType extends AbstractType
         array $options
     ): void {
         $builder
-            ->add('agent_name')
+            ->add('agentName')
             ->add(
                 'lat',
                 NumberType::class,
@@ -46,8 +46,8 @@ class ProfileFormType extends AbstractType
                 ]
             )
             ->add('zoom')
-        ->add('default_style', EnumType::class, ['class' => MapBoxStylesEnum::class])
-        ->add('default_profile', EnumType::class, ['class' => MapBoxProfilesEnum::class])
+        ->add('defaultStyle', EnumType::class, ['class' => MapBoxStylesEnum::class])
+        ->add('defaultProfile', EnumType::class, ['class' => MapBoxProfilesEnum::class])
         ;
     }
 }

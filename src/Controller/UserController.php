@@ -22,16 +22,12 @@ class UserController extends BaseController
     ): Response
     {
         $user = $this->getUser();
-        $params = $user?->getParams();
-        if ($params) {
-            $params['default_style'] = isset($params['default_style']) ? MapBoxStylesEnum::tryFrom($params['default_style']) : MapBoxStylesEnum::Standard;
-            $params['default_profile'] = isset($params['default_profile']) ? MapBoxProfilesEnum::from($params['default_profile']) : MapBoxProfilesEnum::Driving;
-        }
+        $params = $user?->getUserParams();
         $form = $this->createForm(ProfileFormType::class, $params);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user?->setParams($form->getData());
+            $user?->setParams((array)$form->getData());
 
             $entityManager->flush();
 
