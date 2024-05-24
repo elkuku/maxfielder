@@ -4,6 +4,7 @@ namespace App\Tests\Controller;
 
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 class UserAccessTest extends WebTestCase
 {
@@ -11,7 +12,7 @@ class UserAccessTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/');
+        $client->request(Request::METHOD_GET, '/');
 
         self::assertResponseIsSuccessful();
         // self::assertSelectorTextContains('h2', 'Hello DefaultController!');
@@ -28,9 +29,9 @@ class UserAccessTest extends WebTestCase
 
         $client->loginUser($user);
 
-        $client->request('GET', '/');
+        $client->request(Request::METHOD_GET, '/');
 
         self::assertResponseIsSuccessful();
-        // self::assertSelectorTextContains('h4', 'Welcome user');
+        self::assertSelectorTextContains('h4', 'Welcome user');
     }
 }

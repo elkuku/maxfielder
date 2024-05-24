@@ -62,6 +62,11 @@ class ControllerAccessTest extends ControllerBaseTest
                     '{path}' => 'test',
                 ],
             ],
+            'maxfield_get_data' => [
+                'params' => [
+                    '{path}' => 'test',
+                ],
+            ],
             'waypoint_thumbnail' => [
                 'params' => [
                     '{guid}' => 'test',
