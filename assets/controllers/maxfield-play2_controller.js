@@ -116,7 +116,7 @@ export default class extends Controller {
             this._clearLayers()
             this.zoomAll()
 
-            if (this.userData.current_point >= 0) {
+            if (this.userData.current_point >= 0 && this.userData.current_point !== null) {
                 this.showDestination(this.userData.current_point)
                 this.linkselectTarget.value = this.userData.current_point
             } else {
@@ -407,15 +407,18 @@ export default class extends Controller {
 
             const id = this.hashCode(o.lon.toString() + o.lat.toString())
             const el = document.createElement('div')
+            const isDone = this.userData.farm_done.includes(cnt)
             el.className = 'farm-layer'
-            el.className += this.userData.farm_done.includes(cnt) ? ' done' : ''
+            el.className += isDone ? ' done' : ''
             el.innerHTML = `<b class="${css}">${numKeys ? numKeys : '-'}<span class="hasKeys">${hasKeys ? '&nbsp;' + hasKeys : ''}</span></b>`
             const popup = `
+                <div class="float-end" style="border: 1px solid gray;padding: 5px;">
                 <input type="checkbox" id="${id}chkDone"
+                ${isDone ? 'checked' : ''}
                 data-action="maxfield-play2#toggleDone"
                 data-maxfield-play2-marker-param="${cnt}"
                 > <label for="${id}chkDone">Done</label>
-                <br>
+                </div>
                 <b>${o.name}</b>
                 <br>${o.description} ${hasKeys ? '(' + hasKeys + ')' : ''}${capsules}
                 <hr>
@@ -444,6 +447,10 @@ export default class extends Controller {
         if (event.target.checked) {
             element.addClassName('done')
             this.userData.farm_done.push(event.params.marker)
+            const popup = document.getElementsByClassName('mapboxgl-popup');
+            if (popup.length) {
+                popup[0].remove();
+            }
         } else {
             element.removeClassName('done')
             this.userData.farm_done = this.userData.farm_done.filter(item => item !== event.params.marker)
@@ -887,13 +894,13 @@ export default class extends Controller {
         } else {
             await this._loadUserData()
             await this.loadFarmLayer2()
-            setTimeout(function() {
-            Swal.fire({
-                title: 'User data have been cleared!',
-                icon: 'success',
-                timer: 2000,
-                showConfirmButton: false
-            })
+            setTimeout(function () {
+                Swal.fire({
+                    title: 'User data have been cleared!',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                })
             }, 500)
         }
     }
