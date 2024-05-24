@@ -1504,18 +1504,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mapbox/geojson-rewind@npm:^0.5.2":
-  version: 0.5.2
-  resolution: "@mapbox/geojson-rewind@npm:0.5.2"
-  dependencies:
-    get-stream: ^6.0.1
-    minimist: ^1.2.6
-  bin:
-    geojson-rewind: geojson-rewind
-  checksum: 429d34edf6fc50809771923665f211e92bb99caf46986b43c8e529b0d751ddbd502044ef0a9e2ffb8356893877e3e7b4e9723220a08fee986992b82e51361ce0
-  languageName: node
-  linkType: hard
-
 "@mapbox/jsonlint-lines-primitives@npm:^2.0.2":
   version: 2.0.2
   resolution: "@mapbox/jsonlint-lines-primitives@npm:2.0.2"
@@ -5606,13 +5594,6 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"get-stream@npm:^6.0.1":
-  version: 6.0.1
-  resolution: "get-stream@npm:6.0.1"
-  checksum: 83de1fde5b21f879b91e45c1be765f53cf041873d65aea3b5a15cd53d4bc7825118693b1f50efb5c33a5d979dd20b398b6af955ffd70a013017da933b18fa5c8
-  languageName: node
-  linkType: hard
-
 "getpass@npm:^0.1.1":
   version: 0.1.7
   resolution: "getpass@npm:0.1.7"
@@ -6561,11 +6542,10 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"mapbox-gl@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "mapbox-gl@npm:3.3.0"
+"mapbox-gl@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "mapbox-gl@npm:3.4.0"
   dependencies:
-    "@mapbox/geojson-rewind": ^0.5.2
     "@mapbox/jsonlint-lines-primitives": ^2.0.2
     "@mapbox/mapbox-gl-supported": ^3.0.0
     "@mapbox/point-geometry": ^0.1.0
@@ -6589,11 +6569,11 @@ fsevents@~2.3.2:
     rw: ^1.3.3
     serialize-to-js: ^3.1.2
     supercluster: ^8.0.0
-    tiny-lru: ^11.2.5
+    tiny-lru: ^11.2.6
     tinyqueue: ^2.0.3
     tweakpane: ^4.0.3
     vt-pbf: ^3.1.3
-  checksum: cf76946e1551d1e80be3fb3d693e4fcd4fd8abd16f9951f547c3b14d1b572cdc4fe7b50001dec9000e9c21aea82c175257fc48fea63703137063f13316466329
+  checksum: 35868e6a98519afcf7fd624b80cdb738ed2b93e6095092140205b35875712c44fb8d070325d492dd04a66bc4102943d7cad220734092fc08770b09b33c056a1a
   languageName: node
   linkType: hard
 
@@ -6753,13 +6733,6 @@ fsevents@~2.3.2:
   version: 1.2.5
   resolution: "minimist@npm:1.2.5"
   checksum: b77b8590147a4e217ff34266236bc39de23b52e6e33054076991ff674c7397a1380a7bde11111916f16f003a94aaa7e4f3d92595a32189644ff607fabc65a5b6
-  languageName: node
-  linkType: hard
-
-"minimist@npm:^1.2.6":
-  version: 1.2.8
-  resolution: "minimist@npm:1.2.8"
-  checksum: e3f8b422f9bff709afffa75fc87a8949b26a85bac5b69327f9ac03e5b826e6c7265945435848f23da6e54e78da5063734c2e0060bb1212bdfff4ad3ed6d23f52
   languageName: node
   linkType: hard
 
@@ -8219,10 +8192,10 @@ resolve@^1.20.0:
     leaflet-routing-machine: ^3.2.12
     leaflet.locatecontrol: ^0.79.0
     leaflet.markercluster: ^1.5.3
-    mapbox-gl: ^3.3.0
+    mapbox-gl: ^3.4.0
     regenerator-runtime: ^0.14.1
     stimulus-use: ^0.52.2
-    sweetalert2: ^11.10.8
+    sweetalert2: ^11.11.0
     webpack: ^5.91.0
     webpack-cli: ^5.1.4
     webpack-notifier: ^1.15.0
@@ -8838,10 +8811,10 @@ resolve@^1.20.0:
   languageName: node
   linkType: hard
 
-"sweetalert2@npm:^11.10.8":
-  version: 11.10.8
-  resolution: "sweetalert2@npm:11.10.8"
-  checksum: 4c1196851f6d94042b774a9f905532ed5c69a3960cb200a61ea9c073c744d4c586ccacc857837d0d0f9b729888307ad10cd22b09746242eafaccf58faa4a5ee1
+"sweetalert2@npm:^11.11.0":
+  version: 11.11.0
+  resolution: "sweetalert2@npm:11.11.0"
+  checksum: 98f921e9b0be4e08d72196060d04a146a36acbec3d7a5dbc12eb0e35fed63f3fbefa87a80b52cfbc2260b1c3f5d87666bedffbe042cca9a2ca33c1cbdd4e51b1
   languageName: node
   linkType: hard
 
@@ -8954,7 +8927,7 @@ resolve@^1.20.0:
   languageName: node
   linkType: hard
 
-"tiny-lru@npm:^11.2.5":
+"tiny-lru@npm:^11.2.6":
   version: 11.2.6
   resolution: "tiny-lru@npm:11.2.6"
   checksum: 122c3a361dba10fdd6e2c9728b1ef93fcc1904d81cb1cbb053d7abde4c8e78dc24520aa86ff5b554d0536c2877046d4e58a1adc1550ed6dca573f4b284383622
