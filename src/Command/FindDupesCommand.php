@@ -20,15 +20,17 @@ class FindDupesCommand extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly WaypointRepository $waypointRepository
-    ) {
+        private readonly WaypointRepository     $waypointRepository
+    )
+    {
         parent::__construct();
     }
 
     protected function execute(
-        InputInterface $input,
+        InputInterface  $input,
         OutputInterface $output
-    ): int {
+    ): int
+    {
         $io = new SymfonyStyle($input, $output);
         $waypoints = $this->waypointRepository->findAll();
         $progressBar = new ProgressBar($output, count($waypoints));
@@ -55,6 +57,11 @@ class FindDupesCommand extends Command
 
         foreach ($waypoints as $waypoint) {
             foreach ($waypoints as $test) {
+                if ($test->getGuid() === $waypoint->getGuid()
+                    && $test->getId() !== $waypoint->getId()) {
+                    $io->warning('@TODO Duplicated GUID found for: ' . $waypoint->getName());
+                    // @todo handle Duplicated GUID
+                }
                 if ($test->getLat() === $waypoint->getLat()
                     && $test->getLon() === $waypoint->getLon()
                     && $test->getId() !== $waypoint->getId()
@@ -86,7 +93,7 @@ class FindDupesCommand extends Command
                             $this->entityManager->flush();
                             ++$removals;
                         } elseif ($choice === $choices[2]) {
-                            $waypoint->setName((string) $test->getName());
+                            $waypoint->setName((string)$test->getName());
                             $this->entityManager->persist($waypoint);
                             $this->entityManager->flush();
                         } elseif ($choice === $choices[3]) {
