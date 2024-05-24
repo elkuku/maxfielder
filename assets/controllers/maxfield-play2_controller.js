@@ -15,8 +15,6 @@ import MapboxAPI from '../lib/MapboxAPI.js'
 export default class extends Controller {
     static values = {
         path: String,
-        jsonData: String,
-        waypointIdMap: String,
         mapboxGlToken: String,
         urls: Object,
         defaultStyle: String,
@@ -59,17 +57,23 @@ export default class extends Controller {
     MapboxApi = null
 
     connect() {
-        this.maxfieldData = JSON.parse(this.jsonDataValue)
-        this.waypointIdMap = JSON.parse(this.waypointIdMapValue)
         this.modal = new Modal('#exampleModal')
-        this.links = this.maxfieldData.links
         this.optimizedRoutePoints = new Map()
         this.MapboxAPI = new MapboxAPI(this.mapboxGlTokenValue)
         this.setupMap()
     }
 
+    async _loadData() {
+        const response = await fetch(this.urlsValue.get_data)
+        const data = await response.json()
+
+        this.maxfieldData = data.jsonData
+        this.waypointIdMap = data.waypointIdMap
+    }
+
     async setupMap() {
         try {
+            await this._loadData()
             await this._loadUserData()
         } catch (error) {
             console.error(error)
@@ -483,27 +487,7 @@ export default class extends Controller {
 
         const coordinates = route.geometry.coordinates
 
-        if (this.map.getSource('route')) {
-            this.map.getSource('route').setData(turf.lineString(coordinates))
-        } else {
-            this.map.addLayer({
-                id: 'route',
-                type: 'line',
-                source: {
-                    type: 'geojson',
-                    data: turf.lineString(coordinates)
-                },
-                layout: {
-                    'line-join': 'round',
-                    'line-cap': 'round'
-                },
-                paint: {
-                    'line-color': '#3887be',
-                    'line-width': 5,
-                    'line-opacity': 0.75
-                }
-            })
-        }
+        this.map.getSource('route').setData(turf.lineString(coordinates))
 
         return
         const instructions = document.getElementById('instructions')
@@ -575,16 +559,17 @@ export default class extends Controller {
     async nextLink(event) {
         const length = this.linkselectTarget.length
         const newVal = parseInt(this.linkselectTarget.value) + 1
-        await this._uploadCurrentPoint(newVal)
 
         if (newVal < length - 1) {
             this.showDestination(newVal)
+            this.map.getSource('route').setData(turf.lineString([[0, 0], [0, 0]]))
             this.linkselectTarget.value = newVal
         } else {
             this.swal('Finished :)')
         }
 
         this._updateNextButtonText(newVal)
+        await this._uploadCurrentPoint(newVal)
     }
 
     jumpToLink(e) {
@@ -615,6 +600,9 @@ export default class extends Controller {
     }
 
     showDestination(id) {
+        if (parseInt(id) === this.maxfieldData.links.length) {
+            id = -1
+        }
         if (id < 0) {
             this.destinationMarker.setLngLat([0, 0])
                 .setPopup('')
@@ -872,6 +860,13 @@ export default class extends Controller {
     }
 
     async clearUserData() {
+        Swal.fire({
+            title: "Clearing...",
+            text: "Please wait",
+            imageUrl: "/build/images/loading.gif",
+            showConfirmButton: false,
+            allowOutsideClick: false
+        })
         const response = await fetch(this.urlsValue.clear_user_data, {
             method: 'POST',
             body: JSON.stringify({
@@ -892,7 +887,14 @@ export default class extends Controller {
         } else {
             await this._loadUserData()
             await this.loadFarmLayer2()
-            this.swal('User data have been cleared!')
+            setTimeout(function() {
+            Swal.fire({
+                title: 'User data have been cleared!',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            })
+            }, 500)
         }
     }
 

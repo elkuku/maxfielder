@@ -7,11 +7,10 @@
 {% block body %}
     <div {{ stimulus_controller('maxfield-play2', {
         path: maxfield.path,
-        jsonData: jsonData,
-        waypointIdMap :waypointIdMap,
         mapboxGlToken :mapboxGlToken,
         defaultStyle: defaultStyle.value,
         urls:{
+            'get_data': path('maxfield_get_data', {path:maxfield.path}),
             'get_user_data': path('maxfield_get_user_data', {path:maxfield.path}),
             'submit_user_data': path('maxfield_submit_user_data', {path:maxfield.path}),
             'clear_user_data': path('maxfield_clear_user_data', {path:maxfield.path}),

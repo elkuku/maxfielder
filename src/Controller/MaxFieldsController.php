@@ -217,7 +217,6 @@ class MaxFieldsController extends BaseController
     #[Route('/play2/{path}', name: 'maxfield_play2', methods: ['GET'])]
     public function play2(MaxFieldHelper                               $maxFieldHelper,
                           Maxfield                                     $maxfield,
-                          UserSettings $userSettings,
                           #[Autowire('%env(MAPBOX_GL_TOKEN)%')] string $mapboxGlToken,
     ): Response
     {
@@ -260,6 +259,23 @@ class MaxFieldsController extends BaseController
         );
     }
 
+    #[Route('/get-data/{path}', name: 'maxfield_get_data', methods: ['GET'])]
+    public function getData(
+        MaxFieldHelper $maxFieldHelper,
+
+        Maxfield $maxfield
+    ): JsonResponse
+    {
+        $json = (new JsonHelper())
+            ->getJsonData($maxFieldHelper->getParser($maxfield->getPath()));
+
+        return $this->json([
+            'jsonData' => $json,
+            'waypointIdMap' => $maxFieldHelper->getWaypointsIdMap($maxfield->getPath()),
+        ]);
+
+
+    }
     #[Route('/get-user-data/{path}', name: 'maxfield_get_user_data', methods: ['GET'])]
     public function getUserData(
         Maxfield $maxfield
