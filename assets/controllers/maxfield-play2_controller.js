@@ -45,6 +45,7 @@ export default class extends Controller {
     markers = {}
 
     trackHeading = false
+    showDone = true
     centerLocation = false
     isFullscreen = false
     isBusy = false
@@ -442,6 +443,17 @@ export default class extends Controller {
         }.bind(this))
     }
 
+    toggleShowDone(event) {
+        this.showDone = !this.showDone
+        this._toggleButtonClass(event.target, this.showDone)
+
+        this.markers['farm2'].forEach((e) => {
+            if (e._element.classList.contains('done')) {
+                e._element.style.display = this.showDone ? 'block' : 'none'
+            }
+        })
+    }
+
     toggleDone(event) {
         const element = this.markers['farm2'][event.params.marker]
         if (event.target.checked) {
@@ -450,6 +462,9 @@ export default class extends Controller {
             const popup = document.getElementsByClassName('mapboxgl-popup');
             if (popup.length) {
                 popup[0].remove();
+            }
+            if (false === this.showDone) {
+                element._element.style.display = 'none'
             }
         } else {
             element.removeClassName('done')

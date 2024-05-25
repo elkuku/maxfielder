@@ -33,13 +33,12 @@ html, body, #map {
 
 .circle {
     border-radius: 50%;
-    min-width: 34px;
-    min-height: 34px;
     padding: 10px;
     background: #fff;
     border: 3px solid #6e6e6e;
     color: #000;
     text-align: center;
+    font-family: monospace;
 }
 
 div.done b.circle {
