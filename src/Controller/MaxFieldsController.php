@@ -262,8 +262,7 @@ class MaxFieldsController extends BaseController
     #[Route('/get-data/{path}', name: 'maxfield_get_data', methods: ['GET'])]
     public function getData(
         MaxFieldHelper $maxFieldHelper,
-
-        Maxfield $maxfield
+        Maxfield       $maxfield
     ): JsonResponse
     {
         $json = (new JsonHelper())
@@ -276,12 +275,23 @@ class MaxFieldsController extends BaseController
 
 
     }
-    #[Route('/get-user-data/{path}', name: 'maxfield_get_user_data', methods: ['GET'])]
+
+    #[Route('/get-user-data/{path}', name: 'maxfield_get_user_data', methods: ['POST'])]
     public function getUserData(
-        Maxfield $maxfield
+        Maxfield $maxfield,
+        Request  $request
     ): JsonResponse
     {
-        return $this->json($maxfield->getUserData());
+        $userData = $maxfield->getUserData();
+        $requestData = json_decode($request->getContent(), true);
+
+        $userId = (int)$requestData['userId'];
+
+        if ($userData && array_key_exists($userId, $userData)) {
+            return $this->json($userData[$userId]);
+        }
+
+        return $this->json([]);
     }
 
     #[Route(path: '/export', name: 'export-maxfields', methods: ['POST'])]

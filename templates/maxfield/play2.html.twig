@@ -9,6 +9,7 @@
         path: maxfield.path,
         mapboxGlToken :mapboxGlToken,
         defaultStyle: defaultStyle.value,
+        userId: app.user.id,
         urls:{
             'get_data': path('maxfield_get_data', {path:maxfield.path}),
             'get_user_data': path('maxfield_get_user_data', {path:maxfield.path}),

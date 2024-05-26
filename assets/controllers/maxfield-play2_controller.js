@@ -16,8 +16,9 @@ export default class extends Controller {
     static values = {
         path: String,
         mapboxGlToken: String,
-        urls: Object,
         defaultStyle: String,
+        userId: Number,
+        urls: Object,
     }
 
     static targets = [
@@ -55,7 +56,7 @@ export default class extends Controller {
 
     userData = {}
 
-    MapboxApi = null
+    MapboxAPI = null
 
     connect() {
         this.modal = new Modal('#exampleModal')
@@ -477,8 +478,7 @@ export default class extends Controller {
         const response = await fetch(this.urlsValue.submit_user_data, {
             method: 'POST',
             body: JSON.stringify({
-                // TODO proper agent number
-                agentNum: 1,
+                agentNum: this.userIdValue,
                 farm_done: this.userData.farm_done,
             }),
             headers: {
@@ -603,8 +603,7 @@ export default class extends Controller {
         const response = await fetch(this.urlsValue.submit_user_data, {
             method: 'POST',
             body: JSON.stringify({
-                // TODO proper agent number
-                agentNum: 1,
+                agentNum: this.userIdValue,
                 current_point: number,
             }),
             headers: {
@@ -724,8 +723,7 @@ export default class extends Controller {
         const response = await fetch(this.urlsValue.submit_user_data, {
             method: 'POST',
             body: JSON.stringify({
-                // TODO proper agent number
-                agentNum: 1,
+                agentNum: this.userIdValue,
                 keys: keys,
             }),
             headers: {
@@ -866,15 +864,22 @@ export default class extends Controller {
     }
 
     async _loadUserData() {
-        const response = await fetch(this.urlsValue.get_user_data)
-        const data = await response.json()
-
-        // TODO Select proper user
-        if (data && 1 in data) {
-            this.userData.keys = 'keys' in data[1] ? data[1]['keys'] : []
-            this.userData.current_point = 'current_point' in data[1] ? data[1]['current_point'] : null
-            this.userData.farm_done = 'farm_done' in data[1] ? data[1]['farm_done'] : []
-        } else {
+        const response = await fetch(this.urlsValue.get_user_data, {
+            method: 'POST',
+            body: JSON.stringify({
+                userId: this.userIdValue
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        })
+        const data = await response.json();
+        if (200 === response.status) {
+            this.userData.keys = 'keys' in data ? data['keys'] : []
+            this.userData.current_point = 'current_point' in data ? data['current_point'] : null
+            this.userData.farm_done = 'farm_done' in data ? data['farm_done'] : []
+        }else {
+            alert(data)
             this.userData.keys = []
             this.userData.current_point = null
             this.userData.farm_done = []
@@ -892,8 +897,7 @@ export default class extends Controller {
         const response = await fetch(this.urlsValue.clear_user_data, {
             method: 'POST',
             body: JSON.stringify({
-                // TODO proper agent number
-                agentNum: 1,
+                agentNum: this.userIdValue,
             }),
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
