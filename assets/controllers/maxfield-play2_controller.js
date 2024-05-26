@@ -421,8 +421,11 @@ export default class extends Controller {
                 data-maxfield-play2-marker-param="${cnt}"
                 > <label for="${id}chkDone">Done</label>
                 </div>
+                <img src="/waypoint_thumb/${this.waypointIdMap[cnt].guid}" width="60px" height="60px" alt="thumbnail image">
+                <br>
                 <b>${o.name}</b>
-                <br>${o.description} ${hasKeys ? '(' + hasKeys + ')' : ''}${capsules}
+                <hr>
+                ${o.description} ${hasKeys ? '(' + hasKeys + ')' : ''}${capsules}
                 <hr>
                 <input type="checkbox" id="${id}"
                 data-action="maxfield-play2#toggleRoutePoint"
