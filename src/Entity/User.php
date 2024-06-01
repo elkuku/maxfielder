@@ -142,7 +142,7 @@ class User implements UserInterface, Stringable
     public function getParam(string $name): string
     {
         return $this->params && array_key_exists($name, $this->params)
-            ? $this->params[$name]
+            ? $this->params[$name] ?: ''
             : '';
     }
 
