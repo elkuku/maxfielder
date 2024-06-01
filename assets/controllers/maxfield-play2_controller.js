@@ -28,8 +28,6 @@ export default class extends Controller {
         'selProfile'
     ]
 
-    className = 'maxfield-play2'
-
     maxfieldData = null
     waypointIdMap = null
 
@@ -53,6 +51,7 @@ export default class extends Controller {
     dragHandle = null
 
     optimizedRoutePoints = null
+    proximityPoints = []
 
     userData = {}
 
@@ -68,8 +67,6 @@ export default class extends Controller {
     async _loadData() {
         const response = await fetch(this.urlsValue.get_data)
         const data = await response.json()
-
-        console.log(data)
 
         this.maxfieldData = data.jsonData
         this.waypointIdMap = data.waypointIdMap
@@ -205,14 +202,67 @@ export default class extends Controller {
         })
     }
 
+    _clearProxiMarkers() {
+        if (this.proximityPoints.length) {
+            console.log(this.proximityPoints)
+            console.log('SET')
+            this.proximityPoints.forEach((point, index) => {
+                this.map.removeLayer("proxipoint" + index)
+                this.map.removeSource("proxipoint" + index)
+            })
+            this.proximityPoints = []
+        }
+    }
+
     updateObjects() {
-        if (this.location && this.destination) {
+        if (!this.location) {
+            return
+        }
 
-            this.distance = turf.distance(this.location, this.destination).toFixed(3) * 1000
+        if (this.markers['farm'][0]._element.style.display === 'block'
+            || this.markers['farm2'][0]._element.style.display === 'block') {
+            console.log(this.maxfieldData)
+            console.log(this.waypointIdMap)
 
-            this.mapDebugTarget.innerText = this.distance
+            this._clearProxiMarkers()
 
-            this.map.getSource('trace').setData(turf.lineString([this.location.geometry.coordinates, this.destination.geometry.coordinates]))
+            this.maxfieldData.waypoints.forEach((point, index) => {
+                const distance = turf.distance(this.location, [point.lon, point.lat]) * 1000
+                if (distance <= 40) {
+                    this.proximityPoints.push(index)
+                }
+            })
+
+            this.proximityPoints.forEach((point, index) => {
+                this.map.addLayer({
+                    id: "proxipoint" + index,
+                    type: "line",
+                    source: {
+                        "type": "geojson",
+                        "data": turf.circle([this.maxfieldData.waypoints[point].lon, this.maxfieldData.waypoints[point].lat], .04),
+                        "lineMetrics": true,
+                    },
+                    paint: {
+                        "line-color": "red",
+                        "line-width": 10,
+                        "line-offset": 5,
+                        "line-dasharray": [1, 1]
+                    },
+                    layout: {}
+                })
+
+            })
+        } else {
+            this._clearProxiMarkers()
+        }
+
+        if (this.destination) {
+
+            this.distance = turf.distance(this.location, this.destination).toFixed(3) * 1000;
+
+            this.mapDebugTarget.innerText = this.distance;
+
+            this.map.getSource('trace').setData(turf.lineString([this.location.geometry.coordinates, this.destination.geometry.coordinates]));
 
             if (this.distance <= 50) {
                 this.map.getSource('circle').setData(turf.circle(this.location, .04))
@@ -220,8 +270,8 @@ export default class extends Controller {
                 this.map.getSource('circle').setData(turf.circle([0, 0], .04))
             }
 
-            let dist = 0
-            let style = ''
+            let dist = 0;
+            let style = '';
             if (this.distance < 100) {
                 dist = 100 - this.distance
                 if (dist < 20) {
@@ -241,11 +291,11 @@ export default class extends Controller {
                    >
                    </div>
                    &nbsp;${this.distance} m
-                </div>`
+                </div>`;
         } else {
-            this.map.getSource('circle').setData(turf.circle([0, 0], .04))
-            this.map.getSource('trace').setData(turf.lineString([[0, 0], [0, 0]]))
-            this.distanceBarTarget.innerHTML = ''
+            this.map.getSource('circle').setData(turf.circle([0, 0], .04));
+            this.map.getSource('trace').setData(turf.lineString([[0, 0], [0, 0]]));
+            this.distanceBarTarget.innerHTML = '';
         }
     }
 
@@ -791,7 +841,11 @@ export default class extends Controller {
     }
 
     rotate() {
-        this.map.setBearing(this.map.getBearing() - 30)
+        this.map.easeTo({
+            bearing: this.map.getBearing() - 30,
+            duration: 300,
+            easing: x => x
+        });
     }
 
     showModal() {
@@ -884,7 +938,7 @@ export default class extends Controller {
             this.userData.keys = 'keys' in data ? data['keys'] : []
             this.userData.current_point = 'current_point' in data ? data['current_point'] : null
             this.userData.farm_done = 'farm_done' in data ? data['farm_done'] : []
-        }else {
+        } else {
             alert(data)
             this.userData.keys = []
             this.userData.current_point = null
