@@ -5,14 +5,16 @@ namespace App\Controller;
 use App\Entity\Maxfield;
 use App\Enum\MapBoxProfilesEnum;
 use App\Enum\MapBoxStylesEnum;
+use App\Enum\MapProvidersEnum;
 use App\Form\MaxfieldFormType;
 use App\Repository\MaxfieldRepository;
 use App\Repository\WaypointRepository;
 use App\Service\IngressHelper;
 use App\Service\MaxFieldGenerator;
 use App\Service\MaxFieldHelper;
-use App\Settings\UserSettings;
+use App\Type\MaxfieldCreateType;
 use App\Type\MaxfieldStatus;
+use App\Type\UserDataType;
 use Doctrine\ORM\EntityManagerInterface;
 use Elkuku\MaxfieldParser\JsonHelper;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
@@ -23,10 +25,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\String\Slugger\AsciiSlugger;
 use UnexpectedValueException;
 
 #[Route(path: 'maxfield')]
@@ -214,46 +216,35 @@ class MaxFieldsController extends BaseController
         return $this->json($response);
     }
 
-    #[Route('/play2/{path}', name: 'maxfield_play2', methods: ['GET'])]
-    public function play2(MaxFieldHelper                               $maxFieldHelper,
-                          Maxfield                                     $maxfield,
-                          #[Autowire('%env(MAPBOX_GL_TOKEN)%')] string $mapboxGlToken,
-    ): Response
-    {
-        $json = (new JsonHelper())
-            ->getJson($maxFieldHelper->getParser($maxfield->getPath()));
-        $user = $this->getUser();
-        $userSettings = $user?->getUserParams();
-
-        return $this->render(
-            'maxfield/play2.html.twig',
-            [
-                'maxfield' => $maxfield,
-                'jsonData' => $json,
-                'waypointIdMap' => $maxFieldHelper->getWaypointsIdMap($maxfield->getPath()),
-                'mapboxGlToken' => $mapboxGlToken,
-                'mapboxStylesOptions' => MapBoxStylesEnum::forSelect(),
-                'mapboxProfilesOptions' => MapBoxProfilesEnum::forSelect(),
-                'defaultStyle' => $userSettings->defaultStyle,
-                'defaultProfile' => $userSettings->defaultProfile,
-            ]
-        );
-    }
-
     #[Route('/play/{path}', name: 'maxfield_play', methods: ['GET'])]
     public function play(
         MaxFieldHelper $maxFieldHelper,
         Maxfield       $maxfield
     ): Response
     {
-        $json = (new JsonHelper())
-            ->getJson($maxFieldHelper->getParser($maxfield->getPath()));
+        $user = $this->getUser();
+        $userSettings = $user?->getUserParams();
+
+        if (MapProvidersEnum::mapbox === $userSettings->mapProvider) {
+            return $this->render(
+                'maxfield/play2.html.twig',
+                [
+                    'maxfield' => $maxfield,
+                    'mapboxGlToken' => $userSettings->mapboxApiKey,
+                    'mapboxStylesOptions' => MapBoxStylesEnum::forSelect(),
+                    'mapboxProfilesOptions' => MapBoxProfilesEnum::forSelect(),
+                    'defaultStyle' => $userSettings->defaultStyle,
+                    'defaultProfile' => $userSettings->defaultProfile,
+                ]
+            );
+        }
 
         return $this->render(
             'maxfield/play.html.twig',
             [
                 'maxfield' => $maxfield,
-                'jsonData' => $json,
+                'jsonData' => (new JsonHelper())
+                    ->getJson($maxFieldHelper->getParser($maxfield->getPath())),
                 'waypointIdMap' => $maxFieldHelper->getWaypointsIdMap($maxfield->getPath()),
             ]
         );
@@ -278,17 +269,14 @@ class MaxFieldsController extends BaseController
 
     #[Route('/get-user-data/{path}', name: 'maxfield_get_user_data', methods: ['POST'])]
     public function getUserData(
-        Maxfield $maxfield,
-        Request  $request
+        Maxfield                          $maxfield,
+        #[MapRequestPayload] UserDataType $data,
     ): JsonResponse
     {
         $userData = $maxfield->getUserData();
-        $requestData = json_decode($request->getContent(), true);
 
-        $userId = (int)$requestData['userId'];
-
-        if ($userData && array_key_exists($userId, $userData)) {
-            return $this->json($userData[$userId]);
+        if ($userData && array_key_exists($data->userId, $userData)) {
+            return $this->json($userData[$data->userId]);
         }
 
         return $this->json([]);
@@ -296,39 +284,34 @@ class MaxFieldsController extends BaseController
 
     #[Route(path: '/export', name: 'export-maxfields', methods: ['POST'])]
     public function generateMaxFields(
-        WaypointRepository     $repository,
-        MaxFieldGenerator      $maxFieldGenerator,
-        EntityManagerInterface $entityManager,
-        Request                $request
+        WaypointRepository                      $repository,
+        MaxFieldGenerator                       $maxFieldGenerator,
+        EntityManagerInterface                  $entityManager,
+        #[MapRequestPayload] MaxfieldCreateType $maxfieldType,
+
     ): Response
     {
-        $points = $request->request->getString('points');
-        $ids = array_map('intval', explode(',', $points));
-
-        $wayPoints = $repository->findBy(['id' => $ids]);
+        $wayPoints = $repository->findBy(['id' => $maxfieldType->getPoints()]);
         $maxField = $maxFieldGenerator->convertWayPointsToMaxFields($wayPoints);
         $waypointMap = $maxFieldGenerator->getWaypointsMap($wayPoints);
-        $buildName = $request->request->get('build_name');
-        $playersNum = (int)$request->request->get('players_num') ?: 1;
+
         $options = [
-            'skip_plots' => $request->request
-                ->getBoolean('skip_plots'),
-            'skip_step_plots' => $request->request
-                ->getBoolean('skip_step_plots'),
+            'skip_plots' => $maxfieldType->skipPlots,
+            'skip_step_plots' => $maxfieldType->skipStepPlots,
         ];
 
-        $projectName = uniqid() . '-' . (new AsciiSlugger())->slug($buildName);
+        $projectName = $maxfieldType->getProjectName();
 
         $maxFieldGenerator->generate(
             $projectName,
             $maxField,
             $waypointMap,
-            $playersNum,
+            $maxfieldType->getPlayersNum(),
             $options
         );
 
         $maxfield = (new Maxfield())
-            ->setName($buildName)
+            ->setName($maxfieldType->buildName)
             ->setPath($projectName)
             ->setOwner($this->getUser());
 
@@ -410,8 +393,6 @@ class MaxFieldsController extends BaseController
         } catch (IOException $exception) {
             $this->addFlash('warning', $exception->getMessage());
         }
-
-        // $this->addFlash('warning', 'Temporary disabled....');
 
         $referer = $this->getInternalReferer($request, $router);
 

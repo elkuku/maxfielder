@@ -69,6 +69,8 @@ export default class extends Controller {
         const response = await fetch(this.urlsValue.get_data)
         const data = await response.json()
 
+        console.log(data)
+
         this.maxfieldData = data.jsonData
         this.waypointIdMap = data.waypointIdMap
     }
@@ -877,6 +879,7 @@ export default class extends Controller {
             }
         })
         const data = await response.json();
+        console.log(data)
         if (200 === response.status) {
             this.userData.keys = 'keys' in data ? data['keys'] : []
             this.userData.current_point = 'current_point' in data ? data['current_point'] : null

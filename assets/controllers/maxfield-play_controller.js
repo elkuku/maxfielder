@@ -132,7 +132,7 @@ export default class extends Controller {
 
         const overlays = {
             'Farm': this.farmLayer,
-            'Farm2': this.farmLayer2,
+          //  'Farm2': this.farmLayer2,
             'Links': this.linkLayer,
         }
 
@@ -263,6 +263,7 @@ export default class extends Controller {
     }
 
     async loadFarmLayer2() {
+        return
         this.farmLayer2.clearLayers()
 
         const response = await fetch('/maxfield/get-user-keys/' + this.pathValue)

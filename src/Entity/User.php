@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Enum\MapBoxProfilesEnum;
 use App\Enum\MapBoxStylesEnum;
+use App\Enum\MapProvidersEnum;
 use App\Repository\UserRepository;
 use App\Settings\UserSettings;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,6 +17,7 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
+use Stringable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -23,7 +25,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[Entity(repositoryClass: UserRepository::class)]
 #[Table(name: 'system_user')]
 #[UniqueEntity(fields: 'identifier', message: 'This identifier is already in use')]
-class User implements UserInterface, \Stringable
+class User implements UserInterface, Stringable
 {
     final public const ROLES
         = [
@@ -158,12 +160,16 @@ class User implements UserInterface, \Stringable
         $settings->lat = (float)$this->getParam('lat');
         $settings->lon = (float)$this->getParam('lon');
         $settings->zoom = (int)$this->getParam('zoom');
+        $settings->mapboxApiKey = $this->getParam('mapboxApiKey');
         $settings->defaultStyle = $this->getParam('defaultStyle')
             ? MapBoxStylesEnum::tryFrom($this->getParam('defaultStyle'))
             : MapBoxStylesEnum::Standard;
         $settings->defaultProfile = $this->getParam('defaultProfile')
             ? MapBoxProfilesEnum::tryFrom($this->getParam('defaultProfile'))
             : MapBoxProfilesEnum::Driving;
+        $settings->mapProvider = $this->getParam('mapProvider')
+            ? MapProvidersEnum::tryFrom($this->getParam('mapProvider'))
+            : MapProvidersEnum::leaflet;
 
         return $settings;
     }

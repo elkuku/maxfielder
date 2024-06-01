@@ -4,7 +4,7 @@
             <div class="col-md-3 border border-info">
                 <div class="d-grid gap-2">
                     <a class="btn btn-outline-success"
-                       href="{{ path('maxfield_play2', {'path': maxfield.path}) }}">
+                       href="{{ path('maxfield_play', {'path': maxfield.path}) }}">
                         {{ maxfield.name }}
                     </a>
                 </div>
@@ -16,7 +16,7 @@
                         <span>{{ waypointCount(maxfield) }}</span>
                     </div>
                     <div class="col-9 text-center">
-                        <a href="{{ path('maxfield_play2', {'path': maxfield.path}) }}">
+                        <a href="{{ path('maxfield_play', {'path': maxfield.path}) }}">
                             <img src="{{ previewImage(maxfield) | imagine_filter('squared_thumbnail') }}"
                                  alt="Preview"
                                  class="img-fluid"

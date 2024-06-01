@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use UnexpectedValueException;
 
 class WaypointsController extends AbstractController
 {
@@ -78,7 +79,7 @@ class WaypointsController extends AbstractController
         if ($bounds) {
             $bounds = explode(',', $bounds);
             if (4 !== count($bounds)) {
-                throw new \UnexpectedValueException('Invalid bounds');
+                throw new UnexpectedValueException('Invalid bounds');
             }
             $waypoints = $repository->findInBounds(
                 (float)$bounds[0],

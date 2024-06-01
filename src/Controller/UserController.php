@@ -3,8 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Enum\MapBoxProfilesEnum;
-use App\Enum\MapBoxStylesEnum;
 use App\Form\ProfileFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,9 +20,8 @@ class UserController extends BaseController
     ): Response
     {
         $user = $this->getUser();
-        $params = $user?->getUserParams();
-        $form = $this->createForm(ProfileFormType::class, $params);
-        $form->handleRequest($request);
+        $form = $this->createForm(ProfileFormType::class, $user?->getUserParams())
+            ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user?->setParams((array)$form->getData());

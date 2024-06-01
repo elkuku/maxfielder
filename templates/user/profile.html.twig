@@ -9,6 +9,7 @@
         lat: app.user.param('lat'),
         lon: app.user.param('lon'),
         zoom: app.user.param('zoom'),
+        mapProvider: form.mapProvider.vars.data.value,
     }) }}>
         <div class="col-sm-6">
             <p>Identifier: <code>{{ app.user.userIdentifier }}</code></p>
@@ -17,12 +18,14 @@
             {{ form_errors(form) }}
 
             {{ form_row(form.agentName) }}
-            <div class="row">
-                <div class="col">{{ form_row(form.defaultStyle) }}</div>
-                <div class="col">{{ form_row(form.defaultProfile) }}</div>
+            {{ form_row(form.mapProvider, {'attr':{'data-action':'profile#checkMapOptions'}}) }}
+            <div data-profile-target="mapOptions">
+                <div class="row">
+                    <div class="col">{{ form_row(form.defaultStyle) }}</div>
+                    <div class="col">{{ form_row(form.defaultProfile) }}</div>
+                </div>
+                {{ form_row(form.mapboxApiKey) }}
             </div>
-
-
         </div>
         <div class="col-sm-6">
             <h4>Map view center</h4>

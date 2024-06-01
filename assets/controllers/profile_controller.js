@@ -14,9 +14,10 @@ export default class extends Controller {
         lat: Number,
         lon: Number,
         zoom: Number,
+        mapProvider: String,
     }
 
-    static targets = ['lat', 'lon', 'zoom']
+    static targets = ['lat', 'lon', 'zoom', 'mapOptions']
 
     map = null
 
@@ -44,6 +45,8 @@ export default class extends Controller {
 
         this.map.on('dragend', () => this.updateFields())
         this.map.on('zoomend', () => this.updateFields())
+
+        this._updateMapOptions(this.mapProviderValue)
     }
 
     updateFields() {
@@ -52,5 +55,17 @@ export default class extends Controller {
         this.latTarget.value = center.lat.toFixed(7)
         this.lonTarget.value = center.lng.toFixed(7)
         this.zoomTarget.value = this.map.getZoom()
+    }
+
+    checkMapOptions(event) {
+        this._updateMapOptions(event.target.value)
+    }
+
+    _updateMapOptions(provider) {
+        if ('mapbox' === provider) {
+            this.mapOptionsTarget.style.display = 'block'
+        }else {
+            this.mapOptionsTarget.style.display = 'none'
+        }
     }
 }
