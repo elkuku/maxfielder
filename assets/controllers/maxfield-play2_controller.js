@@ -32,7 +32,6 @@ export default class extends Controller {
     waypointIdMap = null
 
     links = []
-    soundNotifier = null
     distance = 0
     location = null
     destination = null
@@ -58,6 +57,8 @@ export default class extends Controller {
     MapboxAPI = null
 
     connect() {
+        this.mapObjects = require('../lib/MapObjects.js');
+
         this.modal = new Modal('#exampleModal')
         this.optimizedRoutePoints = new Map()
         this.MapboxAPI = new MapboxAPI(this.mapboxGlTokenValue)
@@ -136,76 +137,22 @@ export default class extends Controller {
 
     addObjects() {
         this.map.addSource('trace', {type: 'geojson', data: turf.lineString([[0, 0], [0, 0]])})
-        this.map.addLayer({
-            id: 'trace',
-            type: 'line',
-            source: 'trace',
-            paint: {
-                'line-color': 'yellow',
-                'line-opacity': 0.75,
-                'line-width': 5
-            }
-        })
+        this.map.addLayer(this.mapObjects.getTrace())
 
-        this.map.addLayer({
-            id: "circle",
-            type: "line",
-            source: {
-                "type": "geojson",
-                "data": turf.circle([0, 0], .04),
-                "lineMetrics": true,
-            },
-            paint: {
-                "line-color": "red",
-                "line-width": 10,
-                "line-offset": 5,
-                "line-dasharray": [1, 1]
-            },
-            layout: {}
-        })
+        const circle = this.mapObjects.getCircle()
+        circle.source.data = turf.circle([0, 0], .04)
+        this.map.addLayer(circle)
 
         this.map.addSource('route', {
             type: 'geojson',
             data: turf.featureCollection([])
         })
-
-        this.map.addLayer({
-            id: 'routeline-active',
-            type: 'line',
-            source: 'route',
-            layout: {
-                'line-join': 'round',
-                'line-cap': 'round'
-            },
-            paint: {
-                'line-color': '#3887be',
-                'line-width': ['interpolate', ['linear'], ['zoom'], 12, 3, 22, 12]
-            }
-        })
-
-        this.map.addLayer({
-            id: 'routearrows',
-            type: 'symbol',
-            source: 'route',
-            layout: {
-                'symbol-placement': 'line',
-                'text-field': '▶',
-                'text-size': ['interpolate', ['linear'], ['zoom'], 12, 24, 22, 60],
-                'symbol-spacing': ['interpolate', ['linear'], ['zoom'], 12, 30, 22, 160],
-                'text-keep-upright': false
-            },
-            paint: {
-                'text-color': '#3887be',
-                'text-halo-color': 'hsl(55, 11%, 96%)',
-                'text-halo-width': 3
-            }
-        })
+        this.map.addLayer(this.mapObjects.getRoutlineActive())
+        this.map.addLayer(this.mapObjects.getRouteArrows())
     }
 
     _clearProxiMarkers() {
         if (this.proximityPoints.length) {
-            console.log(this.proximityPoints)
-            console.log('SET')
             this.proximityPoints.forEach((point, index) => {
                 this.map.removeLayer("proxipoint" + index)
                 this.map.removeSource("proxipoint" + index)
@@ -221,36 +168,22 @@ export default class extends Controller {
 
         if (this.markers['farm'][0]._element.style.display === 'block'
             || this.markers['farm2'][0]._element.style.display === 'block') {
-            console.log(this.maxfieldData)
-            console.log(this.waypointIdMap)
 
             this._clearProxiMarkers()
-
             this.maxfieldData.waypoints.forEach((point, index) => {
-                const distance = turf.distance(this.location, [point.lon, point.lat]) * 1000
-                if (distance <= 40) {
-                    this.proximityPoints.push(index)
+                if (false === this.userData.farm_done.includes(index)) {
+                    const distance = turf.distance(this.location, [point.lon, point.lat]) * 1000
+                    if (distance <= 40) {
+                        this.proximityPoints.push(index)
+                    }
                 }
             })
 
             this.proximityPoints.forEach((point, index) => {
-                this.map.addLayer({
-                    id: "proxipoint" + index,
-                    type: "line",
-                    source: {
-                        "type": "geojson",
-                        "data": turf.circle([this.maxfieldData.waypoints[point].lon, this.maxfieldData.waypoints[point].lat], .04),
-                        "lineMetrics": true,
-                    },
-                    paint: {
-                        "line-color": "red",
-                        "line-width": 10,
-                        "line-offset": 5,
-                        "line-dasharray": [1, 1]
-                    },
-                    layout: {}
-                })
-
+                const proxi = this.mapObjects.getCircle()
+                proxi.id = "proxipoint" + index
+                proxi.source.data = turf.circle([this.maxfieldData.waypoints[point].lon, this.maxfieldData.waypoints[point].lat], .04)
+                this.map.addLayer(proxi)
             })
         } else {
             this._clearProxiMarkers()
@@ -543,8 +476,6 @@ export default class extends Controller {
 
         const data = await response.json()
 
-        console.log(data)
-
         if (data['error']) {
             alert(data['error'])
         }
@@ -668,8 +599,6 @@ export default class extends Controller {
 
         const data = await response.json()
 
-        console.log(data)
-
         if (data['error']) {
             alert(data['error'])
         }
@@ -683,8 +612,6 @@ export default class extends Controller {
             this.destinationMarker.setLngLat([0, 0])
                 .setPopup('')
             this.destination = null
-            clearInterval(this.soundNotifier)
-            this.soundNotifier = null
             this._updateNextButtonText(id)
 
             return
@@ -699,7 +626,10 @@ export default class extends Controller {
 
         description += '<ol>'
         destination.links.forEach(link => {
-            description += '<li>' + `<img src="/waypoint_thumb/${this.waypointIdMap[link.num].guid}"` + 'width="60px" height="60px" alt="thumbnail image">' + '&nbsp;' + link.name + '</li>'
+            description += '<li>'
+                + `<img src="/waypoint_thumb/${this.waypointIdMap[link.num].guid}"`
+                + 'width="60px" height="60px" alt="thumbnail image">' + '&nbsp;'
+                + link.name + '</li>'
         })
         description += '</ol>'
 
@@ -725,26 +655,6 @@ export default class extends Controller {
             .addTo(this.map)
 
         this._updateNextButtonText(id)
-
-        // Routing
-        if (id > 0) {
-            /*
-            const previous = this.maxfieldData.links[id - 1]
-            const points = [
-                L.latLng(previous.lat, previous.lon),
-                L.latLng(destination.lat, destination.lon)
-            ]
-            this.originDestinationLine.setLatLngs(points)
-            if (this.routingEnabled) {
-                this.routingControl.setWaypoints(points)
-            }
-            */
-        }
-
-        // Sound
-        if (!this.soundNotifier) {
-            //this.soundNotifier = setInterval(this.soundNotify.bind(this), 15000)
-        }
     }
 
     optionsBoxShow(event) {
@@ -918,10 +828,6 @@ export default class extends Controller {
         )
     }
 
-    setProfile() {
-        console.log(this.selProfileTarget.value)
-    }
-
     async _loadUserData() {
         const response = await fetch(this.urlsValue.get_user_data, {
             method: 'POST',
@@ -933,7 +839,7 @@ export default class extends Controller {
             }
         })
         const data = await response.json();
-        console.log(data)
+
         if (200 === response.status) {
             this.userData.keys = 'keys' in data ? data['keys'] : []
             this.userData.current_point = 'current_point' in data ? data['current_point'] : null
@@ -965,8 +871,6 @@ export default class extends Controller {
         })
 
         const data = await response.json()
-
-        console.log(data)
 
         if (data['error']) {
             alert(data['error'])
