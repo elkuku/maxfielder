@@ -10,6 +10,7 @@ import * as turf from '@turf/turf'
 import Swal from "sweetalert2"
 
 import MapboxAPI from '../lib/MapboxAPI.js'
+import MapDataLoader from '../lib/MapDataLoader.js'
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -55,13 +56,15 @@ export default class extends Controller {
     userData = {}
 
     MapboxAPI = null
+    MapDataLoader = null
 
-    connect() {
+    async connect() {
         this.mapObjects = require('../lib/MapObjects.js');
 
         this.modal = new Modal('#exampleModal')
         this.optimizedRoutePoints = new Map()
         this.MapboxAPI = new MapboxAPI(this.mapboxGlTokenValue)
+        this.MapDataLoader = new MapDataLoader(this.urlsValue, this.userIdValue);
         this.setupMap()
     }
 
@@ -463,17 +466,7 @@ export default class extends Controller {
     }
 
     async _uploadDone() {
-        const response = await fetch(this.urlsValue.submit_user_data, {
-            method: 'POST',
-            body: JSON.stringify({
-                agentNum: this.userIdValue,
-                farm_done: this.userData.farm_done,
-            }),
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            }
-        })
-
+        const response = await this.MapDataLoader.uploadUserData({farm_done: this.userData.farm_done})
         const data = await response.json()
 
         if (data['error']) {
@@ -586,17 +579,8 @@ export default class extends Controller {
     }
 
     async _uploadCurrentPoint(number) {
-        const response = await fetch(this.urlsValue.submit_user_data, {
-            method: 'POST',
-            body: JSON.stringify({
-                agentNum: this.userIdValue,
-                current_point: number,
-            }),
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            }
-        })
 
+        const response = await this.MapDataLoader.uploadUserData({current_point: number})
         const data = await response.json()
 
         if (data['error']) {
@@ -685,17 +669,7 @@ export default class extends Controller {
 
             return
         }
-        const response = await fetch(this.urlsValue.submit_user_data, {
-            method: 'POST',
-            body: JSON.stringify({
-                agentNum: this.userIdValue,
-                keys: keys,
-            }),
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            }
-        })
-
+        const response = await this.MapDataLoader.uploadUserData({keys: keys})
         const data = await response.json()
 
         this.keysTarget.value = ''
@@ -829,15 +803,7 @@ export default class extends Controller {
     }
 
     async _loadUserData() {
-        const response = await fetch(this.urlsValue.get_user_data, {
-            method: 'POST',
-            body: JSON.stringify({
-                userId: this.userIdValue
-            }),
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            }
-        })
+        const response = await this.MapDataLoader.getUserData()
         const data = await response.json();
 
         if (200 === response.status) {
@@ -860,16 +826,7 @@ export default class extends Controller {
             showConfirmButton: false,
             allowOutsideClick: false
         })
-        const response = await fetch(this.urlsValue.clear_user_data, {
-            method: 'POST',
-            body: JSON.stringify({
-                agentNum: this.userIdValue,
-            }),
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            }
-        })
-
+        const response = await this.MapDataLoader.clearUserData()
         const data = await response.json()
 
         if (data['error']) {
