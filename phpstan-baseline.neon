@@ -1,12 +1,12 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Offset float does not exist on 'BKMGTP'\\.$#"
+			message: "#^Out of 59 possible property types, only 58 \\- 98\\.3 %% actually have it\\. Add more property types to get over 100 %%$#"
 			count: 1
-			path: src/Service/MaxFieldHelper.php
+			path: src/Type/MaxfieldCreateType.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function strlen expects string, int\\<0, max\\>\\|false given\\.$#"
+			message: "#^Property App\\\\Type\\\\MaxfieldCreateType\\:\\:\\$playersNum has no type specified\\.$#"
 			count: 1
-			path: src/Service/MaxFieldHelper.php
+			path: src/Type/MaxfieldCreateType.php
 

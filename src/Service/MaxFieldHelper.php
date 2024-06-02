@@ -86,13 +86,10 @@ readonly class MaxFieldHelper
         $path = $this->rootDir . "/$item/plan_movie.gif";
 
         if (file_exists($path)) {
-            $sz = 'BKMGTP';
-            $decimals = 2;
-            $size = filesize($path);
-            $factor = floor(((strlen($size)) - 1) / 3);
-
-            return sprintf("%.{$decimals}f", $size / 1024 ** $factor)
-                . @$sz[$factor];
+            $bytes = filesize($path);
+            $sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+            $factor = floor(log($bytes, 1024));
+            return round($bytes / 1024 ** $factor, 2) . ' ' . $sizes[$factor];
         }
 
         return 'n/a';
