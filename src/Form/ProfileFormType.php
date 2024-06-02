@@ -52,9 +52,7 @@ class ProfileFormType extends AbstractType
                 EnumType::class,
                 [
                     'class' => MapBoxStylesEnum::class,
-                    'choice_label' => function (MapBoxStylesEnum $category): string {
-                        return str_replace('_', ' ', $category->name);
-                    },
+                    'choice_label' => fn(MapBoxStylesEnum $category): string => str_replace('_', ' ', $category->name),
                 ]
             )
             ->add(
@@ -69,9 +67,7 @@ class ProfileFormType extends AbstractType
                 EnumType::class,
                 [
                     'class' => MapProvidersEnum::class,
-                    'choice_label' => function (MapProvidersEnum $element): string {
-                        return ucfirst($element->name);
-                    },
+                    'choice_label' => fn(MapProvidersEnum $element): string => ucfirst($element->name),
                 ]
             );
     }
