@@ -119,7 +119,7 @@ class WaypointsController extends AbstractController
         );
     }
 
-    #[Route(path: '/waypoint_thumb/{guid}', name: 'waypoint_thumbnail', methods: ['GET'])]
+    #[Route(path: '/waypoint_thumb/{guid:waypoint}', name: 'waypoint_thumbnail', methods: ['GET'])]
     #[IsGranted(User::ROLES['agent'])]
     public function getImageThumbnail(Waypoint $waypoint, WayPointHelper $wayPointHelper): BinaryFileResponse
     {

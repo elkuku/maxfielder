@@ -106,7 +106,7 @@ class MaxFieldsController extends BaseController
         );
     }
 
-    #[Route(path: '/show/{path}', name: 'max_fields_result', methods: ['GET', 'POST'])]
+    #[Route(path: '/show/{path:maxfield}', name: 'max_fields_result', methods: ['GET', 'POST'])]
     public function display(
         MaxFieldHelper         $maxFieldHelper,
         MaxField               $maxfield,
@@ -141,7 +141,7 @@ class MaxFieldsController extends BaseController
         );
     }
 
-    #[Route(path: '/clear-user-data/{path}', name: 'maxfield_clear_user_data', methods: ['POST'])]
+    #[Route(path: '/clear-user-data/{path:maxfield}', name: 'maxfield_clear_user_data', methods: ['POST'])]
     public function clearUserData(
         MaxField               $maxfield,
         EntityManagerInterface $entityManager,
@@ -167,7 +167,7 @@ class MaxFieldsController extends BaseController
         return $this->json($response);
     }
 
-    #[Route(path: '/submit-user-data/{path}', name: 'maxfield_submit_user_data', methods: ['POST'])]
+    #[Route(path: '/submit-user-data/{path:maxfield}', name: 'maxfield_submit_user_data', methods: ['POST'])]
     public function submitUserData(
         MaxFieldHelper         $maxFieldHelper,
         MaxField               $maxfield,
@@ -216,7 +216,7 @@ class MaxFieldsController extends BaseController
         return $this->json($response);
     }
 
-    #[Route('/play/{path}', name: 'maxfield_play', methods: ['GET'])]
+    #[Route('/play/{path:maxfield}', name: 'maxfield_play', methods: ['GET'])]
     public function play(
         MaxFieldHelper $maxFieldHelper,
         Maxfield       $maxfield
@@ -250,7 +250,7 @@ class MaxFieldsController extends BaseController
         );
     }
 
-    #[Route('/get-data/{path}', name: 'maxfield_get_data', methods: ['GET'])]
+    #[Route('/get-data/{path:maxfield}', name: 'maxfield_get_data', methods: ['GET'])]
     public function getData(
         MaxFieldHelper $maxFieldHelper,
         Maxfield       $maxfield
@@ -267,7 +267,7 @@ class MaxFieldsController extends BaseController
 
     }
 
-    #[Route('/get-user-data/{path}', name: 'maxfield_get_user_data', methods: ['POST'])]
+    #[Route('/get-user-data/{path:maxfield}', name: 'maxfield_get_user_data', methods: ['POST'])]
     public function getUserData(
         Maxfield                          $maxfield,
         #[MapRequestPayload] UserDataType $data,
