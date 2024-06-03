@@ -1,5 +1,6 @@
-const MapObjects = function () {
-    const getTrace = (color = 'yellow') => {
+module.exports = class MapObjects {
+
+    getTrace(color = 'yellow') {
         return {
             id: 'trace',
             type: 'line',
@@ -12,7 +13,7 @@ const MapObjects = function () {
         }
     };
 
-    const getRoutlineActive = () => {
+    getRoutlineActive() {
         return {
             id: 'routeline-active',
             type: 'line',
@@ -28,7 +29,7 @@ const MapObjects = function () {
         }
     }
 
-    const getRouteArrows = () => {
+    getRouteArrows() {
         return {
             id: 'routearrows',
             type: 'symbol',
@@ -48,7 +49,7 @@ const MapObjects = function () {
         }
     }
 
-    const getCircle = () => {
+    getCircle() {
         return {
             id: "circle",
             type: "line",
@@ -67,12 +68,16 @@ const MapObjects = function () {
         }
     }
 
-    return {
-        getTrace: getTrace,
-        getRoutlineActive: getRoutlineActive,
-        getRouteArrows: getRouteArrows,
-        getCircle: getCircle,
+    linkStar() {
+        return {
+            'id': 'link-star',
+            'type': 'line',
+            'source': 'link-star',
+            'layout': {},
+            'paint': {
+                'line-color': '#00C000',
+                'line-width': 3,
+            },
+        }
     }
-}();
-
-module.exports = MapObjects;
+}

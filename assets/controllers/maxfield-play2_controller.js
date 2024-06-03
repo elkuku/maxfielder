@@ -11,6 +11,7 @@ import Swal from "sweetalert2"
 
 import MapboxAPI from '../lib/MapboxAPI.js'
 import MapDataLoader from '../lib/MapDataLoader.js'
+import MapObjects from '../lib/MapObjects.js'
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -57,14 +58,15 @@ export default class extends Controller {
 
     MapboxAPI = null
     MapDataLoader = null
+    MapObjects = null
 
     async connect() {
-        this.mapObjects = require('../lib/MapObjects.js');
-
         this.modal = new Modal('#exampleModal')
         this.optimizedRoutePoints = new Map()
         this.MapboxAPI = new MapboxAPI(this.mapboxGlTokenValue)
         this.MapDataLoader = new MapDataLoader(this.urlsValue, this.userIdValue);
+        this.mapObjects = new MapObjects;
+
         this.setupMap()
     }
 
@@ -617,7 +619,7 @@ export default class extends Controller {
         })
         description += '</ol>'
 
-        const popup =
+        const popupContent =
             `<b>${destination.name}</b>
              <button 
                 class="btn btn-sm btn-outline-info"
@@ -627,6 +629,15 @@ export default class extends Controller {
              >Nav</button>
             <hr>${description}`
 
+        const popup = new mapboxgl.Popup({offset: 25, maxWidth: '400px', markerId: id})
+            .setHTML(popupContent)
+
+        popup.on('open', (e) => {
+            this._showLinkStar(e.target.options.markerId)
+        })
+        popup.on('close', (e) => {
+            this._hideLinkStar()
+        })
         const el = document.createElement('div')
         el.className = 'circle destinationMarker'
         el.innerHTML = (parseInt(id) + 1).toString()
@@ -634,8 +645,7 @@ export default class extends Controller {
         this.destinationMarker.remove()
         this.destinationMarker = new mapboxgl.Marker(el)
             .setLngLat(this.destination.geometry.coordinates)
-            .setPopup(new mapboxgl.Popup({offset: 25, maxWidth: '400px'}) // add popups
-                .setHTML(popup))
+            .setPopup(popup)
             .addTo(this.map)
 
         this._updateNextButtonText(id)
@@ -868,5 +878,42 @@ export default class extends Controller {
                 element.innerText = `Next (${length - newVal - 2})`
             }
         }
+    }
+
+    _hideLinkStar() {
+        if (this.map.getLayer('link-star')) {
+            this.map.removeLayer('link-star');
+            this.map.removeSource('link-star');
+            this.markers.linkstar.forEach(marker => marker.remove())
+        }
+    }
+
+    _showLinkStar(markerId) {
+        const marker = this.maxfieldData.links[markerId]
+        const center = [marker.lon, marker.lat]
+        const lines = []
+        this.markers.linkstar = []
+        this.maxfieldData.links[markerId].links.forEach(link => {
+            const point = this.maxfieldData.waypoints[link.num]
+            const to = [point.lon, point.lat]
+            lines.push(turf.lineString([center, to]))
+
+            const el = document.createElement('div')
+            el.style.backgroundImage = 'url(/waypoint_thumb/' + this.waypointIdMap[link.num].guid + ')'
+            el.style.width = '50px'
+            el.style.height = '50px'
+
+            const marker = new mapboxgl.Marker(el)
+                .setLngLat(to)
+                .setPopup(new mapboxgl.Popup().setHTML('<b>' + point.name + '</b><br>' + point.description))
+                .addTo(this.map)
+            this.markers.linkstar.push(marker)
+        })
+        this.map.addSource('link-star', {
+            'type': 'geojson',
+            'data': turf.featureCollection(lines)
+        });
+
+        this.map.addLayer(this.mapObjects.linkStar());
     }
 }

@@ -3,6 +3,7 @@
 {% block title %}{{ parent() }} - Welcome{% endblock %}
 
 {% block body %}
+    <div {{ stimulus_controller('hellokuku') }}>aaa</div>
     {% if is_granted('ROLE_AGENT') %}
         <div {{ stimulus_controller('reload-content', {
             url: path('default', { partial: 'favourites' }),
