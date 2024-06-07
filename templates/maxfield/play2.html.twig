@@ -40,23 +40,33 @@
                  data-action="mouseleave->maxfield-play2#optionsBoxHide"
                  data-maxfield-play2-target="optionsBox"
             >
+                <div class="btn-group d-flex">
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked
+                           data-action="maxfield-play2#setMode"
+                           data-maxfield-play2-mode-param="farm"
+                           data-maxfield-play2-target="btnModeFarm"
+                    >
+                    <label class="btn btn-outline-primary" for="btnradio1">Farm</label>
+
+                    <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
+                           data-action="maxfield-play2#setMode"
+                           data-maxfield-play2-mode-param="link"
+                           data-maxfield-play2-target="btnModeLink"
+                    >
+                    <label class="btn btn-outline-primary" for="btnradio2">Link</label>
+                </div>
+                <button class="btn btn-info"
+                        data-maxfield-play2-target="btnUploadKeys"
+                        data-action="maxfield-play2#showModal"
+                >Upload Keys
+                </button>
+                <br>
                 <label for="selStyle">Style</label>
                 <select id="selStyle" class="form-select" data-action="maxfield-play2#setStyle">
                     {% for key, value in mapboxStylesOptions %}
                         <option value="{{ key }}" {{ value == defaultStyle.name ? 'selected':'' }}>{{ value }}</option>
                     {% endfor %}
                 </select>
-                <label for="selLayer">Layer</label>
-                <select id="selLayer" class="form-select" data-action="maxfield-play2#setLayer">
-                    <option value="">None</option>
-                    <option value="farm">Farm</option>
-                    <option value="farm2" selected>Farm2</option>
-                </select>
-
-                <button class="btn btn-info" data-maxfield-play2-target="btnUploadKeys"
-                        data-action="maxfield-play2#showModal">Upload Keys
-                </button>
-                <br>
                 <label for="selProfile">Profile</label>
                 <select id="selProfile" class="form-select" data-action="maxfield-play2#setProfile"
                         data-maxfield-play2-target="selProfile"

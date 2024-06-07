@@ -27,6 +27,7 @@ export default class extends Controller {
         'keys', 'errorMessage', 'linkselect', 'mapDebug',
         'optionsBox', 'optionsBoxTrigger',
         'btnUploadKeys', 'distanceBar',
+        'btnModeFarm', 'btnModeLink',
         'selProfile'
     ]
 
@@ -50,6 +51,8 @@ export default class extends Controller {
     isFullscreen = false
     isBusy = false
     dragHandle = null
+    /* 'farm' or 'link' */
+    mode = ''
 
     optimizedRoutePoints = null
     proximityPoints = []
@@ -65,7 +68,7 @@ export default class extends Controller {
         this.optimizedRoutePoints = new Map()
         this.MapboxAPI = new MapboxAPI(this.mapboxGlTokenValue)
         this.MapDataLoader = new MapDataLoader(this.urlsValue, this.userIdValue);
-        this.mapObjects = new MapObjects;
+        this.MapObjects = new MapObjects;
 
         this.setupMap()
     }
@@ -119,15 +122,15 @@ export default class extends Controller {
             this.map.addControl(this.getOptionsBox())
 
             this.loadFarmLayer()
-            this.loadFarmLayer2()
-            this._clearLayers()
             this.zoomAll()
 
             if (this.userData.current_point >= 0 && this.userData.current_point !== null) {
+                // Link mode
                 this.showDestination(this.userData.current_point)
                 this.linkselectTarget.value = this.userData.current_point
+                this._setMode('link')
             } else {
-                this._toggleLayer('farm2', 'block')
+                this._setMode('farm')
             }
         })
 
@@ -142,9 +145,9 @@ export default class extends Controller {
 
     addObjects() {
         this.map.addSource('trace', {type: 'geojson', data: turf.lineString([[0, 0], [0, 0]])})
-        this.map.addLayer(this.mapObjects.getTrace())
+        this.map.addLayer(this.MapObjects.getTrace())
 
-        const circle = this.mapObjects.getCircle()
+        const circle = this.MapObjects.getCircle()
         circle.source.data = turf.circle([0, 0], .04)
         this.map.addLayer(circle)
 
@@ -152,8 +155,8 @@ export default class extends Controller {
             type: 'geojson',
             data: turf.featureCollection([])
         })
-        this.map.addLayer(this.mapObjects.getRoutlineActive())
-        this.map.addLayer(this.mapObjects.getRouteArrows())
+        this.map.addLayer(this.MapObjects.getRoutlineActive())
+        this.map.addLayer(this.MapObjects.getRouteArrows())
     }
 
     _clearProxiMarkers() {
@@ -171,9 +174,7 @@ export default class extends Controller {
             return
         }
 
-        if (this.markers['farm'][0]._element.style.display === 'block'
-            || this.markers['farm2'][0]._element.style.display === 'block') {
-
+        if ('farm' === this.mode) {
             this._clearProxiMarkers()
             this.maxfieldData.waypoints.forEach((point, index) => {
                 if (false === this.userData.farm_done.includes(index)) {
@@ -185,8 +186,8 @@ export default class extends Controller {
             })
 
             this.proximityPoints.forEach((point, index) => {
-                const proxi = this.mapObjects.getCircle()
-                proxi.id = "proxipoint" + index
+                const proxi = this.MapObjects.getCircle()
+                proxi.id = 'proxipoint' + index
                 proxi.source.data = turf.circle([this.maxfieldData.waypoints[point].lon, this.maxfieldData.waypoints[point].lat], .04)
                 this.map.addLayer(proxi)
             })
@@ -353,31 +354,26 @@ export default class extends Controller {
     }
 
     zoomAll() {
-        this.map.fitBounds(this.getBounds(), {padding: 100})
-    }
-
-    loadFarmLayer() {
-        this.markers.farm = []
-        this.maxfieldData.waypoints.forEach(function (o) {
-            const num = o.keys
-            let css = num > 3 ? 'circle farmalot' : 'circle'
-            const el = document.createElement('div')
-            el.className = 'farm-layer'
-            el.innerHTML = '<b class="' + css + '">' + num + '</b>'
-            const marker = new mapboxgl.Marker(el)
-                .setLngLat([o.lon, o.lat])
-                .setPopup(new mapboxgl.Popup().setHTML('<b>' + o.name + '</b><br>' + o.description))
-                .addTo(this.map)
-            this.markers.farm.push(marker)
-        }.bind(this))
-        this.zoomAll()
-    }
-
-    async loadFarmLayer2() {
-        if (this.markers.farm2 && this.markers.farm2.length) {
-            this._removeLayer('farm2')
+        if ('link' === this.mode) {
+            if (this.location) {
+                const bounds = new mapboxgl.LngLatBounds()
+                bounds.extend(this.location.geometry.coordinates)
+                bounds.extend(this.destination.geometry.coordinates)
+                this.map.fitBounds(bounds, {bearing:this.map.getBearing()});
+                this.startDrag()
+            } else {
+                alert('Get location first')
+            }
+        } else {
+            this.map.fitBounds(this.getBounds(), {padding: 100});
         }
-        this.markers.farm2 = [];
+    }
+
+    async loadFarmLayer() {
+        if (this.markers.farm && this.markers.farm.length) {
+            this._removeLayer('farm')
+        }
+        this.markers.farm = [];
         let cnt = 0
         this.maxfieldData.waypoints.forEach(function (o) {
             const numKeys = o.keys
@@ -432,7 +428,7 @@ export default class extends Controller {
                 .setLngLat([o.lon, o.lat])
                 .setPopup(new mapboxgl.Popup().setHTML(popup))
                 .addTo(this.map)
-            this.markers.farm2.push(marker)
+            this.markers.farm.push(marker)
             cnt++
         }.bind(this))
     }
@@ -441,7 +437,7 @@ export default class extends Controller {
         this.showDone = !this.showDone
         this._toggleButtonClass(event.target, this.showDone)
 
-        this.markers['farm2'].forEach((e) => {
+        this.markers.farm.forEach((e) => {
             if (e._element.classList.contains('done')) {
                 e._element.style.display = this.showDone ? 'block' : 'none'
             }
@@ -449,7 +445,7 @@ export default class extends Controller {
     }
 
     toggleDone(event) {
-        const element = this.markers['farm2'][event.params.marker]
+        const element = this.markers.farm[event.params.marker]
         if (event.target.checked) {
             element.addClassName('done')
             this.userData.farm_done.push(event.params.marker)
@@ -699,18 +695,27 @@ export default class extends Controller {
         }
     }
 
-    setLayer(event) {
-        this._clearLayers()
-        const layer = event.target.value
-        if (layer) {
-            this._toggleLayer(layer, 'block')
+    setMode({params: {mode}}) {
+        console.log(mode)
+        this._setMode(mode)
+    }
+
+    _setMode(mode) {
+        if ('farm' === mode) {
+            this._toggleLayer('farm', 'block')
+            this.btnModeFarmTarget.checked = true
+            this.btnUploadKeysTarget.style.display = ''
+        } else if ('link' === mode) {
+            this._toggleLayer('farm', 'none')
+            this.btnModeLinkTarget.checked = true
+            this.btnUploadKeysTarget.style.display = 'none'
+        } else {
+            alert('invalid mode');
+
+            return
         }
 
-        if ('farm2' === layer) {
-            this.btnUploadKeysTarget.style.display = 'block'
-        } else {
-            this.btnUploadKeysTarget.style.display = 'none'
-        }
+        this.mode = mode
     }
 
     toggleCenter(event) {
@@ -783,13 +788,13 @@ export default class extends Controller {
         this._toggleButtonClass(event.target, state)
     }
 
-    _toggleButtonClass(button, state) {
+    _toggleButtonClass(button, state, css = 'info') {
         if (true === state) {
-            button.classList.add('btn-info')
-            button.classList.remove('btn-outline-info')
+            button.classList.add('btn-' + css)
+            button.classList.remove('btn-outline-' + css)
         } else {
-            button.classList.remove('btn-info')
-            button.classList.add('btn-outline-info')
+            button.classList.remove('btn-' + css)
+            button.classList.add('btn-outline-' + css)
         }
     }
 
@@ -914,6 +919,6 @@ export default class extends Controller {
             'data': turf.featureCollection(lines)
         });
 
-        this.map.addLayer(this.mapObjects.linkStar());
+        this.map.addLayer(this.MapObjects.linkStar());
     }
 }
