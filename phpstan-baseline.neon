@@ -1,6 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Use explicit methods over array access on object$#"
+			count: 1
+			path: src/Entity/User.php
+
+		-
 			message: "#^Out of 59 possible property types, only 58 \\- 98\\.3 %% actually have it\\. Add more property types to get over 100 %%$#"
 			count: 1
 			path: src/Type/MaxfieldCreateType.php

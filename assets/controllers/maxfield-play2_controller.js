@@ -24,9 +24,9 @@ export default class extends Controller {
     }
 
     static targets = [
-        'keys', 'errorMessage', 'linkselect', 'mapDebug',
+        'keys', 'errorMessage', 'linkselect',
         'optionsBox', 'optionsBoxTrigger',
-        'btnUploadKeys', 'distanceBar',
+        'farmOptions', 'distanceBar',
         'btnModeFarm', 'btnModeLink',
         'selProfile'
     ]
@@ -199,8 +199,6 @@ export default class extends Controller {
 
             this.distance = turf.distance(this.location, this.destination).toFixed(3) * 1000;
 
-            this.mapDebugTarget.innerText = this.distance;
-
             this.map.getSource('trace').setData(turf.lineString([this.location.geometry.coordinates, this.destination.geometry.coordinates]));
 
             if (this.distance <= 50) {
@@ -336,8 +334,6 @@ export default class extends Controller {
     onLocationFound(event) {
         this.location = turf.point([event.coords.longitude, event.coords.latitude])
 
-        this.mapDebugTarget.innerText = this.isBusy
-
         if (this.centerLocation && false === this.isBusy) {
             this.map.flyTo({center: this.location.geometry.coordinates})
         }
@@ -359,7 +355,7 @@ export default class extends Controller {
                 const bounds = new mapboxgl.LngLatBounds()
                 bounds.extend(this.location.geometry.coordinates)
                 bounds.extend(this.destination.geometry.coordinates)
-                this.map.fitBounds(bounds, {bearing:this.map.getBearing()});
+                this.map.fitBounds(bounds, {bearing: this.map.getBearing()});
                 this.startDrag()
             } else {
                 alert('Get location first')
@@ -434,9 +430,11 @@ export default class extends Controller {
     }
 
     toggleShowDone(event) {
-        this.showDone = !this.showDone
-        this._toggleButtonClass(event.target, this.showDone)
+        this.showDone = event.target.checked
+        this._checkShowDone()
+    }
 
+    _checkShowDone() {
         this.markers.farm.forEach((e) => {
             if (e._element.classList.contains('done')) {
                 e._element.style.display = this.showDone ? 'block' : 'none'
@@ -685,7 +683,7 @@ export default class extends Controller {
             this.errorMessageTarget.innerText = data['error']
         } else {
             await this._loadUserData()
-            this.loadFarmLayer2()
+            await this.loadFarmLayer()
 
             this.modal.hide()
 
@@ -696,19 +694,19 @@ export default class extends Controller {
     }
 
     setMode({params: {mode}}) {
-        console.log(mode)
         this._setMode(mode)
     }
 
     _setMode(mode) {
         if ('farm' === mode) {
             this._toggleLayer('farm', 'block')
+            this._checkShowDone()
             this.btnModeFarmTarget.checked = true
-            this.btnUploadKeysTarget.style.display = ''
+            this.farmOptionsTarget.style.display = ''
         } else if ('link' === mode) {
             this._toggleLayer('farm', 'none')
             this.btnModeLinkTarget.checked = true
-            this.btnUploadKeysTarget.style.display = 'none'
+            this.farmOptionsTarget.style.display = 'none'
         } else {
             alert('invalid mode');
 
@@ -719,7 +717,11 @@ export default class extends Controller {
     }
 
     toggleCenter(event) {
-        this.centerLocation = !this.centerLocation
+        if (!this.location) {
+            alert('Get location first')
+            return
+        }
+        this.centerLocation = !this.centerLocation;
 
         if (true === this.centerLocation) {
             event.currentTarget.classList.add('button-toggle-selected')
@@ -772,22 +774,6 @@ export default class extends Controller {
         })
     }
 
-    setDebug(event) {
-        this.mapDebugTarget.style.display = event.target.checked ? 'block' : 'none'
-    }
-
-    toggleDebug(event) {
-        let state = ('block' === this.mapDebugTarget.style.display || '' === this.mapDebugTarget.style.display)
-
-        if (state) {
-            this.mapDebugTarget.style.display = 'none'
-        } else {
-            this.mapDebugTarget.style.display = 'block'
-        }
-        state = !state
-        this._toggleButtonClass(event.target, state)
-    }
-
     _toggleButtonClass(button, state, css = 'info') {
         if (true === state) {
             button.classList.add('btn-' + css)
@@ -800,7 +786,6 @@ export default class extends Controller {
 
     startDrag() {
         this.isBusy = true
-        this.mapDebugTarget.innerText = this.isBusy
     }
 
     endDrag() {
@@ -811,7 +796,6 @@ export default class extends Controller {
         this.dragHandle = setTimeout(
             function () {
                 this.isBusy = false
-                this.mapDebugTarget.innerText = this.isBusy
             }.bind(this),
             3000
         )
@@ -848,7 +832,7 @@ export default class extends Controller {
             alert(data['error'])
         } else {
             await this._loadUserData()
-            await this.loadFarmLayer2()
+            await this.loadFarmLayer()
             setTimeout(function () {
                 Swal.fire({
                     title: 'User data have been cleared!',

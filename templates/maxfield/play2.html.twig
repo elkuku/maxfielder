@@ -18,7 +18,6 @@
         }
     }) }}>
 
-        <div id="map-debug" {{ stimulus_target('maxfield-play2', 'mapDebug') }}>D3bug</div>
 
         <div id="zoomBox" class="mapboxgl-ctrl">
             <button class="circle-button button-toggle" data-action="maxfield-play2#toggleCenter"><i
@@ -46,21 +45,30 @@
                            data-maxfield-play2-mode-param="farm"
                            data-maxfield-play2-target="btnModeFarm"
                     >
-                    <label class="btn btn-outline-primary" for="btnradio1">Farm</label>
+                    <label class="btn btn-outline-success" for="btnradio1">Farm</label>
 
                     <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
                            data-action="maxfield-play2#setMode"
                            data-maxfield-play2-mode-param="link"
                            data-maxfield-play2-target="btnModeLink"
                     >
-                    <label class="btn btn-outline-primary" for="btnradio2">Link</label>
+                    <label class="btn btn-outline-success" for="btnradio2">Link</label>
                 </div>
-                <button class="btn btn-info"
-                        data-maxfield-play2-target="btnUploadKeys"
-                        data-action="maxfield-play2#showModal"
-                >Upload Keys
-                </button>
-                <br>
+
+
+                <div class="btn-group" data-maxfield-play2-target="farmOptions">
+                    <button class="btn btn-info"
+                            data-maxfield-play2-target="btnUploadKeys"
+                            data-action="maxfield-play2#showModal"
+                    ><i class="bi bi-cloud-upload"></i> Keys
+                    </button>
+                    <input type="checkbox" class="btn-check" id="chk-show-done" autocomplete="off"
+                           data-action="maxfield-play2#toggleShowDone" checked>
+                    <label class="btn btn-outline-info" for="chk-show-done"><i class="bi bi-eye"></i> Done</label>
+
+                    <button class="btn btn-danger" data-action="maxfield-play2#clearUserData"><i class="bi bi-trash"></i></button>
+                </div>
+                <hr>
                 <label for="selStyle">Style</label>
                 <select id="selStyle" class="form-select" data-action="maxfield-play2#setStyle">
                     {% for key, value in mapboxStylesOptions %}
@@ -75,14 +83,6 @@
                         <option value="{{ key }}" {{ value == defaultProfile.name ? 'selected':'' }}>{{ value }}</option>
                     {% endfor %}
                 </select>
-                <hr>
-
-                <div class="d-grid gap-2 d-md-block">
-                    <button class="btn btn-info" data-action="maxfield-play2#toggleShowDone">Done</button>
-                    <button class="btn btn-outline-info" data-action="maxfield-play2#toggleHeading">Heading</button>
-                    <button class="btn btn-info" data-action="maxfield-play2#toggleDebug">Debug</button>
-                    <button class="btn btn-outline-danger"data-action="maxfield-play2#clearUserData">CLR</button>
-                </div>
             </div>
         </div>
 

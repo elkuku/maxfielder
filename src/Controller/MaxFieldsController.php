@@ -371,7 +371,7 @@ class MaxFieldsController extends BaseController
         Maxfield               $maxfield,
         Request                $request,
         RouterInterface        $router,
-    ): Response
+    ): RedirectResponse
     {
         $this->denyAccessUnlessGranted(
             'modify',
@@ -403,7 +403,7 @@ class MaxFieldsController extends BaseController
     public function deleteFiles(
         MaxFieldGenerator $maxFieldGenerator,
         string            $item,
-    ): Response
+    ): RedirectResponse
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             throw $this->createAccessDeniedException(

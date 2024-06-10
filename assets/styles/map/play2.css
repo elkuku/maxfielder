@@ -11,18 +11,6 @@ html, body, #map {
     width: 100%;
 }
 
-#map-debug {
-    background: black;
-    color: #07bf05;
-    position: absolute;
-    z-index: 1;
-    top: 60px;
-    right: 50%;
-    border-radius: 3px;
-    border: 1px solid rgba(0, 0, 0, 0.4);
-    font-family: 'monospace';
-}
-
 .mapboxgl-popup-content {
     color: black;
 }
@@ -107,7 +95,7 @@ div.destinationMarker, [data-bs-theme=dark] div.destinationMarker {
 div#optionsBoxContent {
     background-color: white;
     border: 1px solid #6e6e6e;
-    padding: 5px;
+    padding: 30px 5px 5px;
     display: none;
 }
 
