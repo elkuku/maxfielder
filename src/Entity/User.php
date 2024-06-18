@@ -27,14 +27,14 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[UniqueEntity(fields: 'identifier', message: 'This identifier is already in use')]
 class User implements UserInterface, Stringable
 {
-    final public const ROLES
+    final public const array ROLES
         = [
             'user' => 'ROLE_USER',
             'agent' => 'ROLE_AGENT',
             'admin' => 'ROLE_ADMIN',
         ];
 
-    #[Column, Id, GeneratedValue]
+    #[Column, Id, GeneratedValue(strategy: 'SEQUENCE')]
     private ?int $id = 0;
 
     #[Column(unique: true), NotBlank]

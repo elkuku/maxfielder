@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping\Id;
 #[Entity(repositoryClass: WaypointRepository::class)]
 class Waypoint implements \Stringable
 {
-    #[Column, Id, GeneratedValue]
+    #[Column, Id, GeneratedValue(strategy: 'SEQUENCE')]
     private ?int $id = null;
 
     #[Column]

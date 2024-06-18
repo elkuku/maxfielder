@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 /** @extends Voter<string, mixed> */
 class MaxfieldVoter extends Voter
 {
-    final public const MODIFY = 'modify';
+    final public const string MODIFY = 'modify';
 
     public function __construct(private readonly Security $security)
     {

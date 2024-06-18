@@ -17,7 +17,7 @@ use stdClass;
 #[Entity(repositoryClass: MaxfieldRepository::class)]
 class Maxfield
 {
-    #[Id, GeneratedValue(strategy: 'AUTO')]
+    #[Id, GeneratedValue(strategy: 'SEQUENCE')]
     #[Column(type: Types::INTEGER)]
     private ?int $id = 0;
 

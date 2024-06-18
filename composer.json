@@ -4,7 +4,7 @@
     "type": "project",
     "license": "WTFPL",
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.3",
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-gd": "*",
@@ -13,7 +13,7 @@
         "composer/package-versions-deprecated": "^1.11",
         "doctrine/doctrine-bundle": "^2.1",
         "doctrine/doctrine-migrations-bundle": "^3.0",
-        "doctrine/orm": "^2.7",
+        "doctrine/orm": "^3",
         "easycorp/easyadmin-bundle": "^4.0",
         "elkuku/maxfield-parser": "@dev",
         "elkuku/symfony-utils": "dev-master",
@@ -73,7 +73,7 @@
         "symfony/stopwatch": "7.*",
         "symfony/var-dumper": "7.*",
         "symfony/web-profiler-bundle": "7.*",
-        "tomasvotruba/type-coverage": "^0.2.8"
+        "tomasvotruba/type-coverage": "^0.3"
     },
     "config": {
         "optimize-autoloader": true,
