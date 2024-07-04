@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css'
 import 'leaflet-fullscreen'
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css'
 
-import 'styles/profile.css'
+import '../styles/profile.css'
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {

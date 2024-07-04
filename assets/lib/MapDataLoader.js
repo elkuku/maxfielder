@@ -1,4 +1,4 @@
-module.exports = class MapDataLoader {
+export class MapDataLoader {
 
     urls = []
     userId = 0

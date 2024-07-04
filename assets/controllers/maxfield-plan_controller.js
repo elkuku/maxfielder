@@ -4,17 +4,17 @@ import {Modal} from 'bootstrap'
 import 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-require('leaflet.markercluster')
-require('leaflet.markercluster/dist/MarkerCluster.css')
-require('leaflet.markercluster/dist/MarkerCluster.Default.css')
+import'leaflet.markercluster'
+import'leaflet.markercluster/dist/MarkerCluster.css'
+import'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
-require('leaflet-draw')
-require('leaflet-draw/dist/leaflet.draw.css')
+import'leaflet-draw'
+import'leaflet-draw/dist/leaflet.draw.css'
 
 import 'leaflet-fullscreen'
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css'
 
-import 'styles/maxfield/plan.css'
+import '../styles/maxfield/plan.css'
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -82,7 +82,7 @@ export default class extends Controller {
 
         const LeafIcon = L.Icon.extend({
             options: {
-                shadowUrl: '/build/images/map-marker/marker-shadow.png',
+                shadowUrl: '/images/leaflet/map-marker/marker-shadow.png',
                 iconSize: [25, 41],
                 iconAnchor: [12, 41],
                 popupAnchor: [1, -34],
@@ -90,8 +90,8 @@ export default class extends Controller {
             }
         })
 
-        this.redIcon = new LeafIcon({iconUrl: '/build/images/map-marker/marker-icon-red.png'})
-        this.orangeIcon = new LeafIcon({iconUrl: '/build/images/map-marker/marker-icon-orange.png'})
+        this.redIcon = new LeafIcon({iconUrl: '/images/leaflet/map-marker/marker-icon-red.png'})
+        this.orangeIcon = new LeafIcon({iconUrl: '/images/leaflet/map-marker/marker-icon-orange.png'})
 
         this.modal = new Modal(this.modalTarget)
     }

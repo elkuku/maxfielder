@@ -17,15 +17,15 @@
     <title>{% block title %}Maxfielder{% endblock %}</title>
     <meta name="og:title" content="{% block og_title %}Maxfielder Map{% endblock %}"/>
     <meta name="og:description" content="{% block og_description %}Maxfielder Map{% endblock %}"/>
-    <meta name="og:image" content="{% block og_image %}{{ absolute_url(asset('build/images/link_map_example.png')) }}{% endblock %}"/>
+    <meta name="og:image" content="{% block og_image %}{{ absolute_url(asset('images/link_map_example.png')) }}{% endblock %}"/>
 
-    {{ encore_entry_link_tags('app') }}
     {% block stylesheets %}{% endblock %}
 
     <script src="{{ asset('js/color-modes.js') }}"></script>
 
-    {{ encore_entry_script_tags('app') }}
-    {% block javascripts %}{% endblock %}
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
 </head>
 
 <body id="app-layout">

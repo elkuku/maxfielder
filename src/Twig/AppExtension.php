@@ -62,7 +62,7 @@ class AppExtension extends AbstractExtension
     public function previewImage(Maxfield $maxfield): string
     {
         return $this->maxFieldHelper->getPreviewImage($maxfield->getPath())
-            ?: 'build/images/no-preview.jpg';
+            ?: 'images/no-preview.jpg';
     }
 
     public function waypointCount(Maxfield $maxfield): int

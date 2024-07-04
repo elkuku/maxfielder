@@ -1,13 +1,13 @@
 import {Controller} from '@hotwired/stimulus'
 
-require('leaflet')
-require('leaflet/dist/leaflet.css')
+import 'leaflet'
+import'leaflet/dist/leaflet.css'
 
-require('leaflet.markercluster')
-require('leaflet.markercluster/dist/MarkerCluster.css')
-require('leaflet.markercluster/dist/MarkerCluster.Default.css')
+import'leaflet.markercluster'
+import'leaflet.markercluster/dist/MarkerCluster.css'
+import'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
-require('styles/map/edit.css')
+import'../styles/map/edit.css'
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -32,7 +32,7 @@ export default class extends Controller {
         this.markers.clearLayers()
 
         const myIcon = L.icon({
-            iconUrl: '/build/images/ico/my-icon.png',
+            iconUrl: '/images/leaflet/marker.png',
             iconSize: [22, 36],
             iconAnchor: [11, 36],
             popupAnchor: [0, -18],

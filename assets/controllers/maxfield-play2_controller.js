@@ -4,14 +4,20 @@ import {Modal} from "bootstrap"
 import '../styles/map/play2.css'
 
 import mapboxgl from 'mapbox-gl'
-import 'mapbox-gl/dist/mapbox-gl.css'
+import 'mapbox-gl/dist/mapbox-gl.min.css'
 
-import * as turf from '@turf/turf'
+import turfLineString from 'turf-linestring'
+import turfCircle from 'turf-circle'
+import turfDistance from 'turf-distance'
+import turfFeature from 'turf-feature'
+import turfFeatureCollection from 'turf-featurecollection'
+import turfPoint from 'turf-point'
+
 import Swal from "sweetalert2"
 
-import MapboxAPI from '../lib/MapboxAPI.js'
-import MapDataLoader from '../lib/MapDataLoader.js'
-import MapObjects from '../lib/MapObjects.js'
+import {MapboxAPI} from '../lib/MapboxAPI.js'
+import {MapDataLoader} from '../lib/MapDataLoader.js'
+import {MapObjects} from '../lib/MapObjects.js'
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
@@ -147,16 +153,16 @@ export default class extends Controller {
     }
 
     addObjects() {
-        this.map.addSource('trace', {type: 'geojson', data: turf.lineString([[0, 0], [0, 0]])})
+        this.map.addSource('trace', {type: 'geojson', data: turfLineString([[0, 0], [0, 0]])})
         this.map.addLayer(this.MapObjects.getTrace())
 
         const circle = this.MapObjects.getCircle()
-        circle.source.data = turf.circle([0, 0], .04)
+        circle.source.data = turfCircle([0, 0], .04)
         this.map.addLayer(circle)
 
         this.map.addSource('route', {
             type: 'geojson',
-            data: turf.featureCollection([])
+            data: turfFeatureCollection([])
         })
         this.map.addLayer(this.MapObjects.getRoutlineActive())
         this.map.addLayer(this.MapObjects.getRouteArrows())
@@ -181,7 +187,7 @@ export default class extends Controller {
             this._clearProxiMarkers()
             this.maxfieldData.waypoints.forEach((point, index) => {
                 if (false === this.userData.farm_done.includes(index)) {
-                    const distance = turf.distance(this.location, [point.lon, point.lat]) * 1000
+                    const distance = turfDistance(this.location, [point.lon, point.lat]) * 1000
                     if (distance <= 40) {
                         this.proximityPoints.push(index)
                     }
@@ -191,7 +197,7 @@ export default class extends Controller {
             this.proximityPoints.forEach((point, index) => {
                 const proxi = this.MapObjects.getCircle()
                 proxi.id = 'proxipoint' + index
-                proxi.source.data = turf.circle([this.maxfieldData.waypoints[point].lon, this.maxfieldData.waypoints[point].lat], .04)
+                proxi.source.data = turfCircle([this.maxfieldData.waypoints[point].lon, this.maxfieldData.waypoints[point].lat], .04)
                 this.map.addLayer(proxi)
             })
         } else {
@@ -200,14 +206,14 @@ export default class extends Controller {
 
         if (this.destination) {
 
-            this.distance = turf.distance(this.location, this.destination).toFixed(3) * 1000;
+            this.distance = turfDistance(this.location, this.destination).toFixed(3) * 1000;
 
-            this.map.getSource('trace').setData(turf.lineString([this.location.geometry.coordinates, this.destination.geometry.coordinates]));
+            this.map.getSource('trace').setData(turfLineString([this.location.geometry.coordinates, this.destination.geometry.coordinates]));
 
             if (this.distance <= 50) {
-                this.map.getSource('circle').setData(turf.circle(this.location, .04))
+                this.map.getSource('circle').setData(turfCircle(this.location, .04))
             } else {
-                this.map.getSource('circle').setData(turf.circle([0, 0], .04))
+                this.map.getSource('circle').setData(turfCircle([0, 0], .04))
             }
 
             let dist = 0;
@@ -233,8 +239,8 @@ export default class extends Controller {
                    &nbsp;${this.distance} m
                 </div>`;
         } else {
-            this.map.getSource('circle').setData(turf.circle([0, 0], .04));
-            this.map.getSource('trace').setData(turf.lineString([[0, 0], [0, 0]]));
+            this.map.getSource('circle').setData(turfCircle([0, 0], .04));
+            this.map.getSource('trace').setData(turfLineString([[0, 0], [0, 0]]));
             this.distanceBarTarget.innerHTML = '';
         }
     }
@@ -357,7 +363,7 @@ export default class extends Controller {
     }
 
     onLocationFound(event) {
-        this.location = turf.point([event.coords.longitude, event.coords.latitude])
+        this.location = turfPoint([event.coords.longitude, event.coords.latitude])
 
         if (this.centerLocation && false === this.isBusy) {
             this.map.flyTo({center: this.location.geometry.coordinates})
@@ -543,7 +549,7 @@ export default class extends Controller {
             console.log(route)
             const coordinates = route.geometry.coordinates
 
-            this.map.getSource('route').setData(turf.lineString(coordinates))
+            this.map.getSource('route').setData(turfLineString(coordinates))
         } catch (error) {
             this.displayMessage(error, 'danger')
         }
@@ -595,8 +601,8 @@ export default class extends Controller {
             alert(`${response.code} - ${response.message}\n\n${handleMessage}`)
             return 'error'
         } else {
-            const routeGeoJSON = turf.featureCollection([
-                turf.feature(response.trips[0].geometry)
+            const routeGeoJSON = turfFeatureCollection([
+                turfFeature(response.trips[0].geometry)
             ])
             this.map.getSource('route').setData(routeGeoJSON)
         }
@@ -622,7 +628,7 @@ export default class extends Controller {
 
         if (newVal < length - 1) {
             this.showDestination(newVal)
-            this.map.getSource('route').setData(turf.lineString([[0, 0], [0, 0]]))
+            this.map.getSource('route').setData(turfLineString([[0, 0], [0, 0]]))
             this.linkselectTarget.value = newVal
         } else {
             this.swal('Finished :)')
@@ -659,7 +665,7 @@ export default class extends Controller {
         }
 
         const destination = this.maxfieldData.links[id]
-        this.destination = turf.point([destination.lon, destination.lat])
+        this.destination = turfPoint([destination.lon, destination.lat])
 
         this.map.panTo(this.destination.geometry.coordinates)
 
@@ -884,7 +890,7 @@ export default class extends Controller {
         Swal.fire({
             title: "Clearing...",
             text: "Please wait",
-            imageUrl: "/build/images/loading.gif",
+            imageUrl: "/images/loading.gif",
             showConfirmButton: false,
             allowOutsideClick: false
         })
@@ -962,7 +968,7 @@ export default class extends Controller {
         this.maxfieldData.links[markerId].links.forEach(link => {
             const point = this.maxfieldData.waypoints[link.num]
             const to = [point.lon, point.lat]
-            lines.push(turf.lineString([center, to]))
+            lines.push(turfLineString([center, to]))
 
             const el = document.createElement('div')
             el.style.backgroundImage = 'url(/waypoint_thumb/' + this.waypointIdMap[link.num].guid + ')'
@@ -977,7 +983,7 @@ export default class extends Controller {
         })
         this.map.addSource('link-star', {
             'type': 'geojson',
-            'data': turf.featureCollection(lines)
+            'data': turfFeatureCollection(lines)
         });
 
         this.map.addLayer(this.MapObjects.linkStar());

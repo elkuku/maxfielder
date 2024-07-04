@@ -3,7 +3,7 @@
  *
  * Probably not for You ;)
  */
-module.exports = class MapboxAPI {
+export class MapboxAPI {
     baseUrl = 'https://api.mapbox.com'
 
     constructor(token) {

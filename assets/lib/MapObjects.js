@@ -1,4 +1,4 @@
-module.exports = class MapObjects {
+export class MapObjects {
 
     getTrace(color = 'yellow') {
         return {
