@@ -28,7 +28,8 @@ export default class extends Controller {
         'optionsBox', 'optionsBoxTrigger',
         'farmOptions', 'distanceBar',
         'btnModeFarm', 'btnModeLink',
-        'selProfile'
+        'selProfile',
+        'messageBox', 'farmCounter'
     ]
 
     maxfieldData = null
@@ -112,6 +113,8 @@ export default class extends Controller {
                 .addTo(this.map)
 
             this.map.addControl(this.getDistanceBar())
+            this.map.addControl(this.getFarmCounter())
+            this.map.addControl(this.getMessageBox())
             this.map.addControl(new mapboxgl.FullscreenControl(), 'top-left')
             this.map.addControl(new mapboxgl.NavigationControl({
                 visualizePitch: true
@@ -250,7 +253,7 @@ export default class extends Controller {
 
     getPlayControl() {
         return {
-            onAdd: (map) => {
+            onAdd: () => {
                 const container = document.createElement('div')
                 container.classList.add('mapboxgl-ctrl')
 
@@ -278,7 +281,7 @@ export default class extends Controller {
 
     getDistanceBar() {
         return {
-            onAdd: (map) => {
+            onAdd: () => {
                 const container = document.createElement('div')
                 container.classList.add('mapboxgl-ctrl')
                 container.innerHTML = '<div data-maxfield-play2-target="distanceBar" class="vw-100" id="distanceBar"></div>'
@@ -292,7 +295,7 @@ export default class extends Controller {
 
     getOptionsBox() {
         return {
-            onAdd: (map) => {
+            onAdd: () => {
                 return document.getElementById('optionsBox')
             }, getDefaultPosition: () => {
                 return 'top-right'
@@ -303,10 +306,32 @@ export default class extends Controller {
 
     getZoomControl() {
         return {
-            onAdd: (map) => {
+            onAdd: () => {
                 return document.getElementById('zoomBox')
             }, getDefaultPosition: () => {
                 return 'bottom-right'
+            }, onRemove: () => {
+            }
+        }
+    }
+
+    getMessageBox() {
+        return {
+            onAdd: () => {
+                return this.messageBoxTarget
+            }, getDefaultPosition: () => {
+                return 'top-left'
+            }, onRemove: () => {
+            }
+        }
+    }
+
+    getFarmCounter() {
+        return {
+            onAdd: () => {
+                return this.farmCounterTarget
+            }, getDefaultPosition: () => {
+                return 'top-left'
             }, onRemove: () => {
             }
         }
@@ -458,33 +483,71 @@ export default class extends Controller {
             element.removeClassName('done')
             this.userData.farm_done = this.userData.farm_done.filter(item => item !== event.params.marker)
         }
+        this.updateFarmCounter()
         this._uploadDone()
     }
 
-    async _uploadDone() {
-        const response = await this.MapDataLoader.uploadUserData({farm_done: this.userData.farm_done})
-        const data = await response.json()
+    updateFarmCounter() {
+        this.farmCounterTarget.innerText = this.markers.farm.length - this.userData.farm_done.length
+    }
 
-        if (data['error']) {
-            alert(data['error'])
+    async _uploadDone() {
+        const response = await this.MapDataLoader.uploadUserData({
+            farm_done: this.userData.farm_done
+        })
+        this._showResponse(response)
+    }
+
+    async _showResponse(response) {
+        if (response.ok) {
+            this._clearMessageBox()
+        } else {
+            try {
+                const data = await response.json()
+                if (data['error']) {
+                    this.displayMessage(data['error'], 'danger')
+                } else {
+                    this.displayMessage('Error uploading user data', 'danger')
+
+                }
+            } catch (err) {
+                this.displayMessage('Error parsing user data', 'danger')
+                console.log('error', err)
+            }
         }
+    }
+
+    _clearMessageBox() {
+        this.messageBoxTarget.innerHTML = ''
+    }
+
+    displayMessage(message, type) {
+        this.messageBoxTarget.innerHTML = message
+        this.messageBoxTarget.removeAttribute('class')
+        this.messageBoxTarget.classList.add('alert', 'alert-' + type)
     }
 
     async getRoute(event) {
         if (null === this.location) {
-            alert('Get location first...')
+            this.displayMessage('Get location first...', 'warning')
 
             return
         }
-        const route = await this.MapboxAPI.getRoute(
-            this.location.geometry.coordinates,
-            [event.params.lon, event.params.lat],
-            this.selProfileTarget.value
-        )
+        this._clearMessageBox()
+        try {
+            const route = await this.MapboxAPI.getRoute(
+                this.location.geometry.coordinates,
+                [event.params.lon, event.params.lat],
+                this.selProfileTarget.value
+            )
+            console.log(route)
+            const coordinates = route.geometry.coordinates
 
-        const coordinates = route.geometry.coordinates
+            this.map.getSource('route').setData(turf.lineString(coordinates))
+        } catch (error) {
+            this.displayMessage(error, 'danger')
+        }
 
-        this.map.getSource('route').setData(turf.lineString(coordinates))
 
         return
         const instructions = document.getElementById('instructions')
@@ -576,12 +639,10 @@ export default class extends Controller {
 
     async _uploadCurrentPoint(number) {
 
-        const response = await this.MapDataLoader.uploadUserData({current_point: number})
-        const data = await response.json()
-
-        if (data['error']) {
-            alert(data['error'])
-        }
+        const response = await this.MapDataLoader.uploadUserData({
+            current_point: number
+        })
+        this._showResponse(response)
     }
 
     showDestination(id) {
@@ -826,17 +887,31 @@ export default class extends Controller {
             allowOutsideClick: false
         })
         const response = await this.MapDataLoader.clearUserData()
-        const data = await response.json()
-
-        if (data['error']) {
-            alert(data['error'])
-        } else {
+        if (response.ok) {
             await this._loadUserData()
             await this.loadFarmLayer()
             setTimeout(function () {
                 Swal.fire({
                     title: 'User data have been cleared!',
                     icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                })
+            }, 500)
+        } else {
+            let error = 'An error occurred!'
+            try {
+                const data = await response.json();
+                if (data['error']) {
+                    error = data['error']
+                }
+            } catch (e) {
+                error = 'Invalid JSON string received'
+            }
+            setTimeout(function () {
+                Swal.fire({
+                    title: error,
+                    icon: 'error',
                     timer: 2000,
                     showConfirmButton: false
                 })

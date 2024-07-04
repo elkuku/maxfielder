@@ -18,10 +18,18 @@
         }
     }) }}>
 
+        <span id="messageBox" class="alert"
+                {{ stimulus_target('maxfield-play2', 'messageBox') }}
+        ></span>
+
+        <span id="farm-counter"
+        {{ stimulus_target('maxfield-play2', 'farmCounter') }}
+        >666</span>
 
         <div id="zoomBox" class="mapboxgl-ctrl">
-            <button class="circle-button button-toggle" data-action="maxfield-play2#toggleCenter"><i
-                        class="bi-crosshair"></i></button>
+            <button class="circle-button button-toggle" data-action="maxfield-play2#toggleCenter">
+                <i class="bi-crosshair"></i>
+            </button>
             <button class="circle-button" data-action="maxfield-play2#zoomAll"><i class="bi-asterisk"></i></button>
             <button class="circle-button" data-action="maxfield-play2#zoomIn"><i class="bi-plus"></i></button>
             <button class="circle-button" data-action="maxfield-play2#zoomOut"><i class="bi-dash"></i></button>
@@ -54,7 +62,6 @@
                     >
                     <label class="btn btn-outline-success" for="btnradio2">Link</label>
                 </div>
-
 
                 <div class="btn-group" data-maxfield-play2-target="farmOptions">
                     <button class="btn btn-info"
@@ -99,15 +106,14 @@
                     <form method="post">
                         <div class="modal-body">
                             <label for="keys" class="form-label">Keys</label>
-                            <textarea {{ stimulus_target('maxfield-play2', 'keys') }} name="keys" id="keys" cols="30"
-                                                                                      rows="5" class="form-control"
-                                                                                      required></textarea>
+                            <textarea {{ stimulus_target('maxfield-play2', 'keys') }}
+                                    name="keys" id="keys" cols="30" rows="5" class="form-control" required></textarea>
                             <div {{ stimulus_target('maxfield-play2', 'errorMessage') }}></div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" data-action="maxfield-play2#uploadKeys">Save
-                                changes
+                            <button type="button" class="btn btn-primary" data-action="maxfield-play2#uploadKeys">
+                                Upload
                             </button>
                         </div>
                     </form>

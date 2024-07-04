@@ -106,36 +106,20 @@ class MaxFieldsController extends BaseController
         );
     }
 
-    #[Route(path: '/show/{path:maxfield}', name: 'max_fields_result', methods: ['GET', 'POST'])]
+    #[Route(path: '/show/{path:maxfield}', name: 'max_fields_result', methods: ['GET'])]
     public function display(
-        MaxFieldHelper         $maxFieldHelper,
-        MaxField               $maxfield,
-        Request                $request,
-        IngressHelper          $ingressHelper,
-        EntityManagerInterface $entityManager,
+        MaxFieldHelper $maxFieldHelper,
+        MaxField       $maxfield,
     ): Response
     {
-        $keys = (string)$request->request->get('keys');
-        $agentNum = (int)$request->request->get('agentNum');
         $info = $maxFieldHelper->getMaxField($maxfield->getPath());
         $waypointIdMap = $maxFieldHelper->getWaypointsIdMap($maxfield->getPath());
-        $existingKeys = [];
-
-        if ($keys) {
-            $existingKeys = $ingressHelper->getExistingKeysForMaxfield($waypointIdMap, $keys);
-            $maxfield->setUserKeysWithUser($existingKeys, $agentNum);
-
-            $entityManager->flush();
-
-            $this->addFlash('success', sprintf('%d keys added.', count($existingKeys)));
-        }
 
         return $this->render(
             'maxfield/result.html.twig',
             [
                 'maxfield' => $maxfield,
                 'info' => $info,
-                'existingKeys' => $existingKeys,
                 'waypointIdMap' => $waypointIdMap,
             ]
         );
@@ -157,14 +141,15 @@ class MaxFieldsController extends BaseController
             $maxfield->setCurrentPointWithUser('-1', $agentNum);
             $maxfield->setFarmDoneWithUser([], $agentNum);
             $maxfield->setUserKeysWithUser([], $agentNum);
-
             $entityManager->flush();
             $response ['result'] = 'cleared';
+            $code = 200;
         } catch (\Exception $exception) {
             $response['error'] = $exception->getMessage();
+            $code = 500;
         }
 
-        return $this->json($response);
+        return $this->json($response, $code);
     }
 
     #[Route(path: '/submit-user-data/{path:maxfield}', name: 'maxfield_submit_user_data', methods: ['POST'])]
@@ -177,6 +162,7 @@ class MaxFieldsController extends BaseController
     ): JsonResponse
     {
         $response = [];
+        $status = 200;
 
         $data = json_decode($request->getContent(), true);
 
@@ -202,18 +188,20 @@ class MaxFieldsController extends BaseController
                 $existingKeys = $ingressHelper->getExistingKeysForMaxfield($waypointIdMap, $keys);
                 if ($existingKeys) {
                     $maxfield->setUserKeysWithUser($existingKeys, $agentNum);
-                    $response['result'] = sprintf('%d keys added.', count($existingKeys));
+                    $response['result'] = sprintf('Added keyinfo for %d portals.', count($existingKeys));
 
                     $entityManager->flush();
                 } else {
                     $response['error'] = 'No keys found :(';
+                    $status = 404;
                 }
             } catch (\Exception $exception) {
                 $response['error'] = $exception->getMessage();
+                $status = 500;
             }
         }
 
-        return $this->json($response);
+        return $this->json($response, $status);
     }
 
     #[Route('/play/{path:maxfield}', name: 'maxfield_play', methods: ['GET'])]

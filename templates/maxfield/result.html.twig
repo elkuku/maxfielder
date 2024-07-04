@@ -85,19 +85,6 @@
             </div>
         </div>
         <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none" data-id="keys">
-            <h4>Key Upload</h4>
-            <div class="row">
-                {% for agentInfo in info.agentsInfo %}
-                    <div class="col">
-                        <form method="post">
-                            <label for="keys">Agent {{ agentInfo.agentNumber }} Keys</label><br>
-                            <textarea name="keys" id="keys" cols="30" rows="3"></textarea>
-                            <input type="hidden" name="agentNum" value="{{ agentInfo.agentNumber }}">
-                            <button type="submit">Upload</button>
-                        </form>
-                    </div>
-                {% endfor %}
-            </div>
             <div class="row">
                 <div class="col">
                     <h4>Key Preparation Total</h4>

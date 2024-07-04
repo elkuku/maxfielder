@@ -20,8 +20,13 @@ module.exports = class MapboxAPI {
             + '&access_token=' + this.token
             , {method: 'GET'}
         )
-
+        if (false === response.ok) {
+            if (response.status === 404) throw new Error('404, Not found');
+            if (response.status === 500) throw new Error('500, internal server error');
+            throw new Error(response.status);
+        }
         const json = await response.json()
+
         return json.routes[0]
     }
 

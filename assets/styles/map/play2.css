@@ -137,3 +137,10 @@ button.optionsBoxTrigger {
     line-height: 35px;
     font-size: 2rem;
 }
+
+span#farm-counter {
+    color: #b49125;
+    font-size: 3em;
+    display: block;
+    padding-left: 10px;
+}

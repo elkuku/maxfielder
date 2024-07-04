@@ -24,7 +24,6 @@ module.exports = class MapDataLoader {
 
     async uploadUserData(userData) {
         const data = {...this.userData, ...userData}
-        console.log(data)
         return await fetch(this.urls.submit_user_data, {
             method: 'POST',
             body: JSON.stringify(data),
