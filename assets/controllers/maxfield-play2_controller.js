@@ -764,10 +764,12 @@ export default class extends Controller {
             this._checkShowDone()
             this.btnModeFarmTarget.checked = true
             this.farmOptionsTarget.style.display = ''
+            this.farmCounterTarget.style.display = ''
         } else if ('link' === mode) {
             this._toggleLayer('farm', 'none')
             this.btnModeLinkTarget.checked = true
             this.farmOptionsTarget.style.display = 'none'
+            this.farmCounterTarget.style.display = 'none'
         } else {
             alert('invalid mode');
 
