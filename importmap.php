@@ -129,5 +129,9 @@ return [
     'leaflet-routing-machine/dist/leaflet-routing-machine.css' => [
         'version' => '3.2.12',
         'type' => 'css',
-    ]
+    ],
+    'bootstrap-icons/font/bootstrap-icons.min.css' => [
+        'version' => '1.11.3',
+        'type' => 'css',
+    ],
 ];

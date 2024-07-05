@@ -11,7 +11,7 @@ import './bootstrap.js';
 import './styles/app.css'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
-//import 'bootstrap-icons/font/bootstrap-icons.css'
+import 'bootstrap-icons/font/bootstrap-icons.min.css'
 
 // This is needed for header dropdown menus
 import {Dropdown} from "bootstrap";
