@@ -10,6 +10,7 @@ import'leaflet.markercluster/dist/MarkerCluster.Default.css'
 
 import'leaflet-draw'
 import'leaflet-draw/dist/leaflet.draw.css'
+window.type = true; // Doesn't matter what value to put here, just initialize the thing
 
 import 'leaflet-fullscreen'
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css'
