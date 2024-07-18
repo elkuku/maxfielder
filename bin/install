@@ -14,7 +14,6 @@ check() {
 }
 
 check "composer"
-check "yarn"
 check "docker-compose"
 check "symfony"
 
@@ -25,10 +24,6 @@ cd "$DIR" || exit 1
 echo "🚀 Setting up dev env in $DIR ..."
 
 composer install
-
-# @todo anybody still using npm?...
-yarn install
-yarn dev
 
 docker-compose up -d
 
