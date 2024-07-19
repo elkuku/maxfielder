@@ -54,18 +54,18 @@ class WayPointHelper
     {
         $fileSystem = new Filesystem();
 
+        $path = $this->defineThumbnailPath($wpId);
+
+        if ($fileSystem->exists($path)) {
+            return $path;
+        }
+
         if (false === $fileSystem->exists($this->rootDir)) {
             $fileSystem->mkdir($this->rootDir);
         }
 
         if (false === $fileSystem->exists($this->getThumbnailBasePath())) {
             $fileSystem->mkdir($this->getThumbnailBasePath());
-        }
-
-        $path = $this->defineThumbnailPath($wpId);
-
-        if ($fileSystem->exists($path)) {
-            return $path;
         }
 
         if (false === $this->findImage($wpId)) {
