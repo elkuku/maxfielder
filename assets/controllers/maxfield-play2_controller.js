@@ -77,7 +77,7 @@ export default class extends Controller {
         this.MapDataLoader = new MapDataLoader(this.urlsValue, this.userIdValue);
         this.MapObjects = new MapObjects;
 
-        this.setupMap()
+        this._setupMap()
     }
 
     async _loadData() {
@@ -88,7 +88,7 @@ export default class extends Controller {
         this.waypointIdMap = data.waypointIdMap
     }
 
-    async setupMap() {
+    async _setupMap() {
         try {
             await this._loadData()
             await this._loadUserData()
@@ -139,7 +139,9 @@ export default class extends Controller {
                 this.linkselectTarget.value = this.userData.current_point
                 this._setMode('link')
             } else {
+                // Farm mode
                 this._setMode('farm')
+                this.updateFarmCounter()
             }
         })
 
