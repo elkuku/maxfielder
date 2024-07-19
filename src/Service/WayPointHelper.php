@@ -23,9 +23,14 @@ class WayPointHelper
         return $this->rootDir . '/' . $wpId . '.jpg';
     }
 
+    private function getThumbnailBasePath(): string
+    {
+        return $this->rootDir . '/thumbs';
+    }
+
     private function defineThumbnailPath(string $wpId): string
     {
-        return $this->rootDir . '/thumbs/' . $wpId . '.jpg';
+        return $this->getThumbnailBasePath() . '/' . $wpId . '.jpg';
     }
 
     public function findImage(?string $wpId): bool|string
@@ -51,6 +56,10 @@ class WayPointHelper
 
         if (false === $fileSystem->exists($this->rootDir)) {
             $fileSystem->mkdir($this->rootDir);
+        }
+
+        if (false === $fileSystem->exists($this->getThumbnailBasePath())) {
+            $fileSystem->mkdir($this->getThumbnailBasePath());
         }
 
         $path = $this->defineThumbnailPath($wpId);
