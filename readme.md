@@ -17,6 +17,19 @@ bin/start
 bin/stop
 ```
 
+### Import
+Use portal multi export by modkin using th json format
+https://raw.githubusercontent.com/IITC-CE/Community-plugins/master/dist/modkin/multi_export.user.js
+
+### Maxfield docker container
+There is a maxfield docker container at https://hub.docker.com/r/nikp3h/maxfield to use it in this frontend create a 
+`.env.local` file and set the `APP_DOCKER_CONTAINER` env var to the id of the cloned image. 
+(Find it using `docker images`)
+
+e.g.
+```dotenv
+APP_DOCKER_CONTAINER=db53e0717976
+```
 ----
 
 Happy fielding `=;)`
