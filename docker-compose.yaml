@@ -1,6 +1,6 @@
 services:
   database:
-    image: postgres:13-alpine
+    image: postgres:15-alpine
     environment:
       POSTGRES_USER: main
       POSTGRES_PASSWORD: main
