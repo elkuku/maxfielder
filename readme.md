@@ -18,8 +18,9 @@ bin/stop
 ```
 
 ### Import
-Use portal multi export by modkin using th json format
-https://raw.githubusercontent.com/IITC-CE/Community-plugins/master/dist/modkin/multi_export.user.js
+Use portal multi export by modkin using the json format
+
+* https://raw.githubusercontent.com/IITC-CE/Community-plugins/master/dist/modkin/multi_export.user.js
 
 ### Maxfield docker container
 There is a maxfield docker container at https://hub.docker.com/r/nikp3h/maxfield to use it in this frontend create a 
