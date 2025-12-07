@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Enum\MapBoxProfilesEnum;
 use App\Enum\MapBoxStylesEnum;
 use App\Enum\MapProvidersEnum;
+use App\Enum\UserRole;
 use App\Repository\UserRepository;
 use App\Settings\UserSettings;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -20,6 +21,7 @@ use Doctrine\ORM\Mapping\Table;
 use Stringable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[Entity(repositoryClass: UserRepository::class)]
@@ -27,24 +29,16 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[UniqueEntity(fields: 'identifier', message: 'This identifier is already in use')]
 class User implements UserInterface, Stringable
 {
-    final public const array ROLES
-        = [
-            'user' => 'ROLE_USER',
-            'agent' => 'ROLE_AGENT',
-            'admin' => 'ROLE_ADMIN',
-        ];
-
     #[Column, Id, GeneratedValue(strategy: 'SEQUENCE')]
     private ?int $id = 0;
 
     #[Column(unique: true), NotBlank]
     private string $identifier = '*';
 
-    /**
-     * @var array<string>
-     */
-    #[Column(type: Types::JSON)]
-    private array $roles = [];
+    #[Column(type: Types::STRING, length: 50, enumType: UserRole::class)]
+    #[Assert\NotNull]
+    #[Assert\Type(type: UserRole::class, message: 'The role must be a valid user role.')]
+    private UserRole $role = UserRole::USER;
 
     /**
      * @var array<string>|null
@@ -113,20 +107,17 @@ class User implements UserInterface, Stringable
 
     public function getRoles(): array
     {
-        $roles = $this->roles;
+        $roles = [$this->role->value];
 
         // guarantee every user at least has ROLE_USER
-        $roles[] = self::ROLES['user'];
+        $roles[] = UserRole::USER->value;
 
-        return array_unique($roles);
+        return \array_unique($roles);
     }
 
-    /**
-     * @param array<string> $roles
-     */
-    public function setRoles(array $roles): self
+    public function setRole(UserRole $role): User
     {
-        $this->roles = $roles;
+        $this->role = $role;
 
         return $this;
     }
