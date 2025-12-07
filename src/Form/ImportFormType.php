@@ -28,6 +28,14 @@ class ImportFormType extends AbstractType
                     'attr' => ['cols' => '30', 'rows' => '5'],
                     'required' => false,
                 ]
+            )
+            ->add(
+                'kexport',
+                TextareaType::class,
+                [
+                    'attr' => ['cols' => '30', 'rows' => '5'],
+                    'required' => false,
+                ]
             );
     }
 }

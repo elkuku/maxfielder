@@ -11,17 +11,17 @@
 
     <h5>Import method</h5>
 
-{#    <ul class="nav nav-tabs" id="myTab" role="tablist">#}
-{#        <li class="nav-item">#}
-{#            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab">#}
-{#                Intel Link#}
-{#            </a>#}
-{#        </li>#}
-{#        <li class="nav-item">#}
-{#            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab">#}
-{#                GPX#}
-{#            </a>#}
-{#        </li>#}
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#kexport" href="#" role="tab">
+                KExport
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#multiexport" href="#" role="tab">
+                Multiexport
+            </a>
+        </li>
 {#        <li class="nav-item">#}
 {#            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab">#}
 {#                CSV#}
@@ -47,14 +47,14 @@
 {#                multiexportcsv#}
 {#            </a>#}
 {#        </li>#}
-{#    </ul>#}
-{#    <div class="tab-content" id="myTabContent">#}
-{#        <div class="tab-pane fade show active" id="home" role="tabpanel">#}
-{#            {{ form_row(form.intelLink) }}#}
-{#        </div>#}
-{#        <div class="tab-pane fade" id="profile" role="tabpanel">#}
-{#            {{ form_row(form.gpxRaw) }}#}
-{#        </div>#}
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="kexport" role="tabpanel">
+            {{ form_row(form.kexport) }}
+        </div>
+        <div class="tab-pane fade" id="multiexport" role="tabpanel">
+            {{ form_row(form.multiexportjson) }}
+        </div>
 {#        <div class="tab-pane fade" id="contact" role="tabpanel">#}
 {#            {{ form_row(form.csvRaw) }}#}
 {#        </div>#}
@@ -70,8 +70,7 @@
 {#        <div class="tab-pane fade" id="multiexportcsv" role="tabpanel">#}
 {#            {{ form_row(form.multiexportcsv) }}#}
 {#        </div>#}
-{#    </div>#}
-    {{ form_row(form.multiexportjson) }}
+    </div>
     <button type="submit" class="btn btn-primary">Import</button>
 
     {{ form_end(form) }}
