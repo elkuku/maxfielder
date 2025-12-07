@@ -10,9 +10,7 @@ class IngressHelper
 {
     public function __construct(
         private readonly WayPointHelper $wayPointHelper,
-    )
-    {
-    }
+    ) {}
 
     /**
      * @return array<int, AgentKeyInfo>
@@ -23,7 +21,7 @@ class IngressHelper
 
         if (strpos($string, "\r\n")) {
             $lines = explode("\r\n", $string);
-        }else{
+        } else {
             $lines = explode("\n", $string);
         }
 
@@ -49,12 +47,12 @@ class IngressHelper
      * @param WaypointMap[] $waypoints
      * @return AgentKeyInfo[]
      */
-    public function getExistingKeysForMaxfield(array $waypoints, string $keys):array
+    public function getExistingKeysForMaxfield(array $waypoints, string $keys): array
     {
         $existingKeys = [];
         $parsedKeys = $this->parseKeysString($keys);
 
-       foreach ($waypoints as $waypoint) {
+        foreach ($waypoints as $waypoint) {
             foreach ($parsedKeys as $parsedKey) {
                 if ($parsedKey->guid === $waypoint->guid) {
                     $existingKeys[] = $parsedKey;

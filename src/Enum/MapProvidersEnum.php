@@ -7,5 +7,5 @@ enum MapProvidersEnum: string
     use ForSelectTrait;
 
     case leaflet = 'leaflet';
-    case mapbox= 'mapbox';
+    case mapbox = 'mapbox';
 }

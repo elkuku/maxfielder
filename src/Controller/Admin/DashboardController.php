@@ -16,9 +16,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DashboardController extends AbstractDashboardController
 {
-    public function __construct(private readonly UserRepository $userRepository)
-    {
-    }
+    public function __construct(private readonly UserRepository $userRepository) {}
 
     #[Route('/admin', name: 'admin', methods: ['GET', 'POST'])]
     #[IsGranted(UserRole::ADMIN->value)]

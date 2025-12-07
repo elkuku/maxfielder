@@ -15,7 +15,8 @@ class GoogleController extends AbstractController
     #[Route(path: '/connect/google', name: 'connect_google_start', methods: ['GET'])]
     public function connect(
         ClientRegistry $clientRegistry
-    ): RedirectResponse {
+    ): RedirectResponse
+    {
         return $clientRegistry
             ->getClient('google')
             ->redirect(

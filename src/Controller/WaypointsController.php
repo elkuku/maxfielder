@@ -26,8 +26,8 @@ class WaypointsController extends AbstractController
     ])]
     #[IsGranted('ROLE_ADMIN')]
     public function edit(
-        Request                $request,
-        Waypoint               $waypoint,
+        Request $request,
+        Waypoint $waypoint,
         EntityManagerInterface $entityManager
     ): RedirectResponse|Response
     {
@@ -55,7 +55,7 @@ class WaypointsController extends AbstractController
     #[Route(path: '/waypoint-remove/{id}', name: 'waypoints_remove', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function remove(
-        Waypoint               $waypoint,
+        Waypoint $waypoint,
         EntityManagerInterface $entityManager
     ): RedirectResponse
     {
@@ -72,7 +72,7 @@ class WaypointsController extends AbstractController
     #[IsGranted('ROLE_AGENT')]
     public function map(
         WaypointRepository $repository,
-        Request            $request
+        Request $request
     ): JsonResponse
     {
         $bounds = $request->query->get('bounds');

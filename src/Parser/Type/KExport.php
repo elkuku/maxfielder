@@ -5,7 +5,8 @@ namespace App\Parser\Type;
 use App\Entity\Waypoint;
 use App\Parser\AbstractParser;
 
-class KExport  extends AbstractParser{
+class KExport extends AbstractParser
+{
     protected function getType(): string
     {
         return 'kexport';

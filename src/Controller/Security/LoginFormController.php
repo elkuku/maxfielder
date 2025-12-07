@@ -13,7 +13,8 @@ class LoginFormController extends AbstractController
     public function login(
         AuthenticationUtils $authenticationUtils,
         string $oauthGoogleId,
-    ): Response {
+    ): Response
+    {
         return $this->render(
             'auth/login.html.twig',
             [
@@ -25,7 +26,5 @@ class LoginFormController extends AbstractController
     }
 
     #[Route('/logout', name: 'logout', methods: ['GET'])]
-    public function logout(): void
-    {
-    }
+    public function logout(): void {}
 }

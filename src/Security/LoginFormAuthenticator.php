@@ -23,8 +23,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     public function __construct(
         private readonly RouterInterface $router,
         #[Autowire('%env(APP_ENV)%')] private readonly string $appEnv
-    ) {
-    }
+    ) {}
 
     protected function getLoginUrl(Request $request): string
     {
@@ -38,11 +37,11 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         }
 
         return new SelfValidatingPassport(
-            new UserBadge((string) $request->request->get('identifier')),
+            new UserBadge((string)$request->request->get('identifier')),
             [
                 new CsrfTokenBadge(
                     'login',
-                    (string) $request->request->get('_csrf_token')
+                    (string)$request->request->get('_csrf_token')
                 ),
                 new RememberMeBadge(),
             ]
@@ -53,7 +52,8 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         Request $request,
         TokenInterface $token,
         string $firewallName
-    ): RedirectResponse {
+    ): RedirectResponse
+    {
         if ($targetPath = $this->getTargetPath(
             $request->getSession(),
             $firewallName

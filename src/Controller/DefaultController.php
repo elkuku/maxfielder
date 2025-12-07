@@ -14,7 +14,8 @@ class DefaultController extends BaseController
     public function index(
         MaxfieldRepository $maxfieldRepository,
         Request $request
-    ): Response {
+    ): Response
+    {
         $user = $this->getUser();
 
         $favourites = $user ? $user->getFavourites() : [];

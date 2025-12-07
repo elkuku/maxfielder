@@ -38,7 +38,7 @@ class MaxFieldsController extends BaseController
     #[Route(path: '/list', name: 'maxfields', methods: ['GET'])]
     public function index(
         MaxfieldRepository $maxfieldRepository,
-        Request            $request,
+        Request $request,
     ): Response
     {
         $page = $request->query->get('page', 1);
@@ -78,7 +78,7 @@ class MaxFieldsController extends BaseController
     #[IsGranted('ROLE_ADMIN')]
     public function check(
         MaxfieldRepository $maxfieldRepository,
-        MaxFieldHelper     $maxFieldHelper,
+        MaxFieldHelper $maxFieldHelper,
     ): Response
     {
         $maxfieldFiles = $maxFieldHelper->getList();
@@ -109,7 +109,7 @@ class MaxFieldsController extends BaseController
     #[Route(path: '/show/{path:maxfield}', name: 'max_fields_result', methods: ['GET'])]
     public function display(
         MaxFieldHelper $maxFieldHelper,
-        MaxField       $maxfield,
+        MaxField $maxfield,
     ): Response
     {
         $info = $maxFieldHelper->getMaxField($maxfield->getPath());
@@ -127,9 +127,9 @@ class MaxFieldsController extends BaseController
 
     #[Route(path: '/clear-user-data/{path:maxfield}', name: 'maxfield_clear_user_data', methods: ['POST'])]
     public function clearUserData(
-        MaxField               $maxfield,
+        MaxField $maxfield,
         EntityManagerInterface $entityManager,
-        Request                $request,
+        Request $request,
     ): JsonResponse
     {
         $response = [];
@@ -154,10 +154,10 @@ class MaxFieldsController extends BaseController
 
     #[Route(path: '/submit-user-data/{path:maxfield}', name: 'maxfield_submit_user_data', methods: ['POST'])]
     public function submitUserData(
-        MaxFieldHelper         $maxFieldHelper,
-        MaxField               $maxfield,
-        Request                $request,
-        IngressHelper          $ingressHelper,
+        MaxFieldHelper $maxFieldHelper,
+        MaxField $maxfield,
+        Request $request,
+        IngressHelper $ingressHelper,
         EntityManagerInterface $entityManager,
     ): JsonResponse
     {
@@ -207,7 +207,7 @@ class MaxFieldsController extends BaseController
     #[Route('/play/{path:maxfield}', name: 'maxfield_play', methods: ['GET'])]
     public function play(
         MaxFieldHelper $maxFieldHelper,
-        Maxfield       $maxfield
+        Maxfield $maxfield
     ): Response
     {
         $user = $this->getUser();
@@ -241,7 +241,7 @@ class MaxFieldsController extends BaseController
     #[Route('/get-data/{path:maxfield}', name: 'maxfield_get_data', methods: ['GET'])]
     public function getData(
         MaxFieldHelper $maxFieldHelper,
-        Maxfield       $maxfield
+        Maxfield $maxfield
     ): JsonResponse
     {
         $json = (new JsonHelper())
@@ -257,7 +257,7 @@ class MaxFieldsController extends BaseController
 
     #[Route('/get-user-data/{path:maxfield}', name: 'maxfield_get_user_data', methods: ['POST'])]
     public function getUserData(
-        Maxfield                          $maxfield,
+        Maxfield $maxfield,
         #[MapRequestPayload] UserDataType $data,
     ): JsonResponse
     {
@@ -327,9 +327,9 @@ class MaxFieldsController extends BaseController
         'POST',
     ])]
     public function edit(
-        Maxfield               $maxfield,
+        Maxfield $maxfield,
         EntityManagerInterface $entityManager,
-        Request                $request,
+        Request $request,
     ): RedirectResponse|Response
     {
         $this->denyAccessUnlessGranted(
@@ -362,11 +362,11 @@ class MaxFieldsController extends BaseController
 
     #[Route(path: '/delete/{id}', name: 'max_fields_delete', methods: ['GET'])]
     public function delete(
-        MaxFieldGenerator      $maxFieldGenerator,
+        MaxFieldGenerator $maxFieldGenerator,
         EntityManagerInterface $entityManager,
-        Maxfield               $maxfield,
-        Request                $request,
-        RouterInterface        $router,
+        Maxfield $maxfield,
+        Request $request,
+        RouterInterface $router,
     ): RedirectResponse
     {
         $this->denyAccessUnlessGranted(
@@ -398,7 +398,7 @@ class MaxFieldsController extends BaseController
     #[Route(path: '/delete-files/{item}', name: 'maxfield_delete_files', methods: ['GET'])]
     public function deleteFiles(
         MaxFieldGenerator $maxFieldGenerator,
-        string            $item,
+        string $item,
     ): RedirectResponse
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
@@ -421,7 +421,7 @@ class MaxFieldsController extends BaseController
     #[Route(path: '/status/{id}', name: 'maxfield_status', methods: ['GET'])]
     public function status(
         MaxFieldHelper $maxFieldHelper,
-        Maxfield       $maxfield
+        Maxfield $maxfield
     ): JsonResponse
     {
         $status = (new MaxfieldStatus($maxFieldHelper))
@@ -443,7 +443,7 @@ class MaxFieldsController extends BaseController
 
     #[Route(path: '/toggle-favourite/{id}', name: 'maxfield_toggle_favourite', methods: ['GET'])]
     public function toggleFavourite(
-        Maxfield               $maxfield,
+        Maxfield $maxfield,
         EntityManagerInterface $entityManager
     ): JsonResponse
     {
@@ -458,8 +458,8 @@ class MaxFieldsController extends BaseController
 
     #[Route(path: '/plan', name: 'app_maxfields_plan', methods: ['GET'])]
     public function plan(
-        #[Autowire('%env(APP_DEFAULT_LAT)%')] float  $defaultLat,
-        #[Autowire('%env(APP_DEFAULT_LON)%')] float  $defaultLon,
+        #[Autowire('%env(APP_DEFAULT_LAT)%')] float $defaultLat,
+        #[Autowire('%env(APP_DEFAULT_LON)%')] float $defaultLon,
         #[Autowire('%env(APP_DEFAULT_ZOOM)%')] float $defaultZoom,
     ): Response
     {

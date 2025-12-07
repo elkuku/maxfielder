@@ -15,7 +15,7 @@ class UserController extends BaseController
     #[Route('/profile', name: 'app_profile', methods: ['GET', 'POST'])]
     #[IsGranted(UserRole::USER->value)]
     public function profile(
-        Request                $request,
+        Request $request,
         EntityManagerInterface $entityManager,
     ): Response
     {

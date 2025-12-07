@@ -22,14 +22,16 @@ class CleandbCommand extends Command
         private readonly EntityManagerInterface $entityManager,
         private readonly WaypointRepository $waypointRepository,
         private readonly WayPointHelper $wayPointHelper
-    ) {
+    )
+    {
         parent::__construct();
     }
 
     protected function execute(
         InputInterface $input,
         OutputInterface $output
-    ): int {
+    ): int
+    {
         $errorCount = 0;
         $warningCount = 0;
         $io = new SymfonyStyle($input, $output);
@@ -60,7 +62,7 @@ class CleandbCommand extends Command
             }
 
             $cleanName = $this->wayPointHelper->cleanName(
-                (string) $waypoint->getName()
+                (string)$waypoint->getName()
             );
 
             if ($waypoint->getName() !== $cleanName) {

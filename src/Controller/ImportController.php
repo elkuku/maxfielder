@@ -20,10 +20,10 @@ class ImportController extends AbstractController
 {
     #[Route(path: '/import', name: 'import', methods: ['GET', 'POST'])]
     public function index(
-        Request                $request,
-        WaypointRepository     $waypointRepo,
-        WayPointParser         $wayPointParser,
-        WayPointHelper         $wayPointHelper,
+        Request $request,
+        WaypointRepository $waypointRepo,
+        WayPointParser $wayPointParser,
+        WayPointHelper $wayPointHelper,
         EntityManagerInterface $entityManager,
     ): Response
     {
@@ -41,7 +41,7 @@ class ImportController extends AbstractController
                     isset($data['forceUpdate']) && $data['forceUpdate'],
                 );
                 if ($count) {
-                    $this->addFlash('success', $count . ' Waypoint(s) imported!');
+                    $this->addFlash('success', $count.' Waypoint(s) imported!');
                 } else {
                     $this->addFlash('warning', 'No Waypoints imported!');
                 }
@@ -64,11 +64,11 @@ class ImportController extends AbstractController
      * @param array<Waypoint> $wayPoints
      */
     private function storeWayPoints(
-        array                  $wayPoints,
-        WaypointRepository     $repository,
-        WayPointHelper         $wayPointHelper,
+        array $wayPoints,
+        WaypointRepository $repository,
+        WayPointHelper $wayPointHelper,
         EntityManagerInterface $entityManager,
-        bool                   $forceUpdate = false,
+        bool $forceUpdate = false,
     ): int
     {
         $currentWayPoints = $repository->findAll();

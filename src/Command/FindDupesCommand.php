@@ -20,14 +20,14 @@ class FindDupesCommand extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly WaypointRepository     $waypointRepository
+        private readonly WaypointRepository $waypointRepository
     )
     {
         parent::__construct();
     }
 
     protected function execute(
-        InputInterface  $input,
+        InputInterface $input,
         OutputInterface $output
     ): int
     {
@@ -59,7 +59,7 @@ class FindDupesCommand extends Command
             foreach ($waypoints as $test) {
                 if ($test->getGuid() === $waypoint->getGuid()
                     && $test->getId() !== $waypoint->getId()) {
-                    $io->warning('@TODO Duplicated GUID found for: ' . $waypoint->getName());
+                    $io->warning('@TODO Duplicated GUID found for: '.$waypoint->getName());
                     // @todo handle Duplicated GUID
                 }
                 if ($test->getLat() === $waypoint->getLat()

@@ -11,7 +11,5 @@ class GoogleIdentityController extends AbstractController
      * This route is needed for the authenticator.
      */
     #[Route(path: '/connect/google/verify', name: 'connect_google_verify', methods: ['POST'])]
-    public function connectVerify(): void
-    {
-    }
+    public function connectVerify(): void {}
 }

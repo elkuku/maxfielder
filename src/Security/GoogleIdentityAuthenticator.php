@@ -29,8 +29,7 @@ class GoogleIdentityAuthenticator extends AbstractAuthenticator
         private readonly UserRepository $userRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly UrlGeneratorInterface $urlGenerator,
-    ) {
-    }
+    ) {}
 
     public function supports(Request $request): bool
     {
@@ -64,7 +63,8 @@ class GoogleIdentityAuthenticator extends AbstractAuthenticator
         Request $request,
         TokenInterface $token,
         string $firewallName
-    ): RedirectResponse {
+    ): RedirectResponse
+    {
         if ($targetPath = $this->getTargetPath(
             $request->getSession(),
             $firewallName
@@ -79,7 +79,8 @@ class GoogleIdentityAuthenticator extends AbstractAuthenticator
     public function onAuthenticationFailure(
         Request $request,
         AuthenticationException $exception
-    ): RedirectResponse {
+    ): RedirectResponse
+    {
         $message = strtr(
             $exception->getMessageKey(),
             $exception->getMessageData()

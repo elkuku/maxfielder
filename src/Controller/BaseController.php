@@ -17,7 +17,7 @@ class BaseController extends AbstractController
 {
     protected function getRefererString(Request $request): UnicodeString
     {
-        $referer = (string) $request->headers->get('referer');
+        $referer = (string)$request->headers->get('referer');
 
         return u($referer);
     }
@@ -25,7 +25,8 @@ class BaseController extends AbstractController
     protected function getInternalReferer(
         Request $request,
         RouterInterface $router
-    ): string {
+    ): string
+    {
         $referer = $this->getRefererString($request);
         if ($referer->isEmpty()) {
             return '';

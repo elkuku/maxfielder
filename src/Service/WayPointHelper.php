@@ -11,26 +11,26 @@ class WayPointHelper
     private readonly string $rootDir;
 
     public function __construct(
-        #[Autowire('%kernel.project_dir%')] string              $projectDir,
+        #[Autowire('%kernel.project_dir%')] string $projectDir,
         #[Autowire('%env(INTEL_URL)%')] private readonly string $intelUrl
     )
     {
-        $this->rootDir = $projectDir . '/public/wp_images';
+        $this->rootDir = $projectDir.'/public/wp_images';
     }
 
     public function getImagePath(string $wpId): string
     {
-        return $this->rootDir . '/' . $wpId . '.jpg';
+        return $this->rootDir.'/'.$wpId.'.jpg';
     }
 
     private function getThumbnailBasePath(): string
     {
-        return $this->rootDir . '/thumbs';
+        return $this->rootDir.'/thumbs';
     }
 
     private function defineThumbnailPath(string $wpId): string
     {
-        return $this->getThumbnailBasePath() . '/' . $wpId . '.jpg';
+        return $this->getThumbnailBasePath().'/'.$wpId.'.jpg';
     }
 
     public function findImage(?string $wpId): bool|string
@@ -78,7 +78,7 @@ class WayPointHelper
     public function checkImage(
         string $wpId,
         string $imageUrl,
-        bool   $forceUpdate = false
+        bool $forceUpdate = false
     ): void
     {
         $imagePath = $this->findImage($wpId);
@@ -92,13 +92,13 @@ class WayPointHelper
         $ch = curl_init($imageUrl);
         if (false === $ch) {
             throw new \UnexpectedValueException(
-                'Can not init curl for: ' . $imageUrl
+                'Can not init curl for: '.$imageUrl
             );
         }
         $fp = fopen($imagePath, 'wb');
         if (false === $fp) {
             throw new \UnexpectedValueException(
-                'Can not open image file under: ' . $imageUrl
+                'Can not open image file under: '.$imageUrl
             );
         }
         curl_setopt($ch, CURLOPT_FILE, $fp);

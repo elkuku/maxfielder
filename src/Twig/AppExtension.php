@@ -16,8 +16,7 @@ class AppExtension extends AbstractExtension
     public function __construct(
         private readonly WayPointHelper $wayPointHelper,
         private readonly MaxFieldHelper $maxFieldHelper,
-    ) {
-    }
+    ) {}
 
     public function getFilters(): array
     {
@@ -56,7 +55,7 @@ class AppExtension extends AbstractExtension
 
     public function hasImage(Waypoint $waypoint): bool
     {
-        return (bool) $this->wayPointHelper->findImage($waypoint->getGuid());
+        return (bool)$this->wayPointHelper->findImage($waypoint->getGuid());
     }
 
     public function previewImage(Maxfield $maxfield): string

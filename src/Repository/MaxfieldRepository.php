@@ -37,7 +37,8 @@ class MaxfieldRepository extends ServiceEntityRepository
     }
 
     public function createQueryBuilderSearch(string $search = null
-    ): QueryBuilder {
+    ): QueryBuilder
+    {
         $queryBuilder = $this->createQueryBuilder('m')
             ->orderBy('m.name', 'ASC');
 

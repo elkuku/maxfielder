@@ -15,11 +15,11 @@ readonly class MaxFieldHelper
     private string $rootDir;
 
     public function __construct(
-        #[Autowire('%kernel.project_dir%')] string         $projectDir,
+        #[Autowire('%kernel.project_dir%')] string $projectDir,
         #[Autowire('%env(MAXFIELD_VERSION)%')] private int $maxfieldVersion
     )
     {
-        $this->rootDir = $projectDir . '/public/maxfields';
+        $this->rootDir = $projectDir.'/public/maxfields';
     }
 
     /**
@@ -46,7 +46,7 @@ readonly class MaxFieldHelper
 
     public function getParser(string $item = ''): MaxfieldParser
     {
-        $dir = $item ? $this->rootDir . '/' . $item : $this->rootDir;
+        $dir = $item ? $this->rootDir.'/'.$item : $this->rootDir;
 
         return new MaxfieldParser($dir);
     }
@@ -58,7 +58,7 @@ readonly class MaxFieldHelper
 
     public function getLog(string $item): bool|string
     {
-        $path = $this->rootDir . '/' . $item . '/log.txt';
+        $path = $this->rootDir.'/'.$item.'/log.txt';
 
         if (false === file_exists($path)) {
             throw new FileNotFoundException();
@@ -69,12 +69,12 @@ readonly class MaxFieldHelper
 
     public function filesFinished(string $item): bool
     {
-        return file_exists($this->rootDir . "/$item/key_preparation.txt");
+        return file_exists($this->rootDir."/$item/key_preparation.txt");
     }
 
     public function framesDirCount(string $item): string
     {
-        $path = $this->rootDir . "/$item/frames";
+        $path = $this->rootDir."/$item/frames";
 
         return (is_dir($path))
             ? (string)iterator_count(new FilesystemIterator($path))
@@ -83,13 +83,13 @@ readonly class MaxFieldHelper
 
     public function getMovieSize(string $item): string
     {
-        $path = $this->rootDir . "/$item/plan_movie.gif";
+        $path = $this->rootDir."/$item/plan_movie.gif";
 
         if (file_exists($path)) {
             $bytes = filesize($path);
             $sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
             $factor = floor(log($bytes, 1024));
-            return round($bytes / 1024 ** $factor, 2) . ' ' . $sizes[$factor];
+            return round($bytes / 1024 ** $factor, 2).' '.$sizes[$factor];
         }
 
         return 'n/a';
@@ -102,7 +102,7 @@ readonly class MaxFieldHelper
 
     public function getPreviewImage(string $item): string
     {
-        $path = $this->rootDir . "/$item/link_map.png";
+        $path = $this->rootDir."/$item/link_map.png";
         $webPath = "maxfields/$item/link_map.png";
 
         return file_exists($path) ? $webPath : '';
@@ -110,7 +110,7 @@ readonly class MaxFieldHelper
 
     public function getWaypointCount(string $item): int
     {
-        $path = $this->rootDir . "/$item/portals.txt";
+        $path = $this->rootDir."/$item/portals.txt";
 
         if (false === file_exists($path)) {
             return 0;
@@ -119,7 +119,7 @@ readonly class MaxFieldHelper
         $contents = file($path, FILE_IGNORE_NEW_LINES);
 
         if (false === $contents) {
-            throw new \UnexpectedValueException('Can not read file in ' . $path);
+            throw new \UnexpectedValueException('Can not read file in '.$path);
         }
 
         return count($contents);
@@ -132,7 +132,7 @@ readonly class MaxFieldHelper
      */
     public function getWaypointsIdMap(string $item): array
     {
-        $path = $this->rootDir . "/$item/portals_id_map.csv";
+        $path = $this->rootDir."/$item/portals_id_map.csv";
         $map = [];
         if (false !== ($handle = fopen($path, 'r'))) {
             while (false !== ($data = fgetcsv($handle, 1000, ','))) {
@@ -147,7 +147,7 @@ readonly class MaxFieldHelper
             }
             fclose($handle);
         } else {
-            throw new \InvalidArgumentException('Can not open ' . $path);
+            throw new \InvalidArgumentException('Can not open '.$path);
         }
 
         return $map;

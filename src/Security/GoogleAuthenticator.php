@@ -30,8 +30,7 @@ class GoogleAuthenticator extends AbstractAuthenticator
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
-    ) {
-    }
+    ) {}
 
     public function supports(Request $request): bool
     {
@@ -78,12 +77,12 @@ class GoogleAuthenticator extends AbstractAuthenticator
         )
         ) {
             // @todo remove: Update existing users google id
-            $user->setGoogleId((string) $googleUser->getId());
+            $user->setGoogleId((string)$googleUser->getId());
         } else {
             // Register new user
             $user = (new User())
-                ->setIdentifier((string) $googleUser->getEmail())
-                ->setGoogleId((string) $googleUser->getId());
+                ->setIdentifier((string)$googleUser->getEmail())
+                ->setGoogleId((string)$googleUser->getId());
         }
 
         $this->entityManager->persist($user);
@@ -96,7 +95,8 @@ class GoogleAuthenticator extends AbstractAuthenticator
         Request $request,
         TokenInterface $token,
         string $firewallName
-    ): RedirectResponse {
+    ): RedirectResponse
+    {
         if ($targetPath = $this->getTargetPath(
             $request->getSession(),
             $firewallName
@@ -111,7 +111,8 @@ class GoogleAuthenticator extends AbstractAuthenticator
     public function onAuthenticationFailure(
         Request $request,
         AuthenticationException $exception,
-    ): RedirectResponse {
+    ): RedirectResponse
+    {
         $message = strtr(
             $exception->getMessageKey(),
             $exception->getMessageData()

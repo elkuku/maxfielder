@@ -13,7 +13,8 @@ class ImportFormType extends AbstractType
     public function buildForm(
         FormBuilderInterface $builder,
         array $options
-    ): void {
+    ): void
+    {
         $builder
             ->add('importImages', CheckboxType::class, [
                 'required' => false,

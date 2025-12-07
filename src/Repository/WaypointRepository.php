@@ -78,7 +78,7 @@ class WaypointRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
 
-        return array_column((array) $result, 'lat_lon');
+        return array_column((array)$result, 'lat_lon');
     }
 
     /**
@@ -94,7 +94,8 @@ class WaypointRepository extends ServiceEntityRepository
         float $lonMax,
         float $latMin,
         float $lonMin,
-    ): array {
+    ): array
+    {
         return $this->createQueryBuilder('w')
             ->andWhere('w.lat >= :latMin')
             ->andWhere('w.lat <= :latMax')

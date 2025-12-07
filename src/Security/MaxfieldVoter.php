@@ -15,9 +15,7 @@ class MaxfieldVoter extends Voter
 {
     final public const string MODIFY = 'modify';
 
-    public function __construct(private readonly Security $security)
-    {
-    }
+    public function __construct(private readonly Security $security) {}
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -36,7 +34,8 @@ class MaxfieldVoter extends Voter
         string $attribute,
         mixed $subject,
         TokenInterface $token
-    ): bool {
+    ): bool
+    {
         $user = $token->getUser();
 
         if (!$user instanceof User) {

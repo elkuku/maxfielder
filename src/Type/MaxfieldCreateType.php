@@ -35,6 +35,6 @@ final class MaxfieldCreateType
 
     public function getProjectName(): string
     {
-        return uniqid() . '-' . (new AsciiSlugger())->slug($this->buildName);
+        return uniqid().'-'.(new AsciiSlugger())->slug($this->buildName);
     }
 }

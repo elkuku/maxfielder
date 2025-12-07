@@ -101,9 +101,7 @@ class User implements UserInterface, Stringable
         $this->identifier = (string)($data['identifier'] ?? null);
     }
 
-    public function eraseCredentials(): void
-    {
-    }
+    public function eraseCredentials(): void {}
 
     public function getRoles(): array
     {
