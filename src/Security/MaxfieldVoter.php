@@ -4,6 +4,7 @@ namespace App\Security;
 
 use App\Entity\Maxfield;
 use App\Entity\User;
+use App\Enum\UserRole;
 use LogicException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -43,7 +44,7 @@ class MaxfieldVoter extends Voter
             return false;
         }
 
-        if ($this->security->isGranted(User::ROLES['admin'])) {
+        if ($this->security->isGranted(UserRole::ADMIN)) {
             return true;
         }
 

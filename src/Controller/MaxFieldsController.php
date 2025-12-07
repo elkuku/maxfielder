@@ -272,13 +272,21 @@ class MaxFieldsController extends BaseController
 
     #[Route(path: '/export', name: 'export-maxfields', methods: ['POST'])]
     public function generateMaxFields(
-        WaypointRepository                      $repository,
-        MaxFieldGenerator                       $maxFieldGenerator,
-        EntityManagerInterface                  $entityManager,
-        #[MapRequestPayload] MaxfieldCreateType $maxfieldType,
+        WaypointRepository $repository,
+        MaxFieldGenerator $maxFieldGenerator,
+        EntityManagerInterface $entityManager,
+        Request $request,
+        //   #[MapRequestPayload] MaxfieldCreateType $maxfieldType,
 
     ): Response
     {
+        $maxfieldType = new MaxfieldCreateType();
+        $maxfieldType->points = (string)$request->request->get('points');
+        $maxfieldType->buildName = (string)$request->request->get('buildName');
+        $maxfieldType->skipPlots = (bool)$request->request->get('skipPlots');
+        $maxfieldType->skipStepPlots = (bool)$request->request->get('skipStepPlots');
+        $maxfieldType->playersNum = (int)$request->request->get('playersNum');
+
         $wayPoints = $repository->findBy(['id' => $maxfieldType->getPoints()]);
         $maxField = $maxFieldGenerator->convertWayPointsToMaxFields($wayPoints);
         $waypointMap = $maxFieldGenerator->getWaypointsMap($wayPoints);

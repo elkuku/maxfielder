@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Maxfield;
 use App\Entity\User;
 use App\Entity\Waypoint;
+use App\Enum\UserRole;
 use App\Repository\UserRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -20,7 +21,7 @@ class DashboardController extends AbstractDashboardController
     }
 
     #[Route('/admin', name: 'admin', methods: ['GET', 'POST'])]
-    #[IsGranted(User::ROLES['admin'])]
+    #[IsGranted(UserRole::ADMIN->value)]
     public function index(): Response
     {
         $users = $this->userRepository->findAll();

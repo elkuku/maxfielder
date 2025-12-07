@@ -3,8 +3,8 @@
 namespace App\Twig;
 
 use App\Entity\Maxfield;
-use App\Entity\User;
 use App\Entity\Waypoint;
+use App\Enum\UserRole;
 use App\Service\MaxFieldHelper;
 use App\Service\WayPointHelper;
 use Twig\Extension\AbstractExtension;
@@ -51,7 +51,7 @@ class AppExtension extends AbstractExtension
 
     public function getRoleName(string $value): string
     {
-        return array_search($value, User::ROLES, true) ?: '';
+        return array_search($value, UserRole::cases(), true) ?: '';
     }
 
     public function hasImage(Waypoint $waypoint): bool
