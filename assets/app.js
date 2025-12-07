@@ -1,3 +1,4 @@
+import './stimulus_bootstrap.js';
 // start the Stimulus application
 import './bootstrap.js';
 /*
