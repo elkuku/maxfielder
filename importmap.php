@@ -16,27 +16,27 @@ return [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
-    '@hotwired/stimulus' => [
-        'version' => '3.2.2',
-    ],
     '@symfony/stimulus-bundle' => [
         'path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js',
     ],
+    '@hotwired/stimulus' => [
+        'version' => '3.2.2',
+    ],
     'bootstrap' => [
-        'version' => '5.3.3',
+        'version' => '5.3.8',
     ],
     '@popperjs/core' => [
         'version' => '2.11.8',
     ],
     'bootstrap/dist/css/bootstrap.min.css' => [
-        'version' => '5.3.3',
+        'version' => '5.3.8',
         'type' => 'css',
     ],
     'stimulus-use' => [
-        'version' => '0.52.2',
+        'version' => '0.52.3',
     ],
     'sweetalert2' => [
-        'version' => '11.12.1',
+        'version' => '11.26.4',
     ],
     'leaflet' => [
         'version' => '1.9.4',
@@ -83,10 +83,10 @@ return [
         'type' => 'css',
     ],
     'mapbox-gl' => [
-        'version' => '3.4.0',
+        'version' => '3.17.0',
     ],
     'mapbox-gl/dist/mapbox-gl.min.css' => [
-        'version' => '3.4.0',
+        'version' => '3.17.0',
         'type' => 'css',
     ],
     'turf-linestring' => [
@@ -117,10 +117,10 @@ return [
         'version' => '1.0.0',
     ],
     'leaflet.locatecontrol' => [
-        'version' => '0.81.1',
+        'version' => '0.85.1',
     ],
     'leaflet.locatecontrol/dist/L.Control.Locate.css' => [
-        'version' => '0.81.1',
+        'version' => '0.85.1',
         'type' => 'css',
     ],
     'leaflet-routing-machine' => [
@@ -131,7 +131,7 @@ return [
         'type' => 'css',
     ],
     'bootstrap-icons/font/bootstrap-icons.min.css' => [
-        'version' => '1.11.3',
+        'version' => '1.13.1',
         'type' => 'css',
     ],
 ];
