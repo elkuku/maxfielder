@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Entity\Waypoint;
+use App\Enum\UserRole;
 use App\Form\WaypointFormType;
 use App\Repository\WaypointRepository;
 use App\Service\WayPointHelper;
@@ -120,7 +120,7 @@ class WaypointsController extends AbstractController
     }
 
     #[Route(path: '/waypoint_thumb/{guid:waypoint}', name: 'waypoint_thumbnail', methods: ['GET'])]
-    #[IsGranted(User::ROLES['agent'])]
+    #[IsGranted(UserRole::AGENT->value)]
     public function getImageThumbnail(Waypoint $waypoint, WayPointHelper $wayPointHelper): BinaryFileResponse
     {
         return new BinaryFileResponse($wayPointHelper->getThumbnailPath($waypoint->getGuid(), $waypoint->getImage()));

@@ -4,12 +4,11 @@ namespace App\Service;
 
 use App\Type\AgentKeyInfo;
 use App\Type\WaypointMap;
-use Elkuku\MaxfieldParser\Type\MaxField;
 
-class IngressHelper
+readonly class IngressHelper
 {
     public function __construct(
-        private readonly WayPointHelper $wayPointHelper,
+        private WayPointHelper $wayPointHelper,
     ) {}
 
     /**
@@ -25,10 +24,10 @@ class IngressHelper
             $lines = explode("\n", $string);
         }
 
-        for ($i = 1; $i < count($lines); $i++) {
+        for ($i = 1, $iMax = count($lines); $i < $iMax; $i++) {
             $k = new AgentKeyInfo;
             $data = explode("\t", $lines[$i]);
-            if (count($data) != 5) {
+            if (count($data) !== 5) {
                 throw new \InvalidArgumentException('Invalid keys string!');
             }
             $k->name = $this->wayPointHelper->cleanName($data[0]);

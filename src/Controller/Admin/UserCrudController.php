@@ -3,11 +3,15 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use App\Enum\UserRole;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
+/**
+ * @extends AbstractCrudController<User>
+ */
 class UserCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -47,7 +51,7 @@ class UserCrudController extends AbstractCrudController
                     return false;
                 }),
             ChoiceField::new('roles')
-                ->setChoices(User::ROLES)
+                ->setChoices(UserRole::cases())
                 ->allowMultipleChoices()
                 ->renderExpanded()
                 ->renderAsBadges(),

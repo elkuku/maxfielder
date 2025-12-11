@@ -134,6 +134,8 @@ class WayPointHelper
             'Ú' => 'U',
             'ñ' => 'ni',
             'ü' => 'ue',
+            'ä' => 'ae',
+            'ö' => 'oe',
         ];
 
         $name = trim($name);
