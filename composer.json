@@ -130,7 +130,15 @@
         "test-phpunit": ["make tests"],
         "test-phpstan": ["vendor/bin/phpstan analyse"],
         "test-phpstan-baseline": ["vendor/bin/phpstan analyse --generate-baseline"],
-        "ci": ["@test-phpunit", "@test-phpstan"]
+        "ci": ["@test-phpunit", "@test-phpstan"],
+        "check" : [
+            "echo 'Check for outdated assets:'",
+            "bin/console importmap:outdated",
+            "echo 'Check for outdated PHP deps:'",
+            "composer outdated",
+            "echo 'Check for outdated Recipes:'",
+            "composer recipes:update"
+        ]
     },
     "conflict": {
         "symfony/symfony": "*"
