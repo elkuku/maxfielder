@@ -21,8 +21,8 @@ class AppExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('role_name', $this->getRoleName(...)),
-            new TwigFilter('role_names', $this->getRoleNames(...)),
+           // new TwigFilter('role_name', $this->getRoleName(...)),
+           // new TwigFilter('role_names', $this->getRoleNames(...)),
         ];
     }
 
@@ -35,9 +35,10 @@ class AppExtension extends AbstractExtension
         ];
     }
 
-    /**
+    /*
      * @param array<string> $values
      */
+    /*
     public function getRoleNames(array $values): string
     {
         $roles = [];
@@ -52,6 +53,8 @@ class AppExtension extends AbstractExtension
     {
         return array_search($value, UserRole::cases(), true) ?: '';
     }
+
+    */
 
     public function hasImage(Waypoint $waypoint): bool
     {
