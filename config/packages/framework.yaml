@@ -8,6 +8,10 @@ framework:
     #esi: true
     #fragments: true
 
+    property_info:
+        # Opt-in to the future Symfony 8.0 behavior
+        with_constructor_extractor: true
+
 when@test:
     framework:
         test: true

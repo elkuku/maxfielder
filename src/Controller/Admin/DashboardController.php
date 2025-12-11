@@ -7,19 +7,19 @@ use App\Entity\User;
 use App\Entity\Waypoint;
 use App\Enum\UserRole;
 use App\Repository\UserRepository;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted(UserRole::ADMIN->value)]
+#[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
     public function __construct(private readonly UserRepository $userRepository) {}
 
-    #[Route('/admin', name: 'admin', methods: ['GET', 'POST'])]
-    #[IsGranted(UserRole::ADMIN->value)]
     public function index(): Response
     {
         $users = $this->userRepository->findAll();
