@@ -20,6 +20,11 @@ use UnexpectedValueException;
 
 class WaypointsController extends AbstractController
 {
+    public function __construct(
+        private readonly WaypointRepository $repository,
+        private readonly WayPointHelper $wayPointHelper
+    ) {}
+
     #[Route(path: '/waypoint/{id}', name: 'waypoints_edit', methods: [
         'GET',
         'POST',
@@ -70,10 +75,7 @@ class WaypointsController extends AbstractController
 
     #[Route(path: '/waypoints_map', name: 'map-waypoints', methods: ['GET'])]
     #[IsGranted('ROLE_AGENT')]
-    public function map(
-        WaypointRepository $repository,
-        Request $request
-    ): JsonResponse
+    public function map(Request $request): JsonResponse
     {
         $bounds = $request->query->get('bounds');
         if ($bounds) {
@@ -81,14 +83,14 @@ class WaypointsController extends AbstractController
             if (4 !== count($bounds)) {
                 throw new UnexpectedValueException('Invalid bounds');
             }
-            $waypoints = $repository->findInBounds(
+            $waypoints = $this->repository->findInBounds(
                 (float)$bounds[0],
                 (float)$bounds[1],
                 (float)$bounds[2],
                 (float)$bounds[3]
             );
         } else {
-            $waypoints = $repository->findAll();
+            $waypoints = $this->repository->findAll();
         }
 
         $wps = [];
@@ -121,8 +123,8 @@ class WaypointsController extends AbstractController
 
     #[Route(path: '/waypoint_thumb/{guid:waypoint}', name: 'waypoint_thumbnail', methods: ['GET'])]
     #[IsGranted(UserRole::AGENT->value)]
-    public function getImageThumbnail(Waypoint $waypoint, WayPointHelper $wayPointHelper): BinaryFileResponse
+    public function getImageThumbnail(Waypoint $waypoint): BinaryFileResponse
     {
-        return new BinaryFileResponse($wayPointHelper->getThumbnailPath($waypoint->getGuid(), $waypoint->getImage()));
+        return new BinaryFileResponse($this->wayPointHelper->getThumbnailPath($waypoint->getGuid(), $waypoint->getImage()));
     }
 }

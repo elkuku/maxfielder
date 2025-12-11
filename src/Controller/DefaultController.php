@@ -10,17 +10,16 @@ use UnexpectedValueException;
 
 class DefaultController extends BaseController
 {
+    public function __construct(private readonly MaxfieldRepository $maxfieldRepository) {}
+
     #[Route('/', name: 'default', methods: ['GET'])]
-    public function index(
-        MaxfieldRepository $maxfieldRepository,
-        Request $request
-    ): Response
+    public function index(Request $request): Response
     {
         $user = $this->getUser();
 
         $favourites = $user ? $user->getFavourites() : [];
         $searchTerm = $request->query->get('q');
-        $maxfields = $maxfieldRepository->search($searchTerm);
+        $maxfields = $this->maxfieldRepository->search($searchTerm);
         $template = 'index';
 
         $partial = $request->query->get('partial');

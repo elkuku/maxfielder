@@ -25,10 +25,10 @@ final class MaxfieldCreateType
      */
     public function getPoints(): array
     {
-        return array_map('intval', explode(',', $this->points));
+        return array_map(intval(...), explode(',', $this->points));
     }
 
-    public function getPlayersNum(): ?int
+    public function getPlayersNum(): int
     {
         return $this->playersNum ? (int)$this->playersNum : 1;
     }

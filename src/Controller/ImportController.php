@@ -18,12 +18,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class ImportController extends AbstractController
 {
+    public function __construct(
+        private readonly WaypointRepository $waypointRepo,
+        private readonly WayPointParser $wayPointParser,
+        private readonly WayPointHelper $wayPointHelper,
+    ) {}
+
     #[Route(path: '/import', name: 'import', methods: ['GET', 'POST'])]
     public function index(
         Request $request,
-        WaypointRepository $waypointRepo,
-        WayPointParser $wayPointParser,
-        WayPointHelper $wayPointHelper,
         EntityManagerInterface $entityManager,
     ): Response
     {
@@ -32,11 +35,11 @@ class ImportController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $data = $form->getData();
-                $waypoints = $wayPointParser->parse($data);
+                $waypoints = $this->wayPointParser->parse($data);
                 $count = $this->storeWayPoints(
                     $waypoints,
-                    $waypointRepo,
-                    $wayPointHelper,
+                    $this->waypointRepo,
+                    $this->wayPointHelper,
                     $entityManager,
                     isset($data['forceUpdate']) && $data['forceUpdate'],
                 );

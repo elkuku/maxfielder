@@ -9,17 +9,16 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class LoginFormController extends AbstractController
 {
+    public function __construct(private readonly AuthenticationUtils $authenticationUtils) {}
+
     #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
-    public function login(
-        AuthenticationUtils $authenticationUtils,
-        string $oauthGoogleId,
-    ): Response
+    public function login(string $oauthGoogleId): Response
     {
         return $this->render(
             'auth/login.html.twig',
             [
-                'last_username' => $authenticationUtils->getLastUsername(),
-                'error' => $authenticationUtils->getLastAuthenticationError(),
+                'last_username' => $this->authenticationUtils->getLastUsername(),
+                'error' => $this->authenticationUtils->getLastAuthenticationError(),
                 'oauthGoogleId' => $oauthGoogleId,
             ]
         );

@@ -9,15 +9,15 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class GoogleController extends AbstractController
 {
+    public function __construct(private readonly ClientRegistry $clientRegistry) {}
+
     /**
      * Link to this controller to start the "connect" process.
      */
     #[Route(path: '/connect/google', name: 'connect_google_start', methods: ['GET'])]
-    public function connect(
-        ClientRegistry $clientRegistry
-    ): RedirectResponse
+    public function connect(): RedirectResponse
     {
-        return $clientRegistry
+        return $this->clientRegistry
             ->getClient('google')
             ->redirect(
                 [

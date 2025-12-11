@@ -2,6 +2,7 @@
   <dictionary name="project">
     <words>
       <w>maxfield</w>
+      <w>maxfields</w>
     </words>
   </dictionary>
 </component>
