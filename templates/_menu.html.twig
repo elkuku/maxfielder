@@ -13,6 +13,7 @@
             <div class="navbar-nav mr-auto">
                 {% if is_granted('ROLE_AGENT') %}
                     <a class="nav-link" href="{{ path('app_maxfields_plan') }}">Plan</a>
+                    <a class="nav-link" href="{{ path('app_maxfields_plan2') }}">Plan2</a>
                     <a class="nav-link" href="{{ path('maxfields') }}">Play</a>
                 {% endif %}
                 {% if is_granted('ROLE_ADMIN') %}

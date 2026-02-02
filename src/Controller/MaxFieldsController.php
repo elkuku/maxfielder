@@ -451,4 +451,26 @@ class MaxFieldsController extends BaseController
             'defaultZoom' => $zoom,
         ]);
     }
+
+    #[Route(path: 'maxfield/plan2', name: 'app_maxfields_plan2', methods: ['GET'])]
+    public function plan2(
+        #[Autowire('%env(APP_DEFAULT_LAT)%')] float $defaultLat,
+        #[Autowire('%env(APP_DEFAULT_LON)%')] float $defaultLon,
+        #[Autowire('%env(APP_DEFAULT_ZOOM)%')] float $defaultZoom,
+    ): Response
+    {
+        $user = $this->getUser();
+        $userSettings = $user?->getUserParams();
+
+        $lat = $user?->getParam('lat') ?: $defaultLat;
+        $lon = $user?->getParam('lon') ?: $defaultLon;
+        $zoom = $user?->getParam('zoom') ?: $defaultZoom;
+
+        return $this->render('maxfield/plan2.html.twig', [
+            'lat' => $lat,
+            'lon' => $lon,
+            'zoom' => $zoom,
+            'token' => $userSettings?->mapboxApiKey ?? '',
+        ]);
+    }
 }

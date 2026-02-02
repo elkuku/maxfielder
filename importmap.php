@@ -134,4 +134,61 @@ return [
         'version' => '1.13.1',
         'type' => 'css',
     ],
+    '@mapbox/mapbox-gl-draw' => [
+        'version' => '1.5.1',
+    ],
+    '@mapbox/geojson-area' => [
+        'version' => '0.2.2',
+    ],
+    'nanoid/non-secure' => [
+        'version' => '5.1.6',
+    ],
+    '@mapbox/point-geometry' => [
+        'version' => '1.1.0',
+    ],
+    '@turf/projection' => [
+        'version' => '7.2.0',
+    ],
+    'fast-deep-equal' => [
+        'version' => '3.1.3',
+    ],
+    '@mapbox/geojson-normalize' => [
+        'version' => '0.0.1',
+    ],
+    '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.min.css' => [
+        'version' => '1.5.1',
+        'type' => 'css',
+    ],
+    'wgs84' => [
+        'version' => '0.0.0',
+    ],
+    '@turf/meta' => [
+        'version' => '7.2.0',
+    ],
+    '@turf/helpers' => [
+        'version' => '7.3.1',
+    ],
+    '@turf/clone' => [
+        'version' => '7.2.0',
+    ],
+    '@turf/boolean-point-in-polygon' => [
+        'version' => '7.3.1',
+    ],
+    'point-in-polygon-hao' => [
+        'version' => '1.2.4',
+    ],
+    '@turf/invariant' => [
+        'version' => '7.3.1',
+    ],
+    'robust-predicates' => [
+        'version' => '3.0.2',
+    ],
+    'mapbox-gl/dist/mapbox-gl.css' => [
+        'version' => '3.17.0',
+        'type' => 'css',
+    ],
+    '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css' => [
+        'version' => '1.5.1',
+        'type' => 'css',
+    ],
 ];

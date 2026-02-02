@@ -1,0 +1,30 @@
+html, body, #map {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+
+#map {
+    position: absolute;
+    top: 50px;
+    bottom: 0;
+    width: 100%;
+}
+
+#selection-count {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+    font-size: 3em;
+    color: #07bf05;
+    text-shadow: 2px 2px #666666;
+    padding: 0 5px;
+}
+
+#controls-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+}
