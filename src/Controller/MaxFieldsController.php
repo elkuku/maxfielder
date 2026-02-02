@@ -470,7 +470,7 @@ class MaxFieldsController extends BaseController
             'lat' => $lat,
             'lon' => $lon,
             'zoom' => $zoom,
-            'token' => $userSettings?->mapboxApiKey ?? '',
+            'token' => $userSettings->mapboxApiKey ?? '',
         ]);
     }
 }

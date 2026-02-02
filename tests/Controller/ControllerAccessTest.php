@@ -19,7 +19,7 @@ class ControllerAccessTest extends ControllerBaseTest
         ];
 
     /**
-     * @var array<string, array<string, array<string, int>>>
+     * @var array<string, array<string, array<string, int|string>>>
      */
     protected array $exceptions
         = [

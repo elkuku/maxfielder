@@ -24,7 +24,7 @@ class Waypoint implements \Stringable
     private float $lon = 0;
 
     #[Column(length: 100, nullable: true)]
-    private ?string $guid = '';
+    private string $guid = '';
 
     #[Column(length: 255, nullable: true)]
     private ?string $image = null;

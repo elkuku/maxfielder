@@ -30,7 +30,7 @@ class MaxFieldGenerator
 
     /**
      * @param array<string, bool> $options
-     * @param array<array<int, string>> $wayPointMap
+     * @param list<array{int, int|null, string|null, string}> $wayPointMap
      */
     public function generate(
         string $projectName,
@@ -135,7 +135,7 @@ class MaxFieldGenerator
 
     /**
      * @param Waypoint[] $wayPoints
-     * @return array<array<int,string>>
+     * @return list<array{int, int|null, string|null, string}>
      */
     public function getWaypointsMap(array $wayPoints): array
     {

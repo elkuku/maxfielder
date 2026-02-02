@@ -88,7 +88,7 @@ readonly class MaxFieldHelper
         if (file_exists($path)) {
             $bytes = filesize($path);
             $sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
-            $factor = floor(log($bytes, 1024));
+            $factor = (int)floor(log($bytes, 1024));
             return round($bytes / 1024 ** $factor, 2).' '.$sizes[$factor];
         }
 
@@ -138,10 +138,10 @@ readonly class MaxFieldHelper
             while (false !== ($data = fgetcsv($handle, 1000, ','))) {
                 $waypoint = new WaypointMap();
 
-                $waypoint->mapNo = $data[0];
-                $waypoint->dbId = $data[1];
-                $waypoint->guid = $data[2];
-                $waypoint->name = $data[3];
+                $waypoint->mapNo = (int)$data[0];
+                $waypoint->dbId = (int)$data[1];
+                $waypoint->guid = (string)$data[2];
+                $waypoint->name = (string)$data[3];
 
                 $map[] = $waypoint;
             }

@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class User implements UserInterface, Stringable
 {
     #[Column, Id, GeneratedValue(strategy: 'SEQUENCE')]
-    private ?int $id = 0;
+    private ?int $id = null;
 
     #[Column(unique: true), NotBlank]
     private string $identifier = '*';
@@ -41,10 +41,10 @@ class User implements UserInterface, Stringable
     private UserRole $role = UserRole::USER;
 
     /**
-     * @var array<string>|null
+     * @var array<string>
      */
     #[Column(type: Types::JSON, nullable: true)]
-    private ?array $params = [];
+    private array $params = [];
 
     #[Column(length: 100, nullable: true)]
     private ?string $googleId = null;
@@ -121,16 +121,16 @@ class User implements UserInterface, Stringable
     }
 
     /**
-     * @return array<string>|null
+     * @return array<string>
      */
-    public function getParams(): ?array
+    public function getParams(): array
     {
         return $this->params;
     }
 
     public function getParam(string $name): string
     {
-        return $this->params && array_key_exists($name, $this->params)
+        return array_key_exists($name, $this->params)
             ? $this->params[$name] ?: ''
             : '';
     }
@@ -238,7 +238,7 @@ class User implements UserInterface, Stringable
     public function addMaxfield(Maxfield $maxfield): self
     {
         if (!$this->maxfields->contains($maxfield)) {
-            $this->maxfields[] = $maxfield;
+            $this->maxfields->add($maxfield);
             $maxfield->setOwner($this);
         }
 

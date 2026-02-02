@@ -128,7 +128,7 @@
             "de": "./bin/console translation:extract --format=yaml --domain=messages --force de"
         },
         "test-phpunit": ["make tests"],
-        "test-phpstan": ["vendor/bin/phpstan analyse"],
+        "test-phpstan": ["vendor/bin/phpstan analyse --memory-limit=2G"],
         "test-phpstan-baseline": ["vendor/bin/phpstan analyse --generate-baseline --memory-limit=2G"],
         "ci": ["@test-phpunit", "@test-phpstan"],
         "check" : [

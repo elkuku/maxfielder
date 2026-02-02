@@ -10,11 +10,11 @@ final class MaxfieldCreateType
 
     public string $buildName;
 
-    /*
+    /**
      * @todo can not type hint this :(
-     * https://github.com/symfony/symfony/issues/50759
+     * @see https://github.com/symfony/symfony/issues/50759
      */
-    public $playersNum;
+    public mixed $playersNum = null;
 
     public bool $skipPlots = false;
 
