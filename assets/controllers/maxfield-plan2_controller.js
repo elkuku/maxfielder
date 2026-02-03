@@ -55,6 +55,9 @@ export default class extends Controller {
             this.initSource()
             this.initLayers()
             this.loadMarkers()
+
+            // Fix for map only showing partial content on initial load
+            setTimeout(() => this.map.resize(), 100)
         })
 
         this.map.on('moveend', () => this.loadMarkers())

@@ -81,6 +81,9 @@ export default class extends Controller {
             }.bind(this))
         })
 
+        // Fix for map only showing partial content on initial load
+        setTimeout(() => this.map.invalidateSize(), 100)
+
         const LeafIcon = L.Icon.extend({
             options: {
                 shadowUrl: '/images/leaflet/map-marker/marker-shadow.png',

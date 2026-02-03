@@ -11,12 +11,17 @@ import'../styles/map/edit.css'
 
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
-    map = new L.Map('map', {fullscreenControl: true})
-    markers = L.markerClusterGroup({disableClusteringAtZoom: 16})
+    map = null
+    markers = null
 
     connect() {
+        this.map = new L.Map('map', {fullscreenControl: true})
+        this.markers = L.markerClusterGroup({disableClusteringAtZoom: 16})
         this.initMap()
         this.loadMarkers()
+
+        // Fix for map only showing partial content on initial load
+        setTimeout(() => this.map.invalidateSize(), 100)
     }
 
     initMap() {

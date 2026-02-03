@@ -143,6 +143,9 @@ export default class extends Controller {
                 this._setMode('farm')
                 this.updateFarmCounter()
             }
+
+            // Fix for map only showing partial content on initial load
+            setTimeout(() => this.map.resize(), 100)
         })
 
         this.map.on('style.load', () => {

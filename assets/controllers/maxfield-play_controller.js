@@ -49,6 +49,9 @@ export default class extends Controller {
         this.links = this.maxfieldData.links
         this.setupMap()
         this.displayMaxFieldData()
+
+        // Fix for map only showing partial content on initial load
+        setTimeout(() => this.map.invalidateSize(), 100)
     }
 
     displayMaxFieldData() {
