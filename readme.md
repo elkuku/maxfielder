@@ -1,5 +1,7 @@
 # Maxfielder
 
+[status](https://elkuku.github.io/maxfielder/)
+
 This is a PHP frontend for the [maxfield](https://github.com/tvwenger/maxfield) python script.
 
 Plan and Play.
