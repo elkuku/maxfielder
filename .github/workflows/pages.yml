@@ -46,6 +46,12 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist
 
+      - name: Create database
+        run: php bin/console doctrine:database:create -n
+        env:
+          APP_ENV: test
+          DATABASE_URL: postgresql://main:main@127.0.0.1:5432/main?serverVersion=15&charset=utf8
+
       - name: Run database migrations
         run: php bin/console doctrine:migrations:migrate -n
         env:
