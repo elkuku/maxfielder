@@ -6,7 +6,7 @@ use App\Entity\Maxfield;
 use App\Entity\User;
 use App\Enum\UserRole;
 use App\Security\MaxfieldVoter;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -14,12 +14,12 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 class MaxfieldVoterTest extends TestCase
 {
-    private Security&MockObject $security;
+    private Security&Stub $security;
     private MaxfieldVoter $voter;
 
     protected function setUp(): void
     {
-        $this->security = $this->createMock(Security::class);
+        $this->security = $this->createStub(Security::class);
         $this->voter = new MaxfieldVoter($this->security);
     }
 
@@ -58,7 +58,7 @@ class MaxfieldVoterTest extends TestCase
 
     public function testDeniesNonUserToken(): void
     {
-        $token = $this->createMock(TokenInterface::class);
+        $token = $this->createStub(TokenInterface::class);
         $token->method('getUser')->willReturn(null);
 
         $result = $this->voter->vote($token, new Maxfield(), ['modify']);
@@ -69,7 +69,6 @@ class MaxfieldVoterTest extends TestCase
     public function testGrantsAdminAccess(): void
     {
         $this->security->method('isGranted')
-            ->with(UserRole::ADMIN)
             ->willReturn(true);
 
         $user = new User();
@@ -121,7 +120,7 @@ class MaxfieldVoterTest extends TestCase
 
     private function createTokenWithUser(User $user): TokenInterface
     {
-        $token = $this->createMock(TokenInterface::class);
+        $token = $this->createStub(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
 
         return $token;

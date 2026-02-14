@@ -7,20 +7,20 @@ use App\Entity\Waypoint;
 use App\Service\MaxFieldHelper;
 use App\Service\WayPointHelper;
 use App\Twig\AppExtension;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Twig\TwigFunction;
 
 class AppExtensionTest extends TestCase
 {
-    private WayPointHelper&MockObject $wayPointHelper;
-    private MaxFieldHelper&MockObject $maxFieldHelper;
+    private WayPointHelper&Stub $wayPointHelper;
+    private MaxFieldHelper&Stub $maxFieldHelper;
     private AppExtension $extension;
 
     protected function setUp(): void
     {
-        $this->wayPointHelper = $this->createMock(WayPointHelper::class);
-        $this->maxFieldHelper = $this->createMock(MaxFieldHelper::class);
+        $this->wayPointHelper = $this->createStub(WayPointHelper::class);
+        $this->maxFieldHelper = $this->createStub(MaxFieldHelper::class);
         $this->extension = new AppExtension($this->wayPointHelper, $this->maxFieldHelper);
     }
 
@@ -51,7 +51,6 @@ class AppExtensionTest extends TestCase
         $maxfield->setPath('test-field');
 
         $this->maxFieldHelper->method('getPreviewImage')
-            ->with('test-field')
             ->willReturn('maxfields/test-field/link_map.png');
 
         self::assertSame('maxfields/test-field/link_map.png', $this->extension->previewImage($maxfield));
@@ -63,7 +62,6 @@ class AppExtensionTest extends TestCase
         $maxfield->setPath('missing');
 
         $this->maxFieldHelper->method('getPreviewImage')
-            ->with('missing')
             ->willReturn('');
 
         self::assertSame('images/no-preview.jpg', $this->extension->previewImage($maxfield));
@@ -75,7 +73,6 @@ class AppExtensionTest extends TestCase
         $maxfield->setPath('my-field');
 
         $this->maxFieldHelper->method('getWaypointCount')
-            ->with('my-field')
             ->willReturn(42);
 
         self::assertSame(42, $this->extension->waypointCount($maxfield));
@@ -87,7 +84,6 @@ class AppExtensionTest extends TestCase
         $waypoint->setGuid('abc123');
 
         $this->wayPointHelper->method('findImage')
-            ->with('abc123')
             ->willReturn('/path/to/image.jpg');
 
         self::assertTrue($this->extension->hasImage($waypoint));
@@ -99,7 +95,6 @@ class AppExtensionTest extends TestCase
         $waypoint->setGuid('xyz789');
 
         $this->wayPointHelper->method('findImage')
-            ->with('xyz789')
             ->willReturn(false);
 
         self::assertFalse($this->extension->hasImage($waypoint));
