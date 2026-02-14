@@ -2,12 +2,17 @@
 
 namespace App\Tests\Controller;
 
-use App\Repository\UserRepository;
+use App\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Zenstruck\Foundry\Test\Factories;
+use Zenstruck\Foundry\Test\ResetDatabase;
 
 class UserAccessTest extends WebTestCase
 {
+    use ResetDatabase;
+    use Factories;
+
     public function testUserLogin(): void
     {
         $client = static::createClient();
@@ -15,17 +20,8 @@ class UserAccessTest extends WebTestCase
         $client->request(Request::METHOD_GET, '/');
 
         self::assertResponseIsSuccessful();
-        // self::assertSelectorTextContains('h2', 'Hello DefaultController!');
 
-        /**
-         * @var UserRepository $userRepository
-         */
-        $userRepository = static::getContainer()->get(UserRepository::class);
-
-        /**
-         * @var \Symfony\Component\Security\Core\User\UserInterface $user
-         */
-        $user = $userRepository->findOneBy(['identifier' => 'user']);
+        $user = UserFactory::createOne(['identifier' => 'user']);
 
         $client->loginUser($user);
 

@@ -57,7 +57,6 @@
         "twig/twig": "^3.0"
     },
     "require-dev": {
-        "doctrine/doctrine-fixtures-bundle": "^4.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
@@ -73,7 +72,8 @@
         "symfony/stopwatch": "*",
         "symfony/var-dumper": "*",
         "symfony/web-profiler-bundle": "*",
-        "tomasvotruba/type-coverage": "^2.0"
+        "tomasvotruba/type-coverage": "^2.0",
+        "zenstruck/foundry": "^2.9"
     },
     "config": {
         "optimize-autoloader": true,
@@ -131,8 +131,8 @@
         "test-phpstan": ["vendor/bin/phpstan analyse --memory-limit=2G"],
         "test-phpstan-baseline": ["vendor/bin/phpstan analyse --generate-baseline --memory-limit=2G"],
         "ci": ["@test-phpunit", "@test-phpstan"],
-        "coverage": ["APP_ENV=test symfony console doctrine:database:drop --force || true", "APP_ENV=test symfony console doctrine:database:create", "XDEBUG_MODE=coverage php vendor/bin/phpunit --coverage-text"],
-        "coverage-html": ["APP_ENV=test symfony console doctrine:database:drop --force || true", "APP_ENV=test symfony console doctrine:database:create", "XDEBUG_MODE=coverage php vendor/bin/phpunit --coverage-html coverage"],
+        "coverage": ["XDEBUG_MODE=coverage php vendor/bin/phpunit --coverage-text"],
+        "coverage-html": ["XDEBUG_MODE=coverage php vendor/bin/phpunit --coverage-html coverage"],
         "check" : [
             "echo 'Check for outdated assets:'",
             "bin/console importmap:outdated",
