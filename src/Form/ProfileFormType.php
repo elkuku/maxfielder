@@ -5,11 +5,15 @@ namespace App\Form;
 use App\Enum\MapBoxProfilesEnum;
 use App\Enum\MapBoxStylesEnum;
 use App\Enum\MapProvidersEnum;
+use App\Settings\UserSettings;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * @extends AbstractType<UserSettings>
+ */
 class ProfileFormType extends AbstractType
 {
     public function buildForm(
