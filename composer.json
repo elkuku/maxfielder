@@ -25,7 +25,6 @@
         "liip/imagine-bundle": "^2.3",
         "pagerfanta/pagerfanta": "^4.2",
         "pagerfanta/twig": "*",
-        "phpdocumentor/reflection-docblock": "^5.2",
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "*",
         "symfony/asset-mapper": "*",
