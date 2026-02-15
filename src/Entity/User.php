@@ -137,6 +137,7 @@ class User implements UserInterface, Stringable
 
     public function getUserParams(): UserSettings
     {
+        /** @var UserSettings|null $settings */
         static $settings;
 
         if ($settings) {

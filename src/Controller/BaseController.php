@@ -35,6 +35,9 @@ class BaseController extends AbstractController
 
         $routeInfos = $router->match($refererPathInfo);
 
-        return $routeInfos['_route'] ?? '';
+        /** @var string $route */
+        $route = $routeInfos['_route'] ?? '';
+
+        return $route;
     }
 }

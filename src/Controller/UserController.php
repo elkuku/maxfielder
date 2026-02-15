@@ -24,7 +24,9 @@ class UserController extends BaseController
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user?->setParams((array)$form->getData());
+            /** @var array<string> $params */
+            $params = (array) $form->getData();
+            $user?->setParams($params);
 
             $entityManager->flush();
 
