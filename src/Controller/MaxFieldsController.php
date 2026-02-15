@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
+use Exception;
 use App\Entity\Maxfield;
 use App\Enum\MapBoxProfilesEnum;
 use App\Enum\MapBoxStylesEnum;
@@ -63,14 +66,14 @@ class MaxFieldsController extends BaseController
                 ['list_lg', 'list_sm']
             )
             ) {
-                $template = "_$partial";
+                $template = '_' . $partial;
             } else {
                 throw new UnexpectedValueException('Invalid partial');
             }
         }
 
         return $this->render(
-            "maxfield/$template.html.twig",
+            sprintf('maxfield/%s.html.twig', $template),
             [
                 'favourites' => $this->getUser()?->getFavourites(),
                 'pagerfanta' => $pagerfanta,
@@ -91,11 +94,12 @@ class MaxFieldsController extends BaseController
                 ->fromMaxfield($maxfield);
             $maxfields[] = $maxfieldStatus;
 
-            $index = array_search($maxfieldStatus->getPath(), $maxfieldFiles);
+            $index = array_search($maxfieldStatus->getPath(), $maxfieldFiles, true);
             if (false !== $index) {
                 unset($maxfieldFiles[$index]);
             }
         }
+
         return $this->render(
             'maxfield/check.html.twig',
             [
@@ -142,7 +146,7 @@ class MaxFieldsController extends BaseController
             $entityManager->flush();
             $response ['result'] = 'cleared';
             $code = 200;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $response['error'] = $exception->getMessage();
             $code = 500;
         }
@@ -183,7 +187,7 @@ class MaxFieldsController extends BaseController
             $waypointIdMap = $this->maxFieldHelper->getWaypointsIdMap($maxfield->getPath() ?? '');
             try {
                 $existingKeys = $this->ingressHelper->getExistingKeysForMaxfield($waypointIdMap, $keys);
-                if ($existingKeys) {
+                if ($existingKeys !== []) {
                     $maxfield->setUserKeysWithUser($existingKeys, $agentNum);
                     $response['result'] = sprintf('Added keyinfo for %d portals.', count($existingKeys));
 
@@ -192,7 +196,7 @@ class MaxFieldsController extends BaseController
                     $response['error'] = 'No keys found :(';
                     $status = 404;
                 }
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $response['error'] = $exception->getMessage();
                 $status = 500;
             }
@@ -344,7 +348,7 @@ class MaxFieldsController extends BaseController
         $template = $request->query->get('partial') ? '_form' : 'edit';
 
         return $this->render(
-            "maxfield/$template.html.twig",
+            sprintf('maxfield/%s.html.twig', $template),
             [
                 'form' => $form,
             ]
@@ -375,8 +379,8 @@ class MaxFieldsController extends BaseController
                 'success',
                 sprintf('%s has been removed.', $item)
             );
-        } catch (IOException $exception) {
-            $this->addFlash('warning', $exception->getMessage());
+        } catch (IOException $ioException) {
+            $this->addFlash('warning', $ioException->getMessage());
         }
 
         $referer = $this->getInternalReferer($request, $this->router);
@@ -397,8 +401,8 @@ class MaxFieldsController extends BaseController
             $this->maxFieldGenerator->remove($item);
 
             $this->addFlash('success', sprintf('%s has been removed.', $item));
-        } catch (IOException $exception) {
-            $this->addFlash('warning', $exception->getMessage());
+        } catch (IOException $ioException) {
+            $this->addFlash('warning', $ioException->getMessage());
         }
 
         return $this->redirectToRoute('maxfields');

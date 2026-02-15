@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Parser\Type;
 
+use UnexpectedValueException;
 use App\Parser\Type\KExport;
 use App\Service\WayPointHelper;
 use PHPUnit\Framework\TestCase;
 
-class KExportTest extends TestCase
+final class KExportTest extends TestCase
 {
     public function testParseValidJson(): void
     {
@@ -31,21 +34,21 @@ class KExportTest extends TestCase
 
         $waypoints = $parser->parse(['kexport' => (string) json_encode($items)]);
 
-        self::assertCount(2, $waypoints);
-        self::assertSame('abc-123', $waypoints[0]->getGuid());
-        self::assertSame('Portal Alpha', $waypoints[0]->getName());
-        self::assertSame(48.123, $waypoints[0]->getLat());
-        self::assertSame(11.456, $waypoints[0]->getLon());
-        self::assertSame('http://example.com/img.jpg', $waypoints[0]->getImage());
-        self::assertSame('def-456', $waypoints[1]->getGuid());
-        self::assertSame('Portal Beta', $waypoints[1]->getName());
+        $this->assertCount(2, $waypoints);
+        $this->assertSame('abc-123', $waypoints[0]->getGuid());
+        $this->assertSame('Portal Alpha', $waypoints[0]->getName());
+        $this->assertEqualsWithDelta(48.123, $waypoints[0]->getLat(), PHP_FLOAT_EPSILON);
+        $this->assertEqualsWithDelta(11.456, $waypoints[0]->getLon(), PHP_FLOAT_EPSILON);
+        $this->assertSame('http://example.com/img.jpg', $waypoints[0]->getImage());
+        $this->assertSame('def-456', $waypoints[1]->getGuid());
+        $this->assertSame('Portal Beta', $waypoints[1]->getName());
     }
 
     public function testParseInvalidJsonThrows(): void
     {
         $parser = new KExport($this->createStub(WayPointHelper::class));
 
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Invalid KExport JSON data');
         $parser->parse(['kexport' => '{invalid json']);
     }
@@ -61,8 +64,8 @@ class KExportTest extends TestCase
 
         $waypoints = $parser->parse(['kexport' => (string) json_encode($items)]);
 
-        self::assertCount(1, $waypoints);
-        self::assertSame('valid-guid', $waypoints[0]->getGuid());
+        $this->assertCount(1, $waypoints);
+        $this->assertSame('valid-guid', $waypoints[0]->getGuid());
     }
 
     public function testParseMissingTitleSkipsItem(): void
@@ -76,14 +79,14 @@ class KExportTest extends TestCase
 
         $waypoints = $parser->parse(['kexport' => (string) json_encode($items)]);
 
-        self::assertCount(1, $waypoints);
-        self::assertSame('guid-2', $waypoints[0]->getGuid());
+        $this->assertCount(1, $waypoints);
+        $this->assertSame('guid-2', $waypoints[0]->getGuid());
     }
 
     public function testParseWithImportImagesCallsCheckImage(): void
     {
         $helper = $this->createMock(WayPointHelper::class);
-        $helper->expects(self::once())
+        $helper->expects($this->once())
             ->method('checkImage')
             ->with('guid-1', 'http://example.com/image.jpg');
 
@@ -108,7 +111,7 @@ class KExportTest extends TestCase
     public function testParseWithoutImportImagesDoesNotCallCheckImage(): void
     {
         $helper = $this->createMock(WayPointHelper::class);
-        $helper->expects(self::never())->method('checkImage');
+        $helper->expects($this->never())->method('checkImage');
 
         $parser = new KExport($helper);
 
@@ -129,8 +132,8 @@ class KExportTest extends TestCase
     {
         $parser = new KExport($this->createStub(WayPointHelper::class));
 
-        self::assertTrue($parser->supports(['kexport' => 'data']));
-        self::assertFalse($parser->supports(['multiexportjson' => 'data']));
-        self::assertFalse($parser->supports(['kexport' => '']));
+        $this->assertTrue($parser->supports(['kexport' => 'data']));
+        $this->assertFalse($parser->supports(['multiexportjson' => 'data']));
+        $this->assertFalse($parser->supports(['kexport' => '']));
     }
 }

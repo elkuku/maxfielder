@@ -1,30 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Enum;
 
 use App\Enum\UserRole;
 use PHPUnit\Framework\TestCase;
 
-class UserRoleTest extends TestCase
+final class UserRoleTest extends TestCase
 {
     public function testCssClass(): void
     {
-        self::assertSame('badge bg-secondary', UserRole::USER->cssClass());
-        self::assertSame('badge bg-secondaryx', UserRole::AGENT->cssClass());
-        self::assertSame('badge bg-danger', UserRole::ADMIN->cssClass());
+        $this->assertSame('badge bg-secondary', UserRole::USER->cssClass());
+        $this->assertSame('badge bg-secondaryx', UserRole::AGENT->cssClass());
+        $this->assertSame('badge bg-danger', UserRole::ADMIN->cssClass());
     }
 
     public function testLabel(): void
     {
-        self::assertSame('User', UserRole::USER->label());
-        self::assertSame('Agent', UserRole::AGENT->label());
-        self::assertSame('Administrator', UserRole::ADMIN->label());
+        $this->assertSame('User', UserRole::USER->label());
+        $this->assertSame('Agent', UserRole::AGENT->label());
+        $this->assertSame('Administrator', UserRole::ADMIN->label());
     }
 
     public function testValues(): void
     {
-        self::assertSame('ROLE_USER', UserRole::USER->value);
-        self::assertSame('ROLE_AGENT', UserRole::AGENT->value);
-        self::assertSame('ROLE_ADMIN', UserRole::ADMIN->value);
+        $this->assertSame('ROLE_USER', UserRole::USER->value);
+        $this->assertSame('ROLE_AGENT', UserRole::AGENT->value);
+        $this->assertSame('ROLE_ADMIN', UserRole::ADMIN->value);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Entity;
 
 use App\Entity\Maxfield;
@@ -7,28 +9,28 @@ use App\Entity\User;
 use App\Type\AgentKeyInfo;
 use PHPUnit\Framework\TestCase;
 
-class MaxfieldTest extends TestCase
+final class MaxfieldTest extends TestCase
 {
     public function testGetSetName(): void
     {
         $maxfield = new Maxfield();
 
-        self::assertNull($maxfield->getName());
+        $this->assertNull($maxfield->getName());
 
         $result = $maxfield->setName('Test Field');
 
-        self::assertSame('Test Field', $maxfield->getName());
-        self::assertSame($maxfield, $result);
+        $this->assertSame('Test Field', $maxfield->getName());
+        $this->assertSame($maxfield, $result);
     }
 
     public function testGetSetPath(): void
     {
         $maxfield = new Maxfield();
 
-        self::assertNull($maxfield->getPath());
+        $this->assertNull($maxfield->getPath());
 
         $maxfield->setPath('some/path');
-        self::assertSame('some/path', $maxfield->getPath());
+        $this->assertSame('some/path', $maxfield->getPath());
     }
 
     public function testGetSetOwner(): void
@@ -36,31 +38,31 @@ class MaxfieldTest extends TestCase
         $maxfield = new Maxfield();
         $user = new User();
 
-        self::assertNull($maxfield->getOwner());
+        $this->assertNotInstanceOf(User::class, $maxfield->getOwner());
 
         $maxfield->setOwner($user);
-        self::assertSame($user, $maxfield->getOwner());
+        $this->assertSame($user, $maxfield->getOwner());
 
         $maxfield->setOwner(null);
-        self::assertNull($maxfield->getOwner());
+        $this->assertNull($maxfield->getOwner());
     }
 
     public function testGetSetJsonData(): void
     {
         $maxfield = new Maxfield();
 
-        self::assertNull($maxfield->getJsonData());
+        $this->assertNull($maxfield->getJsonData());
 
         $data = ['waypoints' => []];
         $maxfield->setJsonData($data);
-        self::assertSame($data, $maxfield->getJsonData());
+        $this->assertSame($data, $maxfield->getJsonData());
     }
 
     public function testGetSetUserData(): void
     {
         $maxfield = new Maxfield();
 
-        self::assertNull($maxfield->getUserData());
+        $this->assertNull($maxfield->getUserData());
 
         $key = new AgentKeyInfo();
         $key->guid = 'g1';
@@ -71,7 +73,7 @@ class MaxfieldTest extends TestCase
 
         $data = [1 => ['keys' => [$key]]];
         $maxfield->setUserData($data);
-        self::assertSame($data, $maxfield->getUserData());
+        $this->assertSame($data, $maxfield->getUserData());
     }
 
     public function testSetUserKeysWithUserInitializesWhenNull(): void
@@ -82,9 +84,9 @@ class MaxfieldTest extends TestCase
         $result = $maxfield->setUserKeysWithUser([$key], 1);
 
         $userData = $maxfield->getUserData();
-        self::assertNotNull($userData);
-        self::assertSame([$key], $userData[1]['keys'] ?? null);
-        self::assertSame($maxfield, $result);
+        $this->assertNotNull($userData);
+        $this->assertSame([$key], $userData[1]['keys'] ?? null);
+        $this->assertSame($maxfield, $result);
     }
 
     public function testSetUserKeysWithUserMergesWhenExisting(): void
@@ -99,8 +101,8 @@ class MaxfieldTest extends TestCase
         $maxfield->setUserKeysWithUser([$key2], 1);
 
         $userData = $maxfield->getUserData();
-        self::assertNotNull($userData);
-        self::assertSame([$key2], $userData[1]['keys'] ?? null);
+        $this->assertNotNull($userData);
+        $this->assertSame([$key2], $userData[1]['keys'] ?? null);
     }
 
     public function testSetUserKeysWithUserDifferentUsers(): void
@@ -113,9 +115,9 @@ class MaxfieldTest extends TestCase
         $maxfield->setUserKeysWithUser([$key2], 2);
 
         $userData = $maxfield->getUserData();
-        self::assertNotNull($userData);
-        self::assertSame([$key1], $userData[1]['keys'] ?? null);
-        self::assertSame([$key2], $userData[2]['keys'] ?? null);
+        $this->assertNotNull($userData);
+        $this->assertSame([$key1], $userData[1]['keys'] ?? null);
+        $this->assertSame([$key2], $userData[2]['keys'] ?? null);
     }
 
     public function testSetCurrentPointWithUserInitializesWhenNull(): void
@@ -125,9 +127,9 @@ class MaxfieldTest extends TestCase
         $result = $maxfield->setCurrentPointWithUser('PointA', 1);
 
         $userData = $maxfield->getUserData();
-        self::assertNotNull($userData);
-        self::assertSame('PointA', $userData[1]['current_point'] ?? null);
-        self::assertSame($maxfield, $result);
+        $this->assertNotNull($userData);
+        $this->assertSame('PointA', $userData[1]['current_point'] ?? null);
+        $this->assertSame($maxfield, $result);
     }
 
     public function testSetCurrentPointWithUserMergesWhenExisting(): void
@@ -140,8 +142,8 @@ class MaxfieldTest extends TestCase
         $maxfield->setCurrentPointWithUser('PointB', 1);
 
         $userData = $maxfield->getUserData();
-        self::assertNotNull($userData);
-        self::assertSame('PointB', $userData[1]['current_point'] ?? null);
+        $this->assertNotNull($userData);
+        $this->assertSame('PointB', $userData[1]['current_point'] ?? null);
     }
 
     public function testSetFarmDoneWithUserInitializesWhenNull(): void
@@ -151,9 +153,9 @@ class MaxfieldTest extends TestCase
         $result = $maxfield->setFarmDoneWithUser([1, 2, 3], 1);
 
         $userData = $maxfield->getUserData();
-        self::assertNotNull($userData);
-        self::assertSame([1, 2, 3], $userData[1]['farm_done'] ?? null);
-        self::assertSame($maxfield, $result);
+        $this->assertNotNull($userData);
+        $this->assertSame([1, 2, 3], $userData[1]['farm_done'] ?? null);
+        $this->assertSame($maxfield, $result);
     }
 
     public function testSetFarmDoneWithUserMergesWhenExisting(): void
@@ -166,15 +168,15 @@ class MaxfieldTest extends TestCase
         $maxfield->setFarmDoneWithUser([4, 5], 1);
 
         $userData = $maxfield->getUserData();
-        self::assertNotNull($userData);
-        self::assertSame([4, 5], $userData[1]['farm_done'] ?? null);
+        $this->assertNotNull($userData);
+        $this->assertSame([4, 5], $userData[1]['farm_done'] ?? null);
     }
 
     public function testIdIsNullByDefault(): void
     {
         $maxfield = new Maxfield();
 
-        self::assertNull($maxfield->getId());
+        $this->assertNull($maxfield->getId());
     }
 
     private function createAgentKeyInfo(string $name, string $guid, int $count): AgentKeyInfo

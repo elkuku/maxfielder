@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security;
 
 use App\Entity\User;
@@ -38,7 +40,7 @@ class GoogleIdentityAuthenticator extends AbstractAuthenticator
     {
         $idToken = (string)$request->request->get('credential');
 
-        if (!$idToken) {
+        if ($idToken === '' || $idToken === '0') {
             throw new AuthenticationException('Missing credentials :(');
         }
 
@@ -73,7 +75,7 @@ class GoogleIdentityAuthenticator extends AbstractAuthenticator
             ['googleId' => $googleUser->getId()]
         );
 
-        if ($user) {
+        if ($user instanceof User) {
             return $user;
         }
 

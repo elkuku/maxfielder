@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Waypoint;
@@ -44,7 +46,7 @@ class ImportController extends AbstractController
                     $entityManager,
                     isset($data['forceUpdate']) && (bool) $data['forceUpdate'],
                 );
-                if ($count) {
+                if ($count !== 0) {
                     $this->addFlash('success', $count.' Waypoint(s) imported!');
                 } else {
                     $this->addFlash('warning', 'No Waypoints imported!');

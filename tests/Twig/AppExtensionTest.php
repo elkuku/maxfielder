@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Twig;
 
 use App\Entity\Maxfield;
@@ -11,10 +13,12 @@ use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Twig\TwigFunction;
 
-class AppExtensionTest extends TestCase
+final class AppExtensionTest extends TestCase
 {
     private WayPointHelper&Stub $wayPointHelper;
+
     private MaxFieldHelper&Stub $maxFieldHelper;
+
     private AppExtension $extension;
 
     protected function setUp(): void
@@ -26,23 +30,23 @@ class AppExtensionTest extends TestCase
 
     public function testGetFiltersReturnsEmptyArray(): void
     {
-        self::assertSame([], $this->extension->getFilters());
+        $this->assertSame([], $this->extension->getFilters());
     }
 
     public function testGetFunctionsReturnsThreeFunctions(): void
     {
         $functions = $this->extension->getFunctions();
 
-        self::assertCount(3, $functions);
+        $this->assertCount(3, $functions);
 
         $names = array_map(
-            static fn(TwigFunction $f) => $f->getName(),
+            static fn(TwigFunction $f): string => $f->getName(),
             $functions
         );
 
-        self::assertContains('hasImage', $names);
-        self::assertContains('previewImage', $names);
-        self::assertContains('waypointCount', $names);
+        $this->assertContains('hasImage', $names);
+        $this->assertContains('previewImage', $names);
+        $this->assertContains('waypointCount', $names);
     }
 
     public function testPreviewImageReturnsImagePath(): void
@@ -53,7 +57,7 @@ class AppExtensionTest extends TestCase
         $this->maxFieldHelper->method('getPreviewImage')
             ->willReturn('maxfields/test-field/link_map.png');
 
-        self::assertSame('maxfields/test-field/link_map.png', $this->extension->previewImage($maxfield));
+        $this->assertSame('maxfields/test-field/link_map.png', $this->extension->previewImage($maxfield));
     }
 
     public function testPreviewImageReturnsFallbackOnEmpty(): void
@@ -64,7 +68,7 @@ class AppExtensionTest extends TestCase
         $this->maxFieldHelper->method('getPreviewImage')
             ->willReturn('');
 
-        self::assertSame('images/no-preview.jpg', $this->extension->previewImage($maxfield));
+        $this->assertSame('images/no-preview.jpg', $this->extension->previewImage($maxfield));
     }
 
     public function testWaypointCount(): void
@@ -75,7 +79,7 @@ class AppExtensionTest extends TestCase
         $this->maxFieldHelper->method('getWaypointCount')
             ->willReturn(42);
 
-        self::assertSame(42, $this->extension->waypointCount($maxfield));
+        $this->assertSame(42, $this->extension->waypointCount($maxfield));
     }
 
     public function testHasImageTrue(): void
@@ -86,7 +90,7 @@ class AppExtensionTest extends TestCase
         $this->wayPointHelper->method('findImage')
             ->willReturn('/path/to/image.jpg');
 
-        self::assertTrue($this->extension->hasImage($waypoint));
+        $this->assertTrue($this->extension->hasImage($waypoint));
     }
 
     public function testHasImageFalse(): void
@@ -97,6 +101,6 @@ class AppExtensionTest extends TestCase
         $this->wayPointHelper->method('findImage')
             ->willReturn(false);
 
-        self::assertFalse($this->extension->hasImage($waypoint));
+        $this->assertFalse($this->extension->hasImage($waypoint));
     }
 }

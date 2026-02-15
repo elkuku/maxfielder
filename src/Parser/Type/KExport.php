@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Parser\Type;
 
+use JsonException;
+use UnexpectedValueException;
 use App\Entity\Waypoint;
 use App\Parser\AbstractParser;
 
@@ -27,8 +31,8 @@ class KExport extends AbstractParser
                 512,
                 JSON_THROW_ON_ERROR
             );
-        } catch (\JsonException) {
-            throw new \UnexpectedValueException(
+        } catch (JsonException) {
+            throw new UnexpectedValueException(
                 'Invalid KExport JSON data'
             );
         }

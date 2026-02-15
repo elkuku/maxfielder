@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use Stringable;
 use App\Repository\WaypointRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -9,7 +12,7 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 
 #[Entity(repositoryClass: WaypointRepository::class)]
-class Waypoint implements \Stringable
+class Waypoint implements Stringable
 {
     #[Column, Id, GeneratedValue(strategy: 'SEQUENCE')]
     private ?int $id = null;

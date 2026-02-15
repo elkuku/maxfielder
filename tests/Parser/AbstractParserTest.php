@@ -1,33 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Parser;
 
+use UnexpectedValueException;
 use App\Entity\Waypoint;
 use App\Parser\AbstractParser;
 use App\Service\WayPointHelper;
 use PHPUnit\Framework\TestCase;
 
-class AbstractParserTest extends TestCase
+final class AbstractParserTest extends TestCase
 {
     public function testSupportsReturnsTrueWhenKeyExistsWithTruthyValue(): void
     {
         $parser = $this->createConcreteParser('mytype');
 
-        self::assertTrue($parser->supports(['mytype' => 'some data']));
+        $this->assertTrue($parser->supports(['mytype' => 'some data']));
     }
 
     public function testSupportsReturnsFalseWhenKeyMissing(): void
     {
         $parser = $this->createConcreteParser('mytype');
 
-        self::assertFalse($parser->supports(['othertype' => 'data']));
+        $this->assertFalse($parser->supports(['othertype' => 'data']));
     }
 
     public function testSupportsReturnsFalseWhenValueFalsy(): void
     {
         $parser = $this->createConcreteParser('mytype');
 
-        self::assertFalse($parser->supports(['mytype' => '']));
+        $this->assertFalse($parser->supports(['mytype' => '']));
     }
 
     public function testSupportsReturnsFalseWhenValueIsZero(): void
@@ -35,20 +38,19 @@ class AbstractParserTest extends TestCase
         $parser = $this->createConcreteParser('mytype');
 
         /** @phpstan-ignore argument.type */
-        self::assertFalse($parser->supports(['mytype' => 0]));
+        $this->assertFalse($parser->supports(['mytype' => 0]));
     }
 
     public function testSupportsThrowsWhenTypeIsEmpty(): void
     {
         $parser = $this->createConcreteParser('');
 
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $parser->supports(['anything' => 'data']);
     }
 
     public function testCreateWayPointReturnsCorrectWaypoint(): void
     {
-        /** @var ConcreteTestParser $parser */
         $parser = $this->createConcreteParser('test');
 
         $waypoint = $parser->callCreateWayPoint(
@@ -59,15 +61,15 @@ class AbstractParserTest extends TestCase
             'http://example.com/image.jpg'
         );
 
-        self::assertInstanceOf(Waypoint::class, $waypoint);
-        self::assertSame('guid-123', $waypoint->getGuid());
-        self::assertSame(48.123, $waypoint->getLat());
-        self::assertSame(11.456, $waypoint->getLon());
-        self::assertSame('Portal Name', $waypoint->getName());
-        self::assertSame('http://example.com/image.jpg', $waypoint->getImage());
+        $this->assertInstanceOf(Waypoint::class, $waypoint);
+        $this->assertSame('guid-123', $waypoint->getGuid());
+        $this->assertEqualsWithDelta(48.123, $waypoint->getLat(), PHP_FLOAT_EPSILON);
+        $this->assertEqualsWithDelta(11.456, $waypoint->getLon(), PHP_FLOAT_EPSILON);
+        $this->assertSame('Portal Name', $waypoint->getName());
+        $this->assertSame('http://example.com/image.jpg', $waypoint->getImage());
     }
 
-    private function createConcreteParser(string $type): AbstractParser
+    private function createConcreteParser(string $type): ConcreteTestParser
     {
         $helper = $this->createStub(WayPointHelper::class);
 

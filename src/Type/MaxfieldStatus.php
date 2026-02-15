@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Type;
 
 use App\Entity\Maxfield;
@@ -9,13 +11,19 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 class MaxfieldStatus
 {
     private int $id;
+
     private string $name;
+
     private string $path;
 
     private string $status;
+
     private bool $filesFinished;
+
     private string $framesDirCount;
+
     private string $movieSize;
+
     private string $log;
 
     public function __construct(private readonly MaxFieldHelper $maxFieldHelper) {}
@@ -28,10 +36,10 @@ class MaxfieldStatus
 
         try {
             $this->log = (string)$this->maxFieldHelper->getLog($this->path);
-            if (str_contains((string)$this->log, 'Total maxfield runtime')) {
+            if (str_contains($this->log, 'Total maxfield runtime')) {
                 $this->status = 'finished';
             } elseif (str_contains(
-                (string)$this->log,
+                $this->log,
                 'Traceback (most recent call last):'
             )
             ) {

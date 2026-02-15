@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
+use InvalidArgumentException;
 use App\Type\AgentKeyInfo;
 use App\Type\WaypointMap;
 
@@ -18,18 +21,15 @@ readonly class IngressHelper
     {
         $keys = [];
 
-        if (strpos($string, "\r\n")) {
-            $lines = explode("\r\n", $string);
-        } else {
-            $lines = explode("\n", $string);
-        }
+        $lines = strpos($string, "\r\n") ? explode("\r\n", $string) : explode("\n", $string);
 
-        for ($i = 1, $iMax = count($lines); $i < $iMax; $i++) {
+        for ($i = 1, $iMax = count($lines); $i < $iMax; ++$i) {
             $k = new AgentKeyInfo;
             $data = explode("\t", $lines[$i]);
             if (count($data) !== 5) {
-                throw new \InvalidArgumentException('Invalid keys string!');
+                throw new InvalidArgumentException('Invalid keys string!');
             }
+
             $k->name = $this->wayPointHelper->cleanName($data[0]);
             $k->link = $data[1];
             $k->guid = $data[2];

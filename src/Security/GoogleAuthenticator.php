@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security;
 
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,7 +38,7 @@ class GoogleAuthenticator extends AbstractAuthenticator
     }
 
     /**
-     * @throws \League\OAuth2\Client\Provider\Exception\IdentityProviderException
+     * @throws IdentityProviderException
      */
     public function authenticate(Request $request): Passport
     {
@@ -64,7 +67,7 @@ class GoogleAuthenticator extends AbstractAuthenticator
             ['googleId' => $googleUser->getId()]
         );
 
-        if ($user) {
+        if ($user instanceof User) {
             return $user;
         }
 

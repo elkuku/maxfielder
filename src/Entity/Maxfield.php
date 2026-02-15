@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use stdClass;
 use App\Repository\MaxfieldRepository;
 use App\Type\AgentKeyInfo;
 use Doctrine\DBAL\Types\Types;
@@ -30,7 +33,7 @@ class Maxfield
     private ?User $owner = null;
 
     /**
-     * @var array<string, array<Waypoint|\stdClass>>|null
+     * @var array<string, array<Waypoint|stdClass>>|null
      */
     #[Column(type: Types::JSON, nullable: true)]
     private array|null $jsonData = null;
@@ -71,7 +74,7 @@ class Maxfield
     }
 
     /**
-     * @return array<string, array<Waypoint|\stdClass>>|null
+     * @return array<string, array<Waypoint|stdClass>>|null
      */
     public function getJsonData(): ?array
     {
@@ -79,7 +82,7 @@ class Maxfield
     }
 
     /**
-     * @param array<string, array<Waypoint|\stdClass>> $jsonData
+     * @param array<string, array<Waypoint|stdClass>> $jsonData
      */
     public function setJsonData(array $jsonData): self
     {

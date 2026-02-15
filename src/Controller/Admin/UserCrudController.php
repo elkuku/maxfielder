@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Admin;
 
 use App\Entity\User;
@@ -30,7 +32,7 @@ class UserCrudController extends AbstractCrudController
                 ->setSortable(false)
                 ->setLabel('Social')
                 ->formatValue(static function (string $value, ?User $user): string|bool {
-                    if (!$user) {
+                    if (!$user instanceof User) {
                         return false;
                     }
 

@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Service;
 
+use InvalidArgumentException;
 use App\Service\IngressHelper;
 use App\Service\WayPointHelper;
 use App\Type\WaypointMap;
 use PHPUnit\Framework\TestCase;
 
-class IngressHelperTest extends TestCase
+final class IngressHelperTest extends TestCase
 {
     private IngressHelper $helper;
 
@@ -25,14 +28,14 @@ class IngressHelperTest extends TestCase
 
         $keys = $this->helper->parseKeysString($input);
 
-        self::assertCount(2, $keys);
-        self::assertSame('Portal A', $keys[0]->name);
-        self::assertSame('link1', $keys[0]->link);
-        self::assertSame('guid1', $keys[0]->guid);
-        self::assertSame(3, $keys[0]->count);
-        self::assertSame('capsule1', $keys[0]->capsules);
-        self::assertSame('Portal B', $keys[1]->name);
-        self::assertSame(5, $keys[1]->count);
+        $this->assertCount(2, $keys);
+        $this->assertSame('Portal A', $keys[0]->name);
+        $this->assertSame('link1', $keys[0]->link);
+        $this->assertSame('guid1', $keys[0]->guid);
+        $this->assertSame(3, $keys[0]->count);
+        $this->assertSame('capsule1', $keys[0]->capsules);
+        $this->assertSame('Portal B', $keys[1]->name);
+        $this->assertSame(5, $keys[1]->count);
     }
 
     public function testParseKeysStringWithCarriageReturnNewlines(): void
@@ -43,10 +46,10 @@ class IngressHelperTest extends TestCase
 
         $keys = $this->helper->parseKeysString($input);
 
-        self::assertCount(2, $keys);
-        self::assertSame('Portal C', $keys[0]->name);
-        self::assertSame('guid3', $keys[0]->guid);
-        self::assertSame('Portal D', $keys[1]->name);
+        $this->assertCount(2, $keys);
+        $this->assertSame('Portal C', $keys[0]->name);
+        $this->assertSame('guid3', $keys[0]->guid);
+        $this->assertSame('Portal D', $keys[1]->name);
     }
 
     public function testParseKeysStringCleansNames(): void
@@ -56,12 +59,12 @@ class IngressHelperTest extends TestCase
 
         $keys = $this->helper->parseKeysString($input);
 
-        self::assertSame('Cafe Ninio', $keys[0]->name);
+        $this->assertSame('Cafe Ninio', $keys[0]->name);
     }
 
     public function testParseKeysStringThrowsOnInvalidData(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid keys string!');
 
         $input = "Header\n"
@@ -76,7 +79,7 @@ class IngressHelperTest extends TestCase
 
         $keys = $this->helper->parseKeysString($input);
 
-        self::assertCount(0, $keys);
+        $this->assertCount(0, $keys);
     }
 
     public function testGetExistingKeysForMaxfield(): void
@@ -100,9 +103,9 @@ class IngressHelperTest extends TestCase
 
         $result = $this->helper->getExistingKeysForMaxfield([$wp1, $wp2], $keysString);
 
-        self::assertCount(2, $result);
-        self::assertSame('guid1', $result[0]->guid);
-        self::assertSame('guid3', $result[1]->guid);
+        $this->assertCount(2, $result);
+        $this->assertSame('guid1', $result[0]->guid);
+        $this->assertSame('guid3', $result[1]->guid);
     }
 
     public function testGetExistingKeysForMaxfieldNoMatches(): void
@@ -118,6 +121,6 @@ class IngressHelperTest extends TestCase
 
         $result = $this->helper->getExistingKeysForMaxfield([$wp], $keysString);
 
-        self::assertCount(0, $result);
+        $this->assertCount(0, $result);
     }
 }

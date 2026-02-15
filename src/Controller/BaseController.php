@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\User;
@@ -31,6 +33,7 @@ class BaseController extends AbstractController
         if ($referer->isEmpty()) {
             return '';
         }
+
         $refererPathInfo = Request::create($referer)->getPathInfo();
 
         $routeInfos = $router->match($refererPathInfo);

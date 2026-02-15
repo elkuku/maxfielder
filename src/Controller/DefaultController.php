@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Repository\MaxfieldRepository;
@@ -30,14 +32,14 @@ class DefaultController extends BaseController
                 ['searchPreview', 'favourites', 'contentList']
             )
             ) {
-                $template = "_$partial";
+                $template = '_' . $partial;
             } else {
                 throw new UnexpectedValueException('Invalid partial');
             }
         }
 
         return $this->render(
-            "default/$template.html.twig",
+            sprintf('default/%s.html.twig', $template),
             [
                 'maxfields' => $maxfields,
                 'favourites' => $favourites,

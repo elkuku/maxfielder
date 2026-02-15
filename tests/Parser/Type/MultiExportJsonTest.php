@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Parser\Type;
 
+use UnexpectedValueException;
 use App\Parser\Type\MultiExportJson;
 use App\Service\WayPointHelper;
 use PHPUnit\Framework\TestCase;
 
-class MultiExportJsonTest extends TestCase
+final class MultiExportJsonTest extends TestCase
 {
     public function testParseValidJson(): void
     {
@@ -29,20 +32,20 @@ class MultiExportJsonTest extends TestCase
 
         $waypoints = $parser->parse(['multiexportjson' => (string) json_encode($items)]);
 
-        self::assertCount(2, $waypoints);
-        self::assertSame('abc-123', $waypoints[0]->getGuid());
-        self::assertSame('Portal Alpha', $waypoints[0]->getName());
-        self::assertSame(48.123, $waypoints[0]->getLat());
-        self::assertSame(11.456, $waypoints[0]->getLon());
-        self::assertSame('http://example.com/img.jpg', $waypoints[0]->getImage());
-        self::assertSame('def-456', $waypoints[1]->getGuid());
+        $this->assertCount(2, $waypoints);
+        $this->assertSame('abc-123', $waypoints[0]->getGuid());
+        $this->assertSame('Portal Alpha', $waypoints[0]->getName());
+        $this->assertEqualsWithDelta(48.123, $waypoints[0]->getLat(), PHP_FLOAT_EPSILON);
+        $this->assertEqualsWithDelta(11.456, $waypoints[0]->getLon(), PHP_FLOAT_EPSILON);
+        $this->assertSame('http://example.com/img.jpg', $waypoints[0]->getImage());
+        $this->assertSame('def-456', $waypoints[1]->getGuid());
     }
 
     public function testParseInvalidJsonThrows(): void
     {
         $parser = new MultiExportJson($this->createStub(WayPointHelper::class));
 
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Invalid multiexport JSON data');
         $parser->parse(['multiexportjson' => 'not-json']);
     }
@@ -58,8 +61,8 @@ class MultiExportJsonTest extends TestCase
 
         $waypoints = $parser->parse(['multiexportjson' => (string) json_encode($items)]);
 
-        self::assertCount(1, $waypoints);
-        self::assertSame('valid-guid', $waypoints[0]->getGuid());
+        $this->assertCount(1, $waypoints);
+        $this->assertSame('valid-guid', $waypoints[0]->getGuid());
     }
 
     public function testParseMissingTitleSkipsItem(): void
@@ -73,14 +76,14 @@ class MultiExportJsonTest extends TestCase
 
         $waypoints = $parser->parse(['multiexportjson' => (string) json_encode($items)]);
 
-        self::assertCount(1, $waypoints);
-        self::assertSame('guid-2', $waypoints[0]->getGuid());
+        $this->assertCount(1, $waypoints);
+        $this->assertSame('guid-2', $waypoints[0]->getGuid());
     }
 
     public function testParseWithImportImagesCallsCheckImage(): void
     {
         $helper = $this->createMock(WayPointHelper::class);
-        $helper->expects(self::once())
+        $helper->expects($this->once())
             ->method('checkImage')
             ->with('guid-1', 'http://example.com/image.jpg');
 
@@ -105,8 +108,8 @@ class MultiExportJsonTest extends TestCase
     {
         $parser = new MultiExportJson($this->createStub(WayPointHelper::class));
 
-        self::assertTrue($parser->supports(['multiexportjson' => 'data']));
-        self::assertFalse($parser->supports(['kexport' => 'data']));
-        self::assertFalse($parser->supports(['multiexportjson' => '']));
+        $this->assertTrue($parser->supports(['multiexportjson' => 'data']));
+        $this->assertFalse($parser->supports(['kexport' => 'data']));
+        $this->assertFalse($parser->supports(['multiexportjson' => '']));
     }
 }

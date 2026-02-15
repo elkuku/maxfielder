@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Enum;
 
 use App\Enum\MapProvidersEnum;
 use PHPUnit\Framework\TestCase;
 
-class MapProvidersEnumTest extends TestCase
+final class MapProvidersEnumTest extends TestCase
 {
     public function testForSelectReturnsCorrectMapping(): void
     {
@@ -16,12 +18,12 @@ class MapProvidersEnumTest extends TestCase
             'mapbox' => 'mapbox',
         ];
 
-        self::assertSame($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     public function testCaseValues(): void
     {
-        self::assertSame('leaflet', MapProvidersEnum::leaflet->value);
-        self::assertSame('mapbox', MapProvidersEnum::mapbox->value);
+        $this->assertSame('leaflet', MapProvidersEnum::leaflet->value);
+        $this->assertSame('mapbox', MapProvidersEnum::mapbox->value);
     }
 }

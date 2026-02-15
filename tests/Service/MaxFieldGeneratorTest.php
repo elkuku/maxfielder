@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Service;
 
 use App\Entity\Waypoint;
 use App\Service\MaxFieldGenerator;
 use PHPUnit\Framework\TestCase;
 
-class MaxFieldGeneratorTest extends TestCase
+final class MaxFieldGeneratorTest extends TestCase
 {
     private MaxFieldGenerator $generator;
 
@@ -38,11 +40,11 @@ class MaxFieldGeneratorTest extends TestCase
         $result = $this->generator->convertWayPointsToMaxFields([$wp1, $wp2]);
 
         $lines = explode("\n", $result);
-        self::assertCount(2, $lines);
-        self::assertStringContainsString('Portal Alpha', $lines[0]);
-        self::assertStringContainsString('48.123,11.456', $lines[0]);
-        self::assertStringContainsString('https://intel.ingress.com/intel', $lines[0]);
-        self::assertStringContainsString('Portal Beta', $lines[1]);
+        $this->assertCount(2, $lines);
+        $this->assertStringContainsString('Portal Alpha', $lines[0]);
+        $this->assertStringContainsString('48.123,11.456', $lines[0]);
+        $this->assertStringContainsString('https://intel.ingress.com/intel', $lines[0]);
+        $this->assertStringContainsString('Portal Beta', $lines[1]);
     }
 
     public function testConvertWayPointsStripsSpecialChars(): void
@@ -54,8 +56,8 @@ class MaxFieldGeneratorTest extends TestCase
 
         $result = $this->generator->convertWayPointsToMaxFields([$wp]);
 
-        self::assertStringContainsString('Portal With Special', $result);
-        self::assertStringNotContainsString(';', explode(';', $result)[0]);
+        $this->assertStringContainsString('Portal With Special', $result);
+        $this->assertStringNotContainsString(';', explode(';', $result)[0]);
     }
 
     public function testGetWaypointsMap(): void
@@ -70,13 +72,13 @@ class MaxFieldGeneratorTest extends TestCase
 
         $result = $this->generator->getWaypointsMap([$wp1, $wp2]);
 
-        self::assertCount(2, $result);
-        self::assertSame(0, $result[0][0]);
-        self::assertNull($result[0][1]);
-        self::assertSame('guid-a', $result[0][2]);
-        self::assertSame('Portal A', $result[0][3]);
-        self::assertSame(1, $result[1][0]);
-        self::assertSame('Portal B', $result[1][3]);
+        $this->assertCount(2, $result);
+        $this->assertSame(0, $result[0][0]);
+        $this->assertNull($result[0][1]);
+        $this->assertSame('guid-a', $result[0][2]);
+        $this->assertSame('Portal A', $result[0][3]);
+        $this->assertSame(1, $result[1][0]);
+        $this->assertSame('Portal B', $result[1][3]);
     }
 
     public function testGetWaypointsMapStripsSpecialChars(): void
@@ -87,14 +89,11 @@ class MaxFieldGeneratorTest extends TestCase
 
         $result = $this->generator->getWaypointsMap([$wp]);
 
-        self::assertSame('Portal With Comma', $result[0][3]);
+        $this->assertSame('Portal With Comma', $result[0][3]);
     }
 
     public function testGetImagePath(): void
     {
-        self::assertSame(
-            '/tmp/test-project/public/maxfields/my-field/link_map.png',
-            $this->generator->getImagePath('my-field', 'link_map.png')
-        );
+        $this->assertSame('/tmp/test-project/public/maxfields/my-field/link_map.png', $this->generator->getImagePath('my-field', 'link_map.png'));
     }
 }

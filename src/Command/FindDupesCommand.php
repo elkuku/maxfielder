@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
+use Symfony\Component\Console\Helper\QuestionHelper;
 use App\Repository\WaypointRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -35,7 +38,7 @@ class FindDupesCommand extends Command
         $waypoints = $this->waypointRepository->findAll();
         $progressBar = new ProgressBar($output, count($waypoints));
 
-        /** @var \Symfony\Component\Console\Helper\QuestionHelper $helper */
+        /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
         $choices = [
@@ -62,6 +65,7 @@ class FindDupesCommand extends Command
                     $io->warning('@TODO Duplicated GUID found for: '.$waypoint->getName());
                     // @todo handle Duplicated GUID
                 }
+
                 if ($test->getLat() === $waypoint->getLat()
                     && $test->getLon() === $waypoint->getLon()
                     && $test->getId() !== $waypoint->getId()
@@ -112,7 +116,7 @@ class FindDupesCommand extends Command
 
         $progressBar->finish();
 
-        if ($removals) {
+        if ($removals !== 0) {
             $io->warning(
                 sprintf('%d duplicates have been removed.', $removals)
             );

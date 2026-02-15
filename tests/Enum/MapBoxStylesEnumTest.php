@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Enum;
 
 use App\Enum\MapBoxStylesEnum;
 use PHPUnit\Framework\TestCase;
 
-class MapBoxStylesEnumTest extends TestCase
+final class MapBoxStylesEnumTest extends TestCase
 {
     public function testForSelectReturnsCorrectMapping(): void
     {
@@ -24,11 +26,11 @@ class MapBoxStylesEnumTest extends TestCase
             'mapbox/navigation-night-v1' => 'Navigation_Night',
         ];
 
-        self::assertSame($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     public function testCaseCount(): void
     {
-        self::assertCount(10, MapBoxStylesEnum::cases());
+        $this->assertCount(10, MapBoxStylesEnum::cases());
     }
 }

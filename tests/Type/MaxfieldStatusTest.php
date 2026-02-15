@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Type;
 
+use ReflectionProperty;
 use App\Entity\Maxfield;
 use App\Service\MaxFieldHelper;
 use App\Type\MaxfieldStatus;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
-class MaxfieldStatusTest extends TestCase
+final class MaxfieldStatusTest extends TestCase
 {
     public function testFromMaxfieldFinished(): void
     {
@@ -22,14 +25,14 @@ class MaxfieldStatusTest extends TestCase
 
         $status = (new MaxfieldStatus($helper))->fromMaxfield($maxfield);
 
-        self::assertSame(1, $status->getId());
-        self::assertSame('Test Field', $status->getName());
-        self::assertSame('test-path', $status->getPath());
-        self::assertSame('finished', $status->getStatus());
-        self::assertStringContainsString('Total maxfield runtime', $status->getLog());
-        self::assertTrue($status->isFilesFinished());
-        self::assertSame('10', $status->getFramesDirCount());
-        self::assertSame('1.5 MB', $status->getMovieSize());
+        $this->assertSame(1, $status->getId());
+        $this->assertSame('Test Field', $status->getName());
+        $this->assertSame('test-path', $status->getPath());
+        $this->assertSame('finished', $status->getStatus());
+        $this->assertStringContainsString('Total maxfield runtime', $status->getLog());
+        $this->assertTrue($status->isFilesFinished());
+        $this->assertSame('10', $status->getFramesDirCount());
+        $this->assertSame('1.5 MB', $status->getMovieSize());
     }
 
     public function testFromMaxfieldError(): void
@@ -44,8 +47,8 @@ class MaxfieldStatusTest extends TestCase
 
         $status = (new MaxfieldStatus($helper))->fromMaxfield($maxfield);
 
-        self::assertSame('error', $status->getStatus());
-        self::assertFalse($status->isFilesFinished());
+        $this->assertSame('error', $status->getStatus());
+        $this->assertFalse($status->isFilesFinished());
     }
 
     public function testFromMaxfieldRunning(): void
@@ -60,7 +63,7 @@ class MaxfieldStatusTest extends TestCase
 
         $status = (new MaxfieldStatus($helper))->fromMaxfield($maxfield);
 
-        self::assertSame('running', $status->getStatus());
+        $this->assertSame('running', $status->getStatus());
     }
 
     public function testFromMaxfieldMissingLog(): void
@@ -75,7 +78,7 @@ class MaxfieldStatusTest extends TestCase
 
         $status = (new MaxfieldStatus($helper))->fromMaxfield($maxfield);
 
-        self::assertSame('X', $status->getStatus());
+        $this->assertSame('X', $status->getStatus());
     }
 
     private function createMaxfield(int $id, string $name, string $path): Maxfield
@@ -84,7 +87,7 @@ class MaxfieldStatusTest extends TestCase
         $maxfield->setName($name);
         $maxfield->setPath($path);
 
-        $ref = new \ReflectionProperty(Maxfield::class, 'id');
+        $ref = new ReflectionProperty(Maxfield::class, 'id');
         $ref->setValue($maxfield, $id);
 
         return $maxfield;

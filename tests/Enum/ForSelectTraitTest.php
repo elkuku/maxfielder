@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Enum;
 
 use App\Enum\MapBoxProfilesEnum;
 use PHPUnit\Framework\TestCase;
 
-class ForSelectTraitTest extends TestCase
+final class ForSelectTraitTest extends TestCase
 {
     public function testForSelectReturnsValueKeyedByName(): void
     {
@@ -17,6 +19,6 @@ class ForSelectTraitTest extends TestCase
             'mapbox/cycling' => 'Cycling',
         ];
 
-        self::assertSame($expected, $result);
+        $this->assertSame($expected, $result);
     }
 }

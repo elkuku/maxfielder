@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Enum\MapBoxProfilesEnum;
@@ -55,7 +57,7 @@ class User implements UserInterface, Stringable
     /**
      * @var Collection<int, Maxfield>
      */
-    #[OneToMany(mappedBy: 'owner', targetEntity: Maxfield::class)]
+    #[OneToMany(targetEntity: Maxfield::class, mappedBy: 'owner')]
     private Collection $maxfields;
 
     /**
@@ -151,13 +153,13 @@ class User implements UserInterface, Stringable
         $settings->lon = (float)$this->getParam('lon');
         $settings->zoom = (int)$this->getParam('zoom');
         $settings->mapboxApiKey = $this->getParam('mapboxApiKey');
-        $settings->defaultStyle = $this->getParam('defaultStyle')
+        $settings->defaultStyle = $this->getParam('defaultStyle') !== '' && $this->getParam('defaultStyle') !== '0'
             ? (MapBoxStylesEnum::tryFrom($this->getParam('defaultStyle')) ?? MapBoxStylesEnum::Standard)
             : MapBoxStylesEnum::Standard;
-        $settings->defaultProfile = $this->getParam('defaultProfile')
+        $settings->defaultProfile = $this->getParam('defaultProfile') !== '' && $this->getParam('defaultProfile') !== '0'
             ? (MapBoxProfilesEnum::tryFrom($this->getParam('defaultProfile')) ?? MapBoxProfilesEnum::Driving)
             : MapBoxProfilesEnum::Driving;
-        $settings->mapProvider = $this->getParam('mapProvider')
+        $settings->mapProvider = $this->getParam('mapProvider') !== '' && $this->getParam('mapProvider') !== '0'
             ? (MapProvidersEnum::tryFrom($this->getParam('mapProvider')) ?? MapProvidersEnum::leaflet)
             : MapProvidersEnum::leaflet;
 
@@ -249,11 +251,9 @@ class User implements UserInterface, Stringable
 
     public function removeMaxfield(Maxfield $maxfield): self
     {
-        if ($this->maxfields->removeElement($maxfield)) {
-            // set the owning side to null (unless already changed)
-            if ($maxfield->getOwner() === $this) {
-                $maxfield->setOwner(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->maxfields->removeElement($maxfield) && $maxfield->getOwner() === $this) {
+            $maxfield->setOwner(null);
         }
 
         return $this;

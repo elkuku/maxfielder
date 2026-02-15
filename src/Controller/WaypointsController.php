@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Waypoint;
@@ -83,6 +85,7 @@ class WaypointsController extends AbstractController
             if (4 !== count($bounds)) {
                 throw new UnexpectedValueException('Invalid bounds');
             }
+
             $waypoints = $this->repository->findInBounds(
                 (float)$bounds[0],
                 (float)$bounds[1],

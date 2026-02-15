@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Entity;
 
+use ReflectionClass;
 use App\Entity\Maxfield;
 use App\Entity\User;
 use App\Enum\MapBoxProfilesEnum;
@@ -11,21 +14,21 @@ use App\Enum\UserRole;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 
-class UserTest extends TestCase
+final class UserTest extends TestCase
 {
     public function testToString(): void
     {
         $user = new User();
         $user->setIdentifier('agent007');
 
-        self::assertSame('agent007', (string)$user);
+        $this->assertSame('agent007', (string)$user);
     }
 
     public function testGetRolesDefaultIncludesRoleUser(): void
     {
         $user = new User();
 
-        self::assertSame(['ROLE_USER'], $user->getRoles());
+        $this->assertSame(['ROLE_USER'], $user->getRoles());
     }
 
     public function testGetRolesAdminIncludesRoleUser(): void
@@ -35,9 +38,9 @@ class UserTest extends TestCase
 
         $roles = $user->getRoles();
 
-        self::assertContains('ROLE_ADMIN', $roles);
-        self::assertContains('ROLE_USER', $roles);
-        self::assertCount(2, $roles);
+        $this->assertContains('ROLE_ADMIN', $roles);
+        $this->assertContains('ROLE_USER', $roles);
+        $this->assertCount(2, $roles);
     }
 
     public function testGetRolesUserNoDuplicates(): void
@@ -47,14 +50,14 @@ class UserTest extends TestCase
 
         $roles = $user->getRoles();
 
-        self::assertSame(['ROLE_USER'], $roles);
+        $this->assertSame(['ROLE_USER'], $roles);
     }
 
     public function testGetParamMissingKeyReturnsEmptyString(): void
     {
         $user = new User();
 
-        self::assertSame('', $user->getParam('nonexistent'));
+        $this->assertSame('', $user->getParam('nonexistent'));
     }
 
     public function testGetParamExistingKeyReturnsValue(): void
@@ -62,7 +65,7 @@ class UserTest extends TestCase
         $user = new User();
         $user->setParams(['agentName' => 'TestAgent']);
 
-        self::assertSame('TestAgent', $user->getParam('agentName'));
+        $this->assertSame('TestAgent', $user->getParam('agentName'));
     }
 
     public function testGetParamFalsyValueReturnsEmptyString(): void
@@ -70,7 +73,7 @@ class UserTest extends TestCase
         $user = new User();
         $user->setParams(['key' => '']);
 
-        self::assertSame('', $user->getParam('key'));
+        $this->assertSame('', $user->getParam('key'));
     }
 
     #[RunInSeparateProcess]
@@ -80,14 +83,14 @@ class UserTest extends TestCase
 
         $settings = $user->getUserParams();
 
-        self::assertSame('', $settings->agentName);
-        self::assertSame(0.0, $settings->lat);
-        self::assertSame(0.0, $settings->lon);
-        self::assertSame(0, $settings->zoom);
-        self::assertSame('', $settings->mapboxApiKey);
-        self::assertSame(MapBoxStylesEnum::Standard, $settings->defaultStyle);
-        self::assertSame(MapBoxProfilesEnum::Driving, $settings->defaultProfile);
-        self::assertSame(MapProvidersEnum::leaflet, $settings->mapProvider);
+        $this->assertSame('', $settings->agentName);
+        $this->assertEqualsWithDelta(0.0, $settings->lat, PHP_FLOAT_EPSILON);
+        $this->assertEqualsWithDelta(0.0, $settings->lon, PHP_FLOAT_EPSILON);
+        $this->assertSame(0, $settings->zoom);
+        $this->assertSame('', $settings->mapboxApiKey);
+        $this->assertSame(MapBoxStylesEnum::Standard, $settings->defaultStyle);
+        $this->assertSame(MapBoxProfilesEnum::Driving, $settings->defaultProfile);
+        $this->assertSame(MapProvidersEnum::leaflet, $settings->mapProvider);
     }
 
     #[RunInSeparateProcess]
@@ -107,14 +110,14 @@ class UserTest extends TestCase
 
         $settings = $user->getUserParams();
 
-        self::assertSame('MyAgent', $settings->agentName);
-        self::assertSame(48.123, $settings->lat);
-        self::assertSame(11.456, $settings->lon);
-        self::assertSame(15, $settings->zoom);
-        self::assertSame('pk.test123', $settings->mapboxApiKey);
-        self::assertSame(MapBoxStylesEnum::Dark, $settings->defaultStyle);
-        self::assertSame(MapBoxProfilesEnum::Walking, $settings->defaultProfile);
-        self::assertSame(MapProvidersEnum::mapbox, $settings->mapProvider);
+        $this->assertSame('MyAgent', $settings->agentName);
+        $this->assertEqualsWithDelta(48.123, $settings->lat, PHP_FLOAT_EPSILON);
+        $this->assertEqualsWithDelta(11.456, $settings->lon, PHP_FLOAT_EPSILON);
+        $this->assertSame(15, $settings->zoom);
+        $this->assertSame('pk.test123', $settings->mapboxApiKey);
+        $this->assertSame(MapBoxStylesEnum::Dark, $settings->defaultStyle);
+        $this->assertSame(MapBoxProfilesEnum::Walking, $settings->defaultProfile);
+        $this->assertSame(MapProvidersEnum::mapbox, $settings->mapProvider);
     }
 
     public function testAddMaxfield(): void
@@ -124,8 +127,8 @@ class UserTest extends TestCase
 
         $user->addMaxfield($maxfield);
 
-        self::assertCount(1, $user->getMaxfields());
-        self::assertSame($user, $maxfield->getOwner());
+        $this->assertCount(1, $user->getMaxfields());
+        $this->assertSame($user, $maxfield->getOwner());
     }
 
     public function testAddMaxfieldNoDuplicates(): void
@@ -136,7 +139,7 @@ class UserTest extends TestCase
         $user->addMaxfield($maxfield);
         $user->addMaxfield($maxfield);
 
-        self::assertCount(1, $user->getMaxfields());
+        $this->assertCount(1, $user->getMaxfields());
     }
 
     public function testRemoveMaxfield(): void
@@ -147,8 +150,8 @@ class UserTest extends TestCase
         $user->addMaxfield($maxfield);
         $user->removeMaxfield($maxfield);
 
-        self::assertCount(0, $user->getMaxfields());
-        self::assertNull($maxfield->getOwner());
+        $this->assertCount(0, $user->getMaxfields());
+        $this->assertNotInstanceOf(User::class, $maxfield->getOwner());
     }
 
     public function testRemoveMaxfieldDoesNotClearOwnerIfChanged(): void
@@ -161,7 +164,7 @@ class UserTest extends TestCase
         $maxfield->setOwner($user2);
         $user1->removeMaxfield($maxfield);
 
-        self::assertSame($user2, $maxfield->getOwner());
+        $this->assertSame($user2, $maxfield->getOwner());
     }
 
     public function testToggleFavouriteAdd(): void
@@ -171,8 +174,8 @@ class UserTest extends TestCase
 
         $result = $user->toggleFavourite($maxfield);
 
-        self::assertTrue($result);
-        self::assertCount(1, $user->getFavourites());
+        $this->assertTrue($result);
+        $this->assertCount(1, $user->getFavourites());
     }
 
     public function testToggleFavouriteRemove(): void
@@ -183,8 +186,8 @@ class UserTest extends TestCase
         $user->addFavourite($maxfield);
         $result = $user->toggleFavourite($maxfield);
 
-        self::assertFalse($result);
-        self::assertCount(0, $user->getFavourites());
+        $this->assertFalse($result);
+        $this->assertCount(0, $user->getFavourites());
     }
 
     public function testSerializeUnserializeRoundtrip(): void
@@ -192,7 +195,7 @@ class UserTest extends TestCase
         $user = new User();
         $user->setIdentifier('testuser');
 
-        $reflection = new \ReflectionClass($user);
+        $reflection = new ReflectionClass($user);
         $idProperty = $reflection->getProperty('id');
         $idProperty->setValue($user, 42);
 
@@ -201,8 +204,8 @@ class UserTest extends TestCase
         $newUser = new User();
         $newUser->__unserialize($data);
 
-        self::assertSame(42, $newUser->getId());
-        self::assertSame('testuser', $newUser->getIdentifier());
+        $this->assertSame(42, $newUser->getId());
+        $this->assertSame('testuser', $newUser->getIdentifier());
     }
 
     public function testUnserializeWithNulls(): void
@@ -210,28 +213,28 @@ class UserTest extends TestCase
         $user = new User();
         $user->__unserialize(['id' => null, 'identifier' => null]);
 
-        self::assertNull($user->getId());
-        self::assertSame('', $user->getIdentifier());
+        $this->assertNull($user->getId());
+        $this->assertSame('', $user->getIdentifier());
     }
 
     public function testGetSetGoogleId(): void
     {
         $user = new User();
 
-        self::assertNull($user->getGoogleId());
+        $this->assertNull($user->getGoogleId());
 
         $user->setGoogleId('google123');
-        self::assertSame('google123', $user->getGoogleId());
+        $this->assertSame('google123', $user->getGoogleId());
     }
 
     public function testGetSetGitHubId(): void
     {
         $user = new User();
 
-        self::assertNull($user->getGitHubId());
+        $this->assertNull($user->getGitHubId());
 
         $user->setGitHubId(456);
-        self::assertSame(456, $user->getGitHubId());
+        $this->assertSame(456, $user->getGitHubId());
     }
 
     public function testUserIdentifier(): void
@@ -239,13 +242,13 @@ class UserTest extends TestCase
         $user = new User();
         $user->setIdentifier('myident');
 
-        self::assertSame('myident', $user->getUserIdentifier());
+        $this->assertSame('myident', $user->getUserIdentifier());
     }
 
     public function testGetPasswordReturnsNull(): void
     {
         $user = new User();
 
-        self::assertNull($user->getPassword());
+        $this->assertNull($user->getPassword());
     }
 }

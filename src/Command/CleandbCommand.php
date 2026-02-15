@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
 use App\Repository\WaypointRepository;
@@ -85,10 +87,11 @@ class CleandbCommand extends Command
 
         $progressBar->finish();
 
-        if ($errorCount) {
+        if ($errorCount !== 0) {
             $io->error(sprintf('There have been %d errors', $errorCount));
         }
-        if ($warningCount) {
+
+        if ($warningCount !== 0) {
             $io->warning(sprintf('There have been %d warnings', $warningCount));
         }
 

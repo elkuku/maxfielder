@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security;
 
 use App\Entity\Maxfield;
@@ -24,11 +26,7 @@ class MaxfieldVoter extends Voter
             return false;
         }
 
-        if (!$subject instanceof Maxfield) {
-            return false;
-        }
-
-        return true;
+        return $subject instanceof Maxfield;
     }
 
     protected function voteOnAttribute(

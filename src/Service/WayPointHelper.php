@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use RuntimeException;
+use UnexpectedValueException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -75,7 +77,7 @@ class WayPointHelper
         $imagePath = $this->findImage($wpId);
 
         if (!\is_string($imagePath)) {
-            throw new \RuntimeException('Image not found for waypoint: '.$wpId);
+            throw new RuntimeException('Image not found for waypoint: '.$wpId);
         }
 
         return $this->makeThumb($imagePath, $path);
@@ -97,16 +99,18 @@ class WayPointHelper
 
         $ch = curl_init($imageUrl);
         if (false === $ch) {
-            throw new \UnexpectedValueException(
+            throw new UnexpectedValueException(
                 'Can not init curl for: '.$imageUrl
             );
         }
+
         $fp = fopen($imagePath, 'wb');
         if (false === $fp) {
-            throw new \UnexpectedValueException(
+            throw new UnexpectedValueException(
                 'Can not open image file under: '.$imageUrl
             );
         }
+
         curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -145,11 +149,9 @@ class WayPointHelper
         ];
 
         $name = trim($name);
-        $name = str_replace(['.', ',', ';', ':', '"', '\'', '\\'], '', $name);
+        $name = str_replace(['.', ',', ';', ':', '"', "'", '\\'], '', $name);
 
-        $name = str_replace(array_keys($replacements), $replacements, $name);
-
-        return $name;
+        return str_replace(array_keys($replacements), $replacements, $name);
     }
 
     /** @param int<1, max> $desiredWidth */
@@ -159,7 +161,7 @@ class WayPointHelper
         $sourceImage = imagecreatefromjpeg($srcPath);
 
         if (false === $sourceImage) {
-            throw new \RuntimeException('Cannot read image: '.$srcPath);
+            throw new RuntimeException('Cannot read image: '.$srcPath);
         }
 
         $width = imagesx($sourceImage);
@@ -172,7 +174,7 @@ class WayPointHelper
         $virtualImage = imagecreatetruecolor($desiredWidth, $desiredHeight);
 
         if (false === $virtualImage) {
-            throw new \RuntimeException('Cannot create thumbnail image');
+            throw new RuntimeException('Cannot create thumbnail image');
         }
 
         /* copy source image at a resized size */

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Service;
 
 use App\Service\MaxFieldHelper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
-class MaxFieldHelperTest extends TestCase
+final class MaxFieldHelperTest extends TestCase
 {
     private string $tempDir;
 
@@ -25,42 +27,42 @@ class MaxFieldHelperTest extends TestCase
     {
         $helper = new MaxFieldHelper($this->tempDir, 6);
 
-        self::assertSame(6, $helper->getMaxfieldVersion());
+        $this->assertSame(6, $helper->getMaxfieldVersion());
     }
 
     public function testGetMovieSizeReturnsNaForNonExistentPath(): void
     {
         $helper = new MaxFieldHelper($this->tempDir, 6);
 
-        self::assertSame('n/a', $helper->getMovieSize('nonexistent'));
+        $this->assertSame('n/a', $helper->getMovieSize('nonexistent'));
     }
 
     public function testFilesFinishedReturnsFalseForNonExistentPath(): void
     {
         $helper = new MaxFieldHelper($this->tempDir, 6);
 
-        self::assertFalse($helper->filesFinished('nonexistent'));
+        $this->assertFalse($helper->filesFinished('nonexistent'));
     }
 
     public function testFramesDirCountReturnsNaForNonExistentPath(): void
     {
         $helper = new MaxFieldHelper($this->tempDir, 6);
 
-        self::assertSame('n/a', $helper->framesDirCount('nonexistent'));
+        $this->assertSame('n/a', $helper->framesDirCount('nonexistent'));
     }
 
     public function testGetPreviewImageReturnsEmptyForNonExistentPath(): void
     {
         $helper = new MaxFieldHelper($this->tempDir, 6);
 
-        self::assertSame('', $helper->getPreviewImage('nonexistent'));
+        $this->assertSame('', $helper->getPreviewImage('nonexistent'));
     }
 
     public function testGetWaypointCountReturnsZeroForNonExistentPath(): void
     {
         $helper = new MaxFieldHelper($this->tempDir, 6);
 
-        self::assertSame(0, $helper->getWaypointCount('nonexistent'));
+        $this->assertSame(0, $helper->getWaypointCount('nonexistent'));
     }
 
     public function testGetLogThrowsForMissingLog(): void
@@ -81,7 +83,7 @@ class MaxFieldHelperTest extends TestCase
         $helper = new MaxFieldHelper($this->tempDir, 6);
         $list = $helper->getList();
 
-        self::assertSame(['alpha', 'bravo'], $list);
+        $this->assertSame(['alpha', 'bravo'], $list);
     }
 
     private function removeDirectory(string $dir): void
@@ -99,9 +101,11 @@ class MaxFieldHelperTest extends TestCase
             if ($item === '.') {
                 continue;
             }
+
             if ($item === '..') {
                 continue;
             }
+
             $path = $dir.'/'.$item;
             is_dir($path) ? $this->removeDirectory($path) : unlink($path);
         }

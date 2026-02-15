@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Controller;
 
 use App\Story\DefaultFixturesStory;
@@ -7,7 +9,7 @@ use Elkuku\SymfonyUtils\Test\ControllerBaseTest;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
-class ControllerAccessTest extends ControllerBaseTest
+final class ControllerAccessTest extends ControllerBaseTest
 {
     use ResetDatabase;
     use Factories;
@@ -77,7 +79,7 @@ class ControllerAccessTest extends ControllerBaseTest
 
     public function testAllRoutesAreProtected(): void
     {
-        $client = static::createClient();
+        $client = self::createClient();
         DefaultFixturesStory::load();
         $this->runTests($client);
     }

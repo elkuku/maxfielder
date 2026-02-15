@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
+use RuntimeException;
 use App\Entity\Waypoint;
 use DirectoryIterator;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -50,7 +53,7 @@ class MaxFieldGenerator
         $fp = fopen($projectRoot.'/portals_id_map.csv', 'w');
 
         if (false === $fp) {
-            throw new \RuntimeException('Cannot open file: '.$projectRoot.'/portals_id_map.csv');
+            throw new RuntimeException('Cannot open file: '.$projectRoot.'/portals_id_map.csv');
         }
 
         foreach ($wayPointMap as $fields) {
@@ -81,7 +84,7 @@ class MaxFieldGenerator
     {
         $logFile = $projectRoot.'/log.txt';
 
-        if ($this->dockerContainer) {
+        if ($this->dockerContainer !== '' && $this->dockerContainer !== '0') {
             $command = [
                 'docker', 'run',
                 '-v', $projectRoot.':/app/share',
@@ -113,7 +116,7 @@ class MaxFieldGenerator
             ];
         }
 
-        if ($this->googleApiKey) {
+        if ($this->googleApiKey !== '' && $this->googleApiKey !== '0') {
             $command[] = '--google_api_key';
             $command[] = $this->googleApiKey;
             $command[] = '--google_api_secret';
@@ -187,14 +190,14 @@ class MaxFieldGenerator
 
     public function getImagePath(string $item, string $image): string
     {
-        return $this->rootDir."/$item/$image";
+        return $this->rootDir.sprintf('/%s/%s', $item, $image);
     }
 
     public function remove(string $item): void
     {
         $fileSystem = new Filesystem();
 
-        $fileSystem->remove($this->rootDir."/$item");
+        $fileSystem->remove($this->rootDir.('/' . $item));
     }
 
     public function findFrames(string $item): int
@@ -206,7 +209,7 @@ class MaxFieldGenerator
             return $frames;
         }
 
-        foreach (new \DirectoryIterator($path) as $file) {
+        foreach (new DirectoryIterator($path) as $file) {
             if (preg_match(
                 '/frame_(\d\d\d\d\d)/',
                 $file->getFilename(),

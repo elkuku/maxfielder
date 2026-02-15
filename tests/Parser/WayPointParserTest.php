@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Parser;
 
+use UnexpectedValueException;
 use App\Parser\WayPointParser;
 use App\Service\WayPointHelper;
 use PHPUnit\Framework\TestCase;
 
-class WayPointParserTest extends TestCase
+final class WayPointParserTest extends TestCase
 {
     public function testParseWithKExportData(): void
     {
@@ -24,16 +27,16 @@ class WayPointParserTest extends TestCase
 
         $waypoints = $parser->parse(['kexport' => (string) json_encode($items)]);
 
-        self::assertCount(1, $waypoints);
-        self::assertSame('abc-123', $waypoints[0]->getGuid());
-        self::assertSame('Portal Alpha', $waypoints[0]->getName());
+        $this->assertCount(1, $waypoints);
+        $this->assertSame('abc-123', $waypoints[0]->getGuid());
+        $this->assertSame('Portal Alpha', $waypoints[0]->getName());
     }
 
     public function testParseThrowsForUnsupportedData(): void
     {
         $parser = new WayPointParser($this->createStub(WayPointHelper::class));
 
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('No suitable parser found');
 
         $parser->parse(['unsupported_format' => 'data']);

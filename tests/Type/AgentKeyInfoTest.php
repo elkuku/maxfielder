@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Type;
 
 use App\Type\AgentKeyInfo;
 use PHPUnit\Framework\TestCase;
 
-class AgentKeyInfoTest extends TestCase
+final class AgentKeyInfoTest extends TestCase
 {
     public function testPropertyAssignment(): void
     {
@@ -16,10 +18,10 @@ class AgentKeyInfoTest extends TestCase
         $info->count = 7;
         $info->capsules = 'C001, C002';
 
-        self::assertSame('guid-123', $info->guid);
-        self::assertSame('Portal Alpha', $info->name);
-        self::assertSame('https://example.com', $info->link);
-        self::assertSame(7, $info->count);
-        self::assertSame('C001, C002', $info->capsules);
+        $this->assertSame('guid-123', $info->guid);
+        $this->assertSame('Portal Alpha', $info->name);
+        $this->assertSame('https://example.com', $info->link);
+        $this->assertSame(7, $info->count);
+        $this->assertSame('C001, C002', $info->capsules);
     }
 }

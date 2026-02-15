@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
+use BackedEnum;
 use App\Entity\User;
 use App\Enum\UserRole;
 use App\Repository\UserRepository;
@@ -26,7 +29,7 @@ class UserAdminCommand extends UserAdminBaseCommand
     }
 
     /**
-     * @return array<\BackedEnum>
+     * @return array<BackedEnum>
      */
     protected function getRoles(): array
     {

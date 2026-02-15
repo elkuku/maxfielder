@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Parser\Type;
 
+use UnexpectedValueException;
 use App\Parser\AbstractParser;
 use JsonException;
 
@@ -26,7 +29,7 @@ class MultiExportJson extends AbstractParser
                 JSON_THROW_ON_ERROR
             );
         } catch (JsonException) {
-            throw new \UnexpectedValueException(
+            throw new UnexpectedValueException(
                 'Invalid multiexport JSON data'
             );
         }

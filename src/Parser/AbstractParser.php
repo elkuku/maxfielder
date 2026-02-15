@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Parser;
 
 use App\Entity\Waypoint;
@@ -28,7 +30,7 @@ abstract class AbstractParser
     {
         $type = $this->gettype();
 
-        if (!$type) {
+        if ($type === '' || $type === '0') {
             throw new UnexpectedValueException(
                 'Type is not set in class '.self::class
             );
