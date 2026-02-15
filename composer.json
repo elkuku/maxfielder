@@ -81,7 +81,6 @@
         },
         "sort-packages": true,
         "allow-plugins": {
-            "composer/package-versions-deprecated": true,
             "symfony/flex": true,
             "symfony/runtime": true,
             "phpstan/extension-installer": true
@@ -104,7 +103,11 @@
         "symfony/polyfill-php73": "*",
         "symfony/polyfill-php74": "*",
         "symfony/polyfill-php80": "*",
-        "symfony/polyfill-php81": "*"
+        "symfony/polyfill-php81": "*",
+        "symfony/polyfill-php82": "*",
+        "symfony/polyfill-php83": "*",
+        "symfony/polyfill-php84": "*",
+        "symfony/polyfill-php85": "*"
     },
     "scripts": {
         "auto-scripts": {

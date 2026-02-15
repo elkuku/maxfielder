@@ -91,7 +91,10 @@ class FindDupesCommand extends Command
                         $choice = $helper->ask($input, $output, $question);
 
                         if ($choice === $choices[0]) {
-                            $io->text('@todo remove a');
+                            $this->entityManager->remove($waypoint);
+                            $this->entityManager->flush();
+                            ++$removals;
+                            break;
                         } elseif ($choice === $choices[1]) {
                             $this->entityManager->remove($test);
                             $this->entityManager->flush();
@@ -101,7 +104,9 @@ class FindDupesCommand extends Command
                             $this->entityManager->persist($waypoint);
                             $this->entityManager->flush();
                         } elseif ($choice === $choices[3]) {
-                            $io->text('@todo change b with a');
+                            $test->setName((string)$waypoint->getName());
+                            $this->entityManager->persist($test);
+                            $this->entityManager->flush();
                         }
                     } else {
                         $this->entityManager->remove($test);

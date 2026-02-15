@@ -53,7 +53,7 @@ class MaxFieldsController extends BaseController
         $pagerfanta = Pagerfanta::createForCurrentPageWithMaxPerPage(
             new QueryAdapter($this->maxfieldRepository->createQueryBuilderSearch()),
             $page,
-            9999
+            20
         );
 
         $template = 'index';
