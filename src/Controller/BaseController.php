@@ -34,7 +34,7 @@ class BaseController extends AbstractController
             return '';
         }
 
-        $refererPathInfo = Request::create($referer)->getPathInfo();
+        $refererPathInfo = Request::create($referer->toString())->getPathInfo();
 
         $routeInfos = $router->match($refererPathInfo);
 
