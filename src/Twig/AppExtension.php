@@ -4,11 +4,9 @@ namespace App\Twig;
 
 use App\Entity\Maxfield;
 use App\Entity\Waypoint;
-use App\Enum\UserRole;
 use App\Service\MaxFieldHelper;
 use App\Service\WayPointHelper;
 use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
@@ -18,14 +16,6 @@ class AppExtension extends AbstractExtension
         private readonly MaxFieldHelper $maxFieldHelper,
     ) {}
 
-    public function getFilters(): array
-    {
-        return [
-           // new TwigFilter('role_name', $this->getRoleName(...)),
-           // new TwigFilter('role_names', $this->getRoleNames(...)),
-        ];
-    }
-
     public function getFunctions(): array
     {
         return [
@@ -34,27 +24,6 @@ class AppExtension extends AbstractExtension
             new TwigFunction('waypointCount', $this->waypointCount(...)),
         ];
     }
-
-    /*
-     * @param array<string> $values
-     */
-    /*
-    public function getRoleNames(array $values): string
-    {
-        $roles = [];
-        foreach ($values as $value) {
-            $roles[] = $this->getRoleName($value);
-        }
-
-        return implode(', ', $roles);
-    }
-
-    public function getRoleName(string $value): string
-    {
-        return array_search($value, UserRole::cases(), true) ?: '';
-    }
-
-    */
 
     public function hasImage(Waypoint $waypoint): bool
     {

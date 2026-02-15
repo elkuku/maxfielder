@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Elkuku\MaxfieldParser\Type\Waypoint;
-use stdClass;
 
 #[Entity(repositoryClass: MaxfieldRepository::class)]
 class Maxfield
@@ -31,7 +30,7 @@ class Maxfield
     private ?User $owner = null;
 
     /**
-     * @var array<string, array<Waypoint|stdClass>>|null
+     * @var array<string, array<Waypoint|\stdClass>>|null
      */
     #[Column(type: Types::JSON, nullable: true)]
     private array|null $jsonData = null;
@@ -72,7 +71,7 @@ class Maxfield
     }
 
     /**
-     * @return array<string, array<Waypoint|stdClass>>|null
+     * @return array<string, array<Waypoint|\stdClass>>|null
      */
     public function getJsonData(): ?array
     {
@@ -80,7 +79,7 @@ class Maxfield
     }
 
     /**
-     * @param array<string, array<Waypoint|stdClass>> $jsonData
+     * @param array<string, array<Waypoint|\stdClass>> $jsonData
      */
     public function setJsonData(array $jsonData): self
     {
@@ -112,11 +111,8 @@ class Maxfield
      */
     public function setUserKeysWithUser(array $userKeys, int $user): self
     {
-        if ($this->userData) {
-            $this->userData[$user]['keys'] = $userKeys;
-        } else {
-            $this->userData = [$user => ['keys' => $userKeys]];
-        }
+        $this->initUserData($user);
+        $this->userData[$user]['keys'] = $userKeys;
 
         return $this;
     }
@@ -135,11 +131,8 @@ class Maxfield
 
     public function setCurrentPointWithUser(string $currentPoint, int $user): self
     {
-        if ($this->userData) {
-            $this->userData[$user]['current_point'] = $currentPoint;
-        } else {
-            $this->userData = [$user => ['current_point' => $currentPoint]];
-        }
+        $this->initUserData($user);
+        $this->userData[$user]['current_point'] = $currentPoint;
 
         return $this;
     }
@@ -149,12 +142,20 @@ class Maxfield
      */
     public function setFarmDoneWithUser(array $farmDone, int $user): self
     {
-        if ($this->userData) {
-            $this->userData[$user]['farm_done'] = $farmDone;
-        } else {
-            $this->userData = [$user => ['farm_done' => $farmDone]];
-        }
+        $this->initUserData($user);
+        $this->userData[$user]['farm_done'] = $farmDone;
 
         return $this;
+    }
+
+    private function initUserData(int $user): void
+    {
+        if (!$this->userData) {
+            $this->userData = [];
+        }
+
+        if (!isset($this->userData[$user])) {
+            $this->userData[$user] = [];
+        }
     }
 }

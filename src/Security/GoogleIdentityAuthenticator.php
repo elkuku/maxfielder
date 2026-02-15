@@ -7,11 +7,8 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Google\Client;
 use League\OAuth2\Client\Provider\GoogleUser;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
@@ -23,6 +20,7 @@ use Symfony\Component\Security\Http\Util\TargetPathTrait;
 class GoogleIdentityAuthenticator extends AbstractAuthenticator
 {
     use TargetPathTrait;
+    use AuthenticationResultTrait;
 
     public function __construct(
         private readonly string $oauthGoogleId,
@@ -59,40 +57,14 @@ class GoogleIdentityAuthenticator extends AbstractAuthenticator
         );
     }
 
-    public function onAuthenticationSuccess(
-        Request $request,
-        TokenInterface $token,
-        string $firewallName
-    ): RedirectResponse
+    private function getSuccessRedirectUrl(): string
     {
-        if ($targetPath = $this->getTargetPath(
-            $request->getSession(),
-            $firewallName
-        )
-        ) {
-            return new RedirectResponse($targetPath);
-        }
-
-        return new RedirectResponse($this->urlGenerator->generate('default'));
+        return $this->urlGenerator->generate('default');
     }
 
-    public function onAuthenticationFailure(
-        Request $request,
-        AuthenticationException $exception
-    ): RedirectResponse
+    private function getFailureRedirectUrl(): string
     {
-        $message = strtr(
-            $exception->getMessageKey(),
-            $exception->getMessageData()
-        );
-
-        /**
-         * @var Session $session
-         */
-        $session = $request->getSession();
-        $session->getFlashBag()->add('danger', $message);
-
-        return new RedirectResponse($this->urlGenerator->generate('login'));
+        return $this->urlGenerator->generate('login');
     }
 
     private function getUser(GoogleUser $googleUser): User
