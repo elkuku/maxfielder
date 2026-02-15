@@ -106,9 +106,13 @@ class GoogleIdentityAuthenticator extends AbstractAuthenticator
         }
 
         // Register a new user
+        /** @var string $email */
+        $email = $googleUser->getEmail();
+        /** @var string $googleId */
+        $googleId = $googleUser->getId();
         $user = (new User())
-            ->setIdentifier((string)$googleUser->getEmail())
-            ->setGoogleId((string)$googleUser->getId());
+            ->setIdentifier($email)
+            ->setGoogleId($googleId);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();

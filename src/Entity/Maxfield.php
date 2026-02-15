@@ -37,7 +37,7 @@ class Maxfield
     private array|null $jsonData = null;
 
     /**
-     * @var mixed[]
+     * @var array<int, array{keys?: array<AgentKeyInfo>, current_point?: string, farm_done?: array<int>}>|null
      */
     #[Column(type: Types::JSON, nullable: true)]
     private ?array $userData = null;
@@ -90,7 +90,7 @@ class Maxfield
     }
 
     /**
-     * @return array<int, array<int, AgentKeyInfo>>
+     * @return array<int, array{keys?: array<AgentKeyInfo>, current_point?: string, farm_done?: array<int>}>|null
      */
     public function getUserData(): ?array
     {
@@ -98,7 +98,7 @@ class Maxfield
     }
 
     /**
-     * @param array<int, array<int, AgentKeyInfo>> $userData
+     * @param array<int, array{keys?: array<AgentKeyInfo>, current_point?: string, farm_done?: array<int>}> $userData
      */
     public function setUserData(array $userData): self
     {

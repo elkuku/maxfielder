@@ -33,6 +33,7 @@ class KExport extends AbstractParser
             );
         }
 
+        /** @var array<array{guid?: string, title?: string, lat: float, lng: float, image?: string}> $items */
         foreach ($items as $item) {
             if (!$guid = $item['guid'] ?? '') {
                 continue;

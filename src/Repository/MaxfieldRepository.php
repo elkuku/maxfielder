@@ -22,6 +22,7 @@ class MaxfieldRepository extends ServiceEntityRepository
      */
     public function search(string|null $search = null): array
     {
+        /** @var Maxfield[] */
         return $this->createQueryBuilderSearch($search)
             ->getQuery()
             ->getResult();

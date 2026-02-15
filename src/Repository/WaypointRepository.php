@@ -21,6 +21,7 @@ class WaypointRepository extends ServiceEntityRepository
      */
     public function findById(int $id): array
     {
+        /** @var Waypoint[] */
         return $this->createQueryBuilder('w')
             ->andWhere('w.exampleField = :val')
             ->setParameter('val', $id)
@@ -37,6 +38,7 @@ class WaypointRepository extends ServiceEntityRepository
      */
     public function findByIds(array $ids): array
     {
+        /** @var Waypoint[] */
         return $this->createQueryBuilder('w')
             ->andWhere('w.id IN (:val)')
             ->setParameter('val', $ids)
@@ -51,6 +53,7 @@ class WaypointRepository extends ServiceEntityRepository
      */
     public function findDetailsByIds(array $ids): array
     {
+        /** @var Waypoint[] */
         return $this->createQueryBuilder('w')
             ->select('w.id, w.guid, w.name, w.lat, w.lon as lng')
             ->andWhere('w.id IN (:val)')
@@ -87,6 +90,7 @@ class WaypointRepository extends ServiceEntityRepository
         float $lonMin,
     ): array
     {
+        /** @var Waypoint[] */
         return $this->createQueryBuilder('w')
             ->andWhere('w.lat >= :latMin')
             ->andWhere('w.lat <= :latMax')

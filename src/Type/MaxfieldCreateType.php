@@ -30,7 +30,10 @@ final class MaxfieldCreateType
 
     public function getPlayersNum(): int
     {
-        return $this->playersNum ? (int)$this->playersNum : 1;
+        /** @var int|string|null $num */
+        $num = $this->playersNum;
+
+        return $num ? (int) $num : 1;
     }
 
     public function getProjectName(): string

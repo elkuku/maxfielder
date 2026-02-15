@@ -34,6 +34,7 @@ class ImportController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             try {
+                /** @var array<string> $data */
                 $data = $form->getData();
                 $waypoints = $this->wayPointParser->parse($data);
                 $count = $this->storeWayPoints(
@@ -41,7 +42,7 @@ class ImportController extends AbstractController
                     $this->waypointRepo,
                     $this->wayPointHelper,
                     $entityManager,
-                    isset($data['forceUpdate']) && $data['forceUpdate'],
+                    isset($data['forceUpdate']) && (bool) $data['forceUpdate'],
                 );
                 if ($count) {
                     $this->addFlash('success', $count.' Waypoint(s) imported!');

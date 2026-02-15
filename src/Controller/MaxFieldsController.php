@@ -131,9 +131,10 @@ class MaxFieldsController extends BaseController
     {
         $response = [];
         try {
+            /** @var array{agentNum: int|string} $data */
             $data = json_decode($request->getContent(), true);
 
-            $agentNum = (int)$data['agentNum'];
+            $agentNum = (int) $data['agentNum'];
 
             $maxfield->setCurrentPointWithUser('-1', $agentNum);
             $maxfield->setFarmDoneWithUser([], $agentNum);
@@ -159,13 +160,14 @@ class MaxFieldsController extends BaseController
         $response = [];
         $status = 200;
 
+        /** @var array{agentNum: int|string, keys?: string, current_point?: string, farm_done?: array<int>} $data */
         $data = json_decode($request->getContent(), true);
 
-        $agentNum = (int)$data['agentNum'];
+        $agentNum = (int) $data['agentNum'];
 
-        $keys = isset($data['keys']) ? (string)$data['keys'] : null;
-        $currentPoint = isset($data['current_point']) ? (string)$data['current_point'] : null;
-        $farmDone = isset($data['farm_done']) ? (array)$data['farm_done'] : null;
+        $keys = $data['keys'] ?? null;
+        $currentPoint = $data['current_point'] ?? null;
+        $farmDone = $data['farm_done'] ?? null;
 
         if ($currentPoint !== null) {
             $maxfield->setCurrentPointWithUser($currentPoint, $agentNum);

@@ -77,12 +77,18 @@ class GoogleAuthenticator extends AbstractAuthenticator
         )
         ) {
             // @todo remove: Update existing users google id
-            $user->setGoogleId((string)$googleUser->getId());
+            /** @var string $googleId */
+            $googleId = $googleUser->getId();
+            $user->setGoogleId($googleId);
         } else {
+            /** @var string $email */
+            $email = $googleUser->getEmail();
+            /** @var string $googleId */
+            $googleId = $googleUser->getId();
             // Register new user
             $user = (new User())
-                ->setIdentifier((string)$googleUser->getEmail())
-                ->setGoogleId((string)$googleUser->getId());
+                ->setIdentifier($email)
+                ->setGoogleId($googleId);
         }
 
         $this->entityManager->persist($user);

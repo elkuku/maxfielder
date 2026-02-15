@@ -69,8 +69,7 @@ class MaxfieldTest extends TestCase
         $key->count = 1;
         $key->capsules = 'cap';
 
-        /** @var array<int, array<int, AgentKeyInfo>> $data */
-        $data = [1 => [0 => $key]];
+        $data = [1 => ['keys' => [$key]]];
         $maxfield->setUserData($data);
         self::assertSame($data, $maxfield->getUserData());
     }
@@ -82,9 +81,9 @@ class MaxfieldTest extends TestCase
 
         $result = $maxfield->setUserKeysWithUser([$key], 1);
 
-        /** @var array<mixed> $userData */
         $userData = $maxfield->getUserData();
-        self::assertSame([$key], $userData[1]['keys']);
+        self::assertNotNull($userData);
+        self::assertSame([$key], $userData[1]['keys'] ?? null);
         self::assertSame($maxfield, $result);
     }
 
@@ -93,16 +92,15 @@ class MaxfieldTest extends TestCase
         $maxfield = new Maxfield();
         $key1 = $this->createAgentKeyInfo('Portal A', 'guid1', 1);
 
-        /** @var array<int, array<int, AgentKeyInfo>> $initialData */
-        $initialData = [1 => [0 => $key1]];
+        $initialData = [1 => ['keys' => [$key1]]];
         $maxfield->setUserData($initialData);
 
         $key2 = $this->createAgentKeyInfo('Portal B', 'guid2', 5);
         $maxfield->setUserKeysWithUser([$key2], 1);
 
-        /** @var array<mixed> $userData */
         $userData = $maxfield->getUserData();
-        self::assertSame([$key2], $userData[1]['keys']);
+        self::assertNotNull($userData);
+        self::assertSame([$key2], $userData[1]['keys'] ?? null);
     }
 
     public function testSetUserKeysWithUserDifferentUsers(): void
@@ -114,10 +112,10 @@ class MaxfieldTest extends TestCase
         $maxfield->setUserKeysWithUser([$key1], 1);
         $maxfield->setUserKeysWithUser([$key2], 2);
 
-        /** @var array<mixed> $userData */
         $userData = $maxfield->getUserData();
-        self::assertSame([$key1], $userData[1]['keys']);
-        self::assertSame([$key2], $userData[2]['keys']);
+        self::assertNotNull($userData);
+        self::assertSame([$key1], $userData[1]['keys'] ?? null);
+        self::assertSame([$key2], $userData[2]['keys'] ?? null);
     }
 
     public function testSetCurrentPointWithUserInitializesWhenNull(): void
@@ -126,9 +124,9 @@ class MaxfieldTest extends TestCase
 
         $result = $maxfield->setCurrentPointWithUser('PointA', 1);
 
-        /** @var array<mixed> $userData */
         $userData = $maxfield->getUserData();
-        self::assertSame('PointA', $userData[1]['current_point']);
+        self::assertNotNull($userData);
+        self::assertSame('PointA', $userData[1]['current_point'] ?? null);
         self::assertSame($maxfield, $result);
     }
 
@@ -136,15 +134,14 @@ class MaxfieldTest extends TestCase
     {
         $maxfield = new Maxfield();
         $key = $this->createAgentKeyInfo('Portal', 'guid', 1);
-        /** @var array<int, array<int, AgentKeyInfo>> $initialData */
-        $initialData = [1 => [0 => $key]];
+        $initialData = [1 => ['keys' => [$key]]];
         $maxfield->setUserData($initialData);
 
         $maxfield->setCurrentPointWithUser('PointB', 1);
 
-        /** @var array<mixed> $userData */
         $userData = $maxfield->getUserData();
-        self::assertSame('PointB', $userData[1]['current_point']);
+        self::assertNotNull($userData);
+        self::assertSame('PointB', $userData[1]['current_point'] ?? null);
     }
 
     public function testSetFarmDoneWithUserInitializesWhenNull(): void
@@ -153,9 +150,9 @@ class MaxfieldTest extends TestCase
 
         $result = $maxfield->setFarmDoneWithUser([1, 2, 3], 1);
 
-        /** @var array<mixed> $userData */
         $userData = $maxfield->getUserData();
-        self::assertSame([1, 2, 3], $userData[1]['farm_done']);
+        self::assertNotNull($userData);
+        self::assertSame([1, 2, 3], $userData[1]['farm_done'] ?? null);
         self::assertSame($maxfield, $result);
     }
 
@@ -163,15 +160,14 @@ class MaxfieldTest extends TestCase
     {
         $maxfield = new Maxfield();
         $key = $this->createAgentKeyInfo('Portal', 'guid', 1);
-        /** @var array<int, array<int, AgentKeyInfo>> $initialData */
-        $initialData = [1 => [0 => $key]];
+        $initialData = [1 => ['keys' => [$key]]];
         $maxfield->setUserData($initialData);
 
         $maxfield->setFarmDoneWithUser([4, 5], 1);
 
-        /** @var array<mixed> $userData */
         $userData = $maxfield->getUserData();
-        self::assertSame([4, 5], $userData[1]['farm_done']);
+        self::assertNotNull($userData);
+        self::assertSame([4, 5], $userData[1]['farm_done'] ?? null);
     }
 
     public function testIdIsNullByDefault(): void

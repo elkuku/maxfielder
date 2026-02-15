@@ -31,6 +31,7 @@ class MultiExportJson extends AbstractParser
             );
         }
 
+        /** @var array<array{guid?: string, title?: string, coordinates: array{lat: float, lng: float}, image?: string}> $items */
         foreach ($items as $item) {
             if (!$guid = $item['guid'] ?? '') {
                 continue;
