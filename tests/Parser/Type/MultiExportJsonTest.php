@@ -27,7 +27,7 @@ class MultiExportJsonTest extends TestCase
             ],
         ];
 
-        $waypoints = $parser->parse(['multiexportjson' => json_encode($items)]);
+        $waypoints = $parser->parse(['multiexportjson' => (string) json_encode($items)]);
 
         self::assertCount(2, $waypoints);
         self::assertSame('abc-123', $waypoints[0]->getGuid());
@@ -56,7 +56,7 @@ class MultiExportJsonTest extends TestCase
             ['guid' => 'valid-guid', 'title' => 'Has Guid', 'coordinates' => ['lat' => 3.0, 'lng' => 4.0]],
         ];
 
-        $waypoints = $parser->parse(['multiexportjson' => json_encode($items)]);
+        $waypoints = $parser->parse(['multiexportjson' => (string) json_encode($items)]);
 
         self::assertCount(1, $waypoints);
         self::assertSame('valid-guid', $waypoints[0]->getGuid());
@@ -71,7 +71,7 @@ class MultiExportJsonTest extends TestCase
             ['guid' => 'guid-2', 'title' => 'Valid', 'coordinates' => ['lat' => 3.0, 'lng' => 4.0]],
         ];
 
-        $waypoints = $parser->parse(['multiexportjson' => json_encode($items)]);
+        $waypoints = $parser->parse(['multiexportjson' => (string) json_encode($items)]);
 
         self::assertCount(1, $waypoints);
         self::assertSame('guid-2', $waypoints[0]->getGuid());
@@ -96,7 +96,7 @@ class MultiExportJsonTest extends TestCase
         ];
 
         $parser->parse([
-            'multiexportjson' => json_encode($items),
+            'multiexportjson' => (string) json_encode($items),
             'importImages' => '1',
         ]);
     }

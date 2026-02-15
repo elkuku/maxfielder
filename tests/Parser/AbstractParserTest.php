@@ -34,6 +34,7 @@ class AbstractParserTest extends TestCase
     {
         $parser = $this->createConcreteParser('mytype');
 
+        /** @phpstan-ignore argument.type */
         self::assertFalse($parser->supports(['mytype' => 0]));
     }
 
@@ -47,6 +48,7 @@ class AbstractParserTest extends TestCase
 
     public function testCreateWayPointReturnsCorrectWaypoint(): void
     {
+        /** @var ConcreteTestParser $parser */
         $parser = $this->createConcreteParser('test');
 
         $waypoint = $parser->callCreateWayPoint(
@@ -65,37 +67,43 @@ class AbstractParserTest extends TestCase
         self::assertSame('http://example.com/image.jpg', $waypoint->getImage());
     }
 
-    private function createConcreteParser(string $type): object
+    private function createConcreteParser(string $type): AbstractParser
     {
         $helper = $this->createStub(WayPointHelper::class);
 
-        return new class($helper, $type) extends AbstractParser {
-            public function __construct(
-                WayPointHelper $wayPointHelper,
-                private readonly string $type,
-            ) {
-                parent::__construct($wayPointHelper);
-            }
+        return new ConcreteTestParser($helper, $type);
+    }
+}
 
-            protected function getType(): string
-            {
-                return $this->type;
-            }
+/**
+ * @internal
+ */
+class ConcreteTestParser extends AbstractParser
+{
+    public function __construct(
+        WayPointHelper $wayPointHelper,
+        private readonly string $type,
+    ) {
+        parent::__construct($wayPointHelper);
+    }
 
-            public function parse(array $data): array
-            {
-                return [];
-            }
+    protected function getType(): string
+    {
+        return $this->type;
+    }
 
-            public function callCreateWayPoint(
-                string $guid,
-                float $lat,
-                float $lon,
-                string $name,
-                string $image,
-            ): \App\Entity\Waypoint {
-                return $this->createWayPoint($guid, $lat, $lon, $name, $image);
-            }
-        };
+    public function parse(array $data): array
+    {
+        return [];
+    }
+
+    public function callCreateWayPoint(
+        string $guid,
+        float $lat,
+        float $lon,
+        string $name,
+        string $image,
+    ): Waypoint {
+        return $this->createWayPoint($guid, $lat, $lon, $name, $image);
     }
 }

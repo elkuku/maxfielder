@@ -31,10 +31,10 @@ class Maxfield
     private ?User $owner = null;
 
     /**
-     * @var array<string, array<Waypoint|stdClass>>
+     * @var array<string, array<Waypoint|stdClass>>|null
      */
     #[Column(type: Types::JSON, nullable: true)]
-    private array|stdClass|null $jsonData = null;
+    private array|null $jsonData = null;
 
     /**
      * @var mixed[]
@@ -80,9 +80,9 @@ class Maxfield
     }
 
     /**
-     * @param array<string, array<Waypoint|stdClass>>|stdClass $jsonData
+     * @param array<string, array<Waypoint|stdClass>> $jsonData
      */
-    public function setJsonData(array|stdClass $jsonData): self
+    public function setJsonData(array $jsonData): self
     {
         $this->jsonData = $jsonData;
 

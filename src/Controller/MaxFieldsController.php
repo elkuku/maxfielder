@@ -46,7 +46,7 @@ class MaxFieldsController extends BaseController
     #[Route(path: 'maxfield/list', name: 'maxfields', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        $page = $request->query->get('page', 1);
+        $page = $request->query->getInt('page', 1);
         $pagerfanta = Pagerfanta::createForCurrentPageWithMaxPerPage(
             new QueryAdapter($this->maxfieldRepository->createQueryBuilderSearch()),
             $page,

@@ -72,7 +72,13 @@ class WayPointHelper
             $this->checkImage($wpId, $imageUrl);
         }
 
-        return $this->makeThumb($this->findImage($wpId), $path);
+        $imagePath = $this->findImage($wpId);
+
+        if (!\is_string($imagePath)) {
+            throw new \RuntimeException('Image not found for waypoint: '.$wpId);
+        }
+
+        return $this->makeThumb($imagePath, $path);
     }
 
     public function checkImage(
@@ -146,18 +152,28 @@ class WayPointHelper
         return $name;
     }
 
+    /** @param int<1, max> $desiredWidth */
     private function makeThumb(string $srcPath, string $destPath, int $desiredWidth = 60): string
     {
         /* read the source image */
         $sourceImage = imagecreatefromjpeg($srcPath);
+
+        if (false === $sourceImage) {
+            throw new \RuntimeException('Cannot read image: '.$srcPath);
+        }
+
         $width = imagesx($sourceImage);
         $height = imagesy($sourceImage);
 
         /* find the "desired height" of this thumbnail, relative to the desired width  */
-        $desiredHeight = (int)floor($height * ($desiredWidth / $width));
+        $desiredHeight = max(1, (int)floor($height * ($desiredWidth / $width)));
 
         /* create a new, "virtual" image */
         $virtualImage = imagecreatetruecolor($desiredWidth, $desiredHeight);
+
+        if (false === $virtualImage) {
+            throw new \RuntimeException('Cannot create thumbnail image');
+        }
 
         /* copy source image at a resized size */
         imagecopyresampled($virtualImage, $sourceImage, 0, 0, 0, 0, $desiredWidth, $desiredHeight, $width, $height);

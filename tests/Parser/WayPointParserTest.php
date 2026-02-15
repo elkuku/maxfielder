@@ -22,7 +22,7 @@ class WayPointParserTest extends TestCase
             ],
         ];
 
-        $waypoints = $parser->parse(['kexport' => json_encode($items)]);
+        $waypoints = $parser->parse(['kexport' => (string) json_encode($items)]);
 
         self::assertCount(1, $waypoints);
         self::assertSame('abc-123', $waypoints[0]->getGuid());

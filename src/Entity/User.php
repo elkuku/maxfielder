@@ -183,9 +183,10 @@ class User implements UserInterface, Stringable
         return $this->identifier;
     }
 
+    /** @return non-empty-string */
     public function getUserIdentifier(): string
     {
-        return $this->identifier;
+        return $this->identifier ?: '*';
     }
 
     public function setIdentifier(string $identifier): self

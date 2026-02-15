@@ -29,7 +29,7 @@ class KExportTest extends TestCase
             ],
         ];
 
-        $waypoints = $parser->parse(['kexport' => json_encode($items)]);
+        $waypoints = $parser->parse(['kexport' => (string) json_encode($items)]);
 
         self::assertCount(2, $waypoints);
         self::assertSame('abc-123', $waypoints[0]->getGuid());
@@ -59,7 +59,7 @@ class KExportTest extends TestCase
             ['guid' => 'valid-guid', 'title' => 'Has Guid', 'lat' => 3.0, 'lng' => 4.0],
         ];
 
-        $waypoints = $parser->parse(['kexport' => json_encode($items)]);
+        $waypoints = $parser->parse(['kexport' => (string) json_encode($items)]);
 
         self::assertCount(1, $waypoints);
         self::assertSame('valid-guid', $waypoints[0]->getGuid());
@@ -74,7 +74,7 @@ class KExportTest extends TestCase
             ['guid' => 'guid-2', 'title' => 'Valid', 'lat' => 3.0, 'lng' => 4.0],
         ];
 
-        $waypoints = $parser->parse(['kexport' => json_encode($items)]);
+        $waypoints = $parser->parse(['kexport' => (string) json_encode($items)]);
 
         self::assertCount(1, $waypoints);
         self::assertSame('guid-2', $waypoints[0]->getGuid());
@@ -100,7 +100,7 @@ class KExportTest extends TestCase
         ];
 
         $parser->parse([
-            'kexport' => json_encode($items),
+            'kexport' => (string) json_encode($items),
             'importImages' => '1',
         ]);
     }
@@ -122,7 +122,7 @@ class KExportTest extends TestCase
             ],
         ];
 
-        $parser->parse(['kexport' => json_encode($items)]);
+        $parser->parse(['kexport' => (string) json_encode($items)]);
     }
 
     public function testSupportsKexportData(): void

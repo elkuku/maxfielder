@@ -50,6 +50,10 @@ class MaxFieldGenerator
 
             $fp = fopen($projectRoot.'/portals_id_map.csv', 'w');
 
+            if (false === $fp) {
+                throw new \RuntimeException('Cannot open file: '.$projectRoot.'/portals_id_map.csv');
+            }
+
             foreach ($wayPointMap as $fields) {
                 fputcsv($fp, $fields);
             }

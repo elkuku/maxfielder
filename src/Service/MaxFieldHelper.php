@@ -64,7 +64,13 @@ readonly class MaxFieldHelper
             throw new FileNotFoundException();
         }
 
-        return str_replace($this->rootDir, '...', file_get_contents($path));
+        $contents = file_get_contents($path);
+
+        if (false === $contents) {
+            throw new \RuntimeException('Cannot read file: '.$path);
+        }
+
+        return str_replace($this->rootDir, '...', $contents);
     }
 
     public function filesFinished(string $item): bool
@@ -87,6 +93,11 @@ readonly class MaxFieldHelper
 
         if (file_exists($path)) {
             $bytes = filesize($path);
+
+            if (false === $bytes || 0 === $bytes) {
+                return '0 B';
+            }
+
             $sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
             $factor = (int)floor(log($bytes, 1024));
             return round($bytes / 1024 ** $factor, 2).' '.$sizes[$factor];
