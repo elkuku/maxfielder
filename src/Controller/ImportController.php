@@ -88,8 +88,8 @@ class ImportController extends AbstractController
                         if ($forceUpdate) {
                             $currentWayPoint
                                 ->setName($wayPointHelper->cleanName((string)$wayPoint->getName()))
-                                ->setLat($wayPoint->getLat())
-                                ->setLon($wayPoint->getLon())
+                                ->setLat($wayPoint->getLat() ?? 0.0)
+                                ->setLon($wayPoint->getLon() ?? 0.0)
                                 ->setImage($wayPoint->getImage());
 
                             $entityManager->persist($currentWayPoint);

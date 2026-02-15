@@ -125,6 +125,6 @@ class WaypointsController extends AbstractController
     #[IsGranted(UserRole::AGENT->value)]
     public function getImageThumbnail(Waypoint $waypoint): BinaryFileResponse
     {
-        return new BinaryFileResponse($this->wayPointHelper->getThumbnailPath($waypoint->getGuid(), $waypoint->getImage()));
+        return new BinaryFileResponse($this->wayPointHelper->getThumbnailPath($waypoint->getGuid(), $waypoint->getImage() ?? ''));
     }
 }

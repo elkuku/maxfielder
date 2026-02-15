@@ -151,13 +151,13 @@ class User implements UserInterface, Stringable
         $settings->zoom = (int)$this->getParam('zoom');
         $settings->mapboxApiKey = $this->getParam('mapboxApiKey');
         $settings->defaultStyle = $this->getParam('defaultStyle')
-            ? MapBoxStylesEnum::tryFrom($this->getParam('defaultStyle'))
+            ? (MapBoxStylesEnum::tryFrom($this->getParam('defaultStyle')) ?? MapBoxStylesEnum::Standard)
             : MapBoxStylesEnum::Standard;
         $settings->defaultProfile = $this->getParam('defaultProfile')
-            ? MapBoxProfilesEnum::tryFrom($this->getParam('defaultProfile'))
+            ? (MapBoxProfilesEnum::tryFrom($this->getParam('defaultProfile')) ?? MapBoxProfilesEnum::Driving)
             : MapBoxProfilesEnum::Driving;
         $settings->mapProvider = $this->getParam('mapProvider')
-            ? MapProvidersEnum::tryFrom($this->getParam('mapProvider'))
+            ? (MapProvidersEnum::tryFrom($this->getParam('mapProvider')) ?? MapProvidersEnum::leaflet)
             : MapProvidersEnum::leaflet;
 
         return $settings;

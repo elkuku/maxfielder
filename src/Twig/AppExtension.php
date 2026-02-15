@@ -63,12 +63,12 @@ class AppExtension extends AbstractExtension
 
     public function previewImage(Maxfield $maxfield): string
     {
-        return $this->maxFieldHelper->getPreviewImage($maxfield->getPath())
+        return $this->maxFieldHelper->getPreviewImage($maxfield->getPath() ?? '')
             ?: 'images/no-preview.jpg';
     }
 
     public function waypointCount(Maxfield $maxfield): int
     {
-        return $this->maxFieldHelper->getWaypointCount($maxfield->getPath());
+        return $this->maxFieldHelper->getWaypointCount($maxfield->getPath() ?? '');
     }
 }

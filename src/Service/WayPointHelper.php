@@ -54,7 +54,7 @@ class WayPointHelper
     {
         $fileSystem = new Filesystem();
 
-        $path = $this->defineThumbnailPath($wpId);
+        $path = $this->defineThumbnailPath($wpId ?? '');
 
         if ($fileSystem->exists($path)) {
             return $path;
@@ -69,7 +69,7 @@ class WayPointHelper
         }
 
         if (false === $this->findImage($wpId)) {
-            $this->checkImage($wpId, $imageUrl);
+            $this->checkImage($wpId ?? '', $imageUrl);
         }
 
         $imagePath = $this->findImage($wpId);

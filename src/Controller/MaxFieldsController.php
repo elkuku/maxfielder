@@ -108,8 +108,9 @@ class MaxFieldsController extends BaseController
     #[Route(path: 'maxfield/show/{path:maxfield}', name: 'max_fields_result', methods: ['GET'])]
     public function display(MaxField $maxfield): Response
     {
-        $info = $this->maxFieldHelper->getMaxField($maxfield->getPath());
-        $waypointIdMap = $this->maxFieldHelper->getWaypointsIdMap($maxfield->getPath());
+        $path = $maxfield->getPath() ?? '';
+        $info = $this->maxFieldHelper->getMaxField($path);
+        $waypointIdMap = $this->maxFieldHelper->getWaypointsIdMap($path);
 
         return $this->render(
             'maxfield/result.html.twig',
@@ -177,7 +178,7 @@ class MaxFieldsController extends BaseController
         }
 
         if ($keys) {
-            $waypointIdMap = $this->maxFieldHelper->getWaypointsIdMap($maxfield->getPath());
+            $waypointIdMap = $this->maxFieldHelper->getWaypointsIdMap($maxfield->getPath() ?? '');
             try {
                 $existingKeys = $this->ingressHelper->getExistingKeysForMaxfield($waypointIdMap, $keys);
                 if ($existingKeys) {
@@ -203,8 +204,9 @@ class MaxFieldsController extends BaseController
     {
         $user = $this->getUser();
         $userSettings = $user?->getUserParams();
+        $path = $maxfield->getPath() ?? '';
 
-        if (MapProvidersEnum::mapbox === $userSettings->mapProvider) {
+        if ($userSettings && MapProvidersEnum::mapbox === $userSettings->mapProvider) {
             return $this->render(
                 'maxfield/play2.html.twig',
                 [
@@ -223,8 +225,8 @@ class MaxFieldsController extends BaseController
             [
                 'maxfield' => $maxfield,
                 'jsonData' => (new JsonHelper())
-                    ->getJson($this->maxFieldHelper->getParser($maxfield->getPath())),
-                'waypointIdMap' => $this->maxFieldHelper->getWaypointsIdMap($maxfield->getPath()),
+                    ->getJson($this->maxFieldHelper->getParser($path)),
+                'waypointIdMap' => $this->maxFieldHelper->getWaypointsIdMap($path),
             ]
         );
     }
@@ -232,12 +234,13 @@ class MaxFieldsController extends BaseController
     #[Route('maxfield/get-data/{path:maxfield}', name: 'maxfield_get_data', methods: ['GET'])]
     public function getData(Maxfield $maxfield): JsonResponse
     {
+        $path = $maxfield->getPath() ?? '';
         $json = (new JsonHelper())
-            ->getJsonData($this->maxFieldHelper->getParser($maxfield->getPath()));
+            ->getJsonData($this->maxFieldHelper->getParser($path));
 
         return $this->json([
             'jsonData' => $json,
-            'waypointIdMap' => $this->maxFieldHelper->getWaypointsIdMap($maxfield->getPath()),
+            'waypointIdMap' => $this->maxFieldHelper->getWaypointsIdMap($path),
         ]);
 
 
