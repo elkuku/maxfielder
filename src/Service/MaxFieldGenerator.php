@@ -4,10 +4,9 @@ namespace App\Service;
 
 use App\Entity\Waypoint;
 use DirectoryIterator;
-use Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
 
 /**
  * This is for https://github.com/tvwenger/maxfield .
@@ -23,6 +22,7 @@ class MaxFieldGenerator
         #[Autowire('%env(GOOGLE_API_KEY)%')] private readonly string $googleApiKey,
         #[Autowire('%env(GOOGLE_API_SECRET)%')] private readonly string $googleApiSecret,
         #[Autowire('%env(APP_DOCKER_CONTAINER)%')] private readonly string $dockerContainer,
+        #[Autowire('%env(INTEL_URL)%')] private readonly string $intelUrl,
     )
     {
         $this->rootDir = $projectDir.'/public/maxfields';
@@ -42,64 +42,96 @@ class MaxFieldGenerator
     {
         $fileSystem = new Filesystem();
 
-        try {
-            $projectRoot = $this->rootDir.'/'.$projectName;
-            $fileSystem->mkdir($projectRoot);
-            $fileName = $projectRoot.'/portals.txt';
-            $fileSystem->appendToFile($fileName, $wayPointList);
+        $projectRoot = $this->rootDir.'/'.$projectName;
+        $fileSystem->mkdir($projectRoot);
+        $fileName = $projectRoot.'/portals.txt';
+        $fileSystem->appendToFile($fileName, $wayPointList);
 
-            $fp = fopen($projectRoot.'/portals_id_map.csv', 'w');
+        $fp = fopen($projectRoot.'/portals_id_map.csv', 'w');
 
-            if (false === $fp) {
-                throw new \RuntimeException('Cannot open file: '.$projectRoot.'/portals_id_map.csv');
-            }
-
-            foreach ($wayPointMap as $fields) {
-                fputcsv($fp, $fields);
-            }
-
-            fclose($fp);
-
-            if ($this->dockerContainer) {
-                $command = "docker run -v $projectRoot:/app/share -t {$this->dockerContainer}"
-                    ." /app/share/portals.txt"
-                    ." --outdir /app/share --num_agents $playersNum --output_csv"
-                    .' --num_cpus 0 --num_field_iterations 10 --max_route_solutions 10';
-            } else {
-                if ($this->maxfieldVersion < 4) {
-                    $command = "python {$this->maxfieldExec} $fileName"
-                        ." -d $projectRoot -f output.pkl -n $playersNum";
-                } else {
-                    $command = "{$this->maxfieldExec} $fileName"
-                        ." --outdir $projectRoot --num_agents $playersNum --output_csv"
-                        .' --num_cpus 0 --num_field_iterations 10 --max_route_solutions 10';
-                }
-            }
-
-            if ($this->googleApiKey) {
-                $command .= ' --google_api_key '.$this->googleApiKey;
-                $command .= ' --google_api_secret '.$this->googleApiSecret;
-            }
-
-            if ($options['skip_plots']) {
-                $command .= ' --skip_plots';
-            }
-
-            if ($options['skip_step_plots']) {
-                $command .= ' --skip_step_plots';
-            }
-
-            $command .= " --verbose > $projectRoot/log.txt 2>&1 &";
-
-            $fileSystem->dumpFile($projectRoot.'/command.txt', $command);
-
-            exec($command);
-        } catch (IOExceptionInterface $exception) {
-            echo 'An error occurred while creating your directory at '
-                .$exception->getPath();
-        } catch (Exception $exception) {
-            echo $exception->getMessage();
+        if (false === $fp) {
+            throw new \RuntimeException('Cannot open file: '.$projectRoot.'/portals_id_map.csv');
         }
+
+        foreach ($wayPointMap as $fields) {
+            fputcsv($fp, $fields);
+        }
+
+        fclose($fp);
+
+        $command = $this->buildCommand($projectRoot, $fileName, $playersNum, $options);
+
+        $fileSystem->dumpFile($projectRoot.'/command.txt', implode(' ', $command));
+
+        $process = new Process($command);
+        $process->start();
+    }
+
+    /**
+     * @param array<string, bool> $options
+     *
+     * @return list<string>
+     */
+    private function buildCommand(
+        string $projectRoot,
+        string $fileName,
+        int $playersNum,
+        array $options,
+    ): array
+    {
+        $logFile = $projectRoot.'/log.txt';
+
+        if ($this->dockerContainer) {
+            $command = [
+                'docker', 'run',
+                '-v', $projectRoot.':/app/share',
+                '-t', $this->dockerContainer,
+                '/app/share/portals.txt',
+                '--outdir', '/app/share',
+                '--num_agents', (string) $playersNum,
+                '--output_csv',
+                '--num_cpus', '0',
+                '--num_field_iterations', '10',
+                '--max_route_solutions', '10',
+            ];
+        } elseif ($this->maxfieldVersion < 4) {
+            $command = [
+                'python', $this->maxfieldExec, $fileName,
+                '-d', $projectRoot,
+                '-f', 'output.pkl',
+                '-n', (string) $playersNum,
+            ];
+        } else {
+            $command = [
+                $this->maxfieldExec, $fileName,
+                '--outdir', $projectRoot,
+                '--num_agents', (string) $playersNum,
+                '--output_csv',
+                '--num_cpus', '0',
+                '--num_field_iterations', '10',
+                '--max_route_solutions', '10',
+            ];
+        }
+
+        if ($this->googleApiKey) {
+            $command[] = '--google_api_key';
+            $command[] = $this->googleApiKey;
+            $command[] = '--google_api_secret';
+            $command[] = $this->googleApiSecret;
+        }
+
+        if ($options['skip_plots']) {
+            $command[] = '--skip_plots';
+        }
+
+        if ($options['skip_step_plots']) {
+            $command[] = '--skip_step_plots';
+        }
+
+        $command[] = '--verbose';
+
+        // Wrap in shell to redirect output to log file and run in background
+        return ['sh', '-c', implode(' ', array_map('escapeshellarg', $command)).' > '.escapeshellarg($logFile).' 2>&1'];
     }
 
     /**
@@ -130,9 +162,7 @@ class MaxFieldGenerator
         foreach ($wayPoints as $wayPoint) {
             $points = $wayPoint->getLat().','.$wayPoint->getLon();
             $name = str_replace([';', '#'], '', (string)$wayPoint->getName());
-            /** @var string $intelUrl */
-            $intelUrl = $_ENV['INTEL_URL'];
-            $maxFields[] = $name.'; '.$intelUrl
+            $maxFields[] = $name.'; '.$this->intelUrl
                 .'?ll='.$points.'&z=1&pll='.$points;
         }
 

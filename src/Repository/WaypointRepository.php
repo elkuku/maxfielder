@@ -17,21 +17,6 @@ class WaypointRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Waypoint[] Returns an array of Waypoint objects
-     */
-    public function findById(int $id): array
-    {
-        /** @var Waypoint[] */
-        return $this->createQueryBuilder('w')
-            ->andWhere('w.exampleField = :val')
-            ->setParameter('val', $id)
-            ->orderBy('w.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
      * @param array<int> $ids
      *
      * @return Waypoint[]

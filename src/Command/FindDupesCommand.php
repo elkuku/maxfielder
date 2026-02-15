@@ -51,7 +51,7 @@ class FindDupesCommand extends Command
             $choices,
             4
         );
-        $question->setErrorMessage('Color %s is invalid.');
+        $question->setErrorMessage('Choice %s is invalid.');
 
         $removals = 0;
 

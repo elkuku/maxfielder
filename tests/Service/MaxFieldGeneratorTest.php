@@ -19,13 +19,12 @@ class MaxFieldGeneratorTest extends TestCase
             '',
             '',
             'test-container',
+            'https://intel.ingress.com/intel',
         );
     }
 
     public function testConvertWayPointsToMaxFields(): void
     {
-        $_ENV['INTEL_URL'] = 'https://intel.ingress.com/intel';
-
         $wp1 = new Waypoint();
         $wp1->setName('Portal Alpha');
         $wp1->setLat(48.123);
@@ -48,8 +47,6 @@ class MaxFieldGeneratorTest extends TestCase
 
     public function testConvertWayPointsStripsSpecialChars(): void
     {
-        $_ENV['INTEL_URL'] = 'https://intel.ingress.com/intel';
-
         $wp = new Waypoint();
         $wp->setName('Portal; With# Special');
         $wp->setLat(1.0);
