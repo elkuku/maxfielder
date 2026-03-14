@@ -19,13 +19,14 @@ class MaxFieldGenerator
     protected string $rootDir = '';
 
     public function __construct(
-        #[Autowire('%kernel.project_dir%')] string $projectDir,
+        #[Autowire('%kernel.project_dir%')] private readonly string $projectDir,
         #[Autowire('%env(MAXFIELDS_EXEC)%')] private readonly string $maxfieldExec,
         #[Autowire('%env(MAXFIELD_VERSION)%')] private readonly int $maxfieldVersion,
         #[Autowire('%env(GOOGLE_API_KEY)%')] private readonly string $googleApiKey,
         #[Autowire('%env(GOOGLE_API_SECRET)%')] private readonly string $googleApiSecret,
         #[Autowire('%env(APP_DOCKER_CONTAINER)%')] private readonly string $dockerContainer,
         #[Autowire('%env(INTEL_URL)%')] private readonly string $intelUrl,
+        #[Autowire('%env(USE_PHP_MAXFIELD)%')] private readonly string $usePhpMaxfield,
     )
     {
         $this->rootDir = $projectDir.'/public/maxfields';
@@ -83,6 +84,19 @@ class MaxFieldGenerator
     ): array
     {
         $logFile = $projectRoot.'/log.txt';
+
+        if ($this->usePhpMaxfield === 'true' || $this->usePhpMaxfield === '1') {
+            $command = [
+                PHP_BINARY, $this->projectDir.'/bin/console',
+                'maxfield:plan', $fileName,
+                '--outdir', $projectRoot,
+                '--num-agents', (string) $playersNum,
+                '--output-csv',
+                '-v',
+            ];
+
+            return ['sh', '-c', implode(' ', array_map('escapeshellarg', $command)).' > '.escapeshellarg($logFile).' 2>&1'];
+        }
 
         if ($this->dockerContainer !== '' && $this->dockerContainer !== '0') {
             $command = [

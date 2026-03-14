@@ -174,7 +174,7 @@ class MaxFieldsController extends BaseController
         $farmDone = $data['farm_done'] ?? null;
 
         if ($currentPoint !== null) {
-            $maxfield->setCurrentPointWithUser($currentPoint, $agentNum);
+            $maxfield->setCurrentPointWithUser((string) $currentPoint, $agentNum);
             $entityManager->flush();
         }
 

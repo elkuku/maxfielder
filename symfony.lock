@@ -80,6 +80,9 @@
     "elkuku/kuku-sf-system-tools-bundle": {
         "version": "1.0"
     },
+    "elkuku/maxfield-bundle": {
+        "version": "dev-master"
+    },
     "elkuku/symfony-utils": {
         "version": "dev-master"
     },

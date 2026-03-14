@@ -18,4 +18,5 @@ return [
     Symfony\UX\TwigComponent\TwigComponentBundle::class => ['all' => true],
     KuKu\SFSystemToolsBundle\KuKuSFSystemToolsBundle::class => ['all' => true],
     Zenstruck\Foundry\ZenstruckFoundryBundle::class => ['dev' => true, 'test' => true],
+    Elkuku\MaxfieldBundle\MaxfieldBundle::class => ['all' => true],
 ];

@@ -1,8 +1,14 @@
 {
-    "name": "elkuku/symfony-playground-one",
-    "description": "An opinionated symfony project template",
+    "name": "elkuku/maxfielder",
+    "description": "A maxfield frontend",
     "type": "project",
     "license": "WTFPL",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../maxfield-php-2"
+        }
+    ],
     "require": {
         "php": ">=8.5",
         "ext-ctype": "*",
@@ -15,6 +21,7 @@
         "doctrine/orm": "^3",
         "easycorp/easyadmin-bundle": "^4.0",
         "elkuku/kuku-sf-system-tools-bundle": "^1.0",
+        "elkuku/maxfield-bundle": "@dev",
         "elkuku/maxfield-parser": "@dev",
         "elkuku/symfony-utils": "dev-master",
         "google/apiclient": "^2.13",
