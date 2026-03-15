@@ -52,7 +52,7 @@ export default class extends Controller {
         const num = s.substring(s.length - 5)
         let msg = ''
 
-        this.framesImageTarget.src = '/maxfields/' + this.itemValue + '/frames/frame_' + num + '.png'
+        this.framesImageTarget.src = '/maxfields/' + this.itemValue + '/frames/frame_' + num + '.gif'
         this.frameNumTarget.innerText = this.frameNumValue + ' / ' + this.maxFramesValue
 
         if (0 === this.frameNumValue) {
