@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
+use Symfony\Component\Filesystem\Filesystem;
 use App\Service\WayPointHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -11,9 +12,18 @@ final class WayPointHelperTest extends TestCase
 {
     private WayPointHelper $helper;
 
+    private string $tempDir;
+
     protected function setUp(): void
     {
-        $this->helper = new WayPointHelper('/tmp/test-project', 'https://intel.ingress.com/intel');
+        $this->tempDir = sys_get_temp_dir().'/maxfielder_wp_test_'.uniqid();
+        mkdir($this->tempDir.'/public/wp_images', 0777, true);
+        $this->helper = new WayPointHelper($this->tempDir, 'https://intel.ingress.com/intel');
+    }
+
+    protected function tearDown(): void
+    {
+        (new Filesystem())->remove($this->tempDir);
     }
 
     public function testCleanNameTrimsWhitespace(): void
@@ -50,16 +60,37 @@ final class WayPointHelperTest extends TestCase
 
     public function testGetImagePath(): void
     {
-        $this->assertSame('/tmp/test-project/public/wp_images/abc123.jpg', $this->helper->getImagePath('abc123'));
+        $this->assertSame($this->tempDir.'/public/wp_images/abc123.jpg', $this->helper->getImagePath('abc123'));
     }
 
     public function testGetRootDir(): void
     {
-        $this->assertSame('/tmp/test-project/public/wp_images', $this->helper->getRootDir());
+        $this->assertSame($this->tempDir.'/public/wp_images', $this->helper->getRootDir());
     }
 
     public function testGetIntelUrl(): void
     {
         $this->assertSame('https://intel.ingress.com/intel', $this->helper->getIntelUrl());
+    }
+
+    public function testFindImageReturnsFalseForNullId(): void
+    {
+        $this->assertFalse($this->helper->findImage(null));
+    }
+
+    public function testFindImageReturnsFalseWhenFileDoesNotExist(): void
+    {
+        $this->assertFalse($this->helper->findImage('nonexistent-guid'));
+    }
+
+    public function testFindImageReturnsPathWhenFileExists(): void
+    {
+        $wpId = 'abc123';
+        $imagePath = $this->tempDir.'/public/wp_images/'.$wpId.'.jpg';
+        file_put_contents($imagePath, 'fake-jpeg');
+
+        $result = $this->helper->findImage($wpId);
+
+        $this->assertSame($imagePath, $result);
     }
 }

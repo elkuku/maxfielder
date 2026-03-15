@@ -4,18 +4,25 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
+use App\Service\WayPointHelper;
 use App\Entity\Waypoint;
 use App\Service\MaxFieldGenerator;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 
 final class MaxFieldGeneratorTest extends TestCase
 {
     private MaxFieldGenerator $generator;
 
+    private string $tempDir;
+
     protected function setUp(): void
     {
+        $this->tempDir = sys_get_temp_dir().'/maxfielder_gen_test_'.uniqid();
+        mkdir($this->tempDir.'/public/maxfields', 0777, true);
+
         $this->generator = new MaxFieldGenerator(
-            '/tmp/test-project',
+            $this->tempDir,
             '/usr/bin/maxfield',
             4,
             '',
@@ -24,6 +31,11 @@ final class MaxFieldGeneratorTest extends TestCase
             'https://intel.ingress.com/intel',
             '0',
         );
+    }
+
+    protected function tearDown(): void
+    {
+        (new Filesystem())->remove($this->tempDir);
     }
 
     public function testConvertWayPointsToMaxFields(): void
@@ -95,6 +107,81 @@ final class MaxFieldGeneratorTest extends TestCase
 
     public function testGetImagePath(): void
     {
-        $this->assertSame('/tmp/test-project/public/maxfields/my-field/link_map.png', $this->generator->getImagePath('my-field', 'link_map.png'));
+        $this->assertSame($this->tempDir.'/public/maxfields/my-field/link_map.png', $this->generator->getImagePath('my-field', 'link_map.png'));
+    }
+
+    public function testGetContentListReturnsFiles(): void
+    {
+        $item = 'my-field';
+        $dir = $this->tempDir.'/public/maxfields/'.$item;
+        mkdir($dir, 0777, true);
+        file_put_contents($dir.'/portals.txt', '');
+        file_put_contents($dir.'/log.txt', '');
+
+        $list = $this->generator->getContentList($item);
+
+        $this->assertContains('portals.txt', $list);
+        $this->assertContains('log.txt', $list);
+        $this->assertSame($list, array_values(array_unique($list)));
+    }
+
+    public function testGetContentListIsSorted(): void
+    {
+        $item = 'my-field';
+        $dir = $this->tempDir.'/public/maxfields/'.$item;
+        mkdir($dir, 0777, true);
+        file_put_contents($dir.'/z_file.txt', '');
+        file_put_contents($dir.'/a_file.txt', '');
+
+        $list = $this->generator->getContentList($item);
+
+        $sorted = $list;
+        sort($sorted);
+        $this->assertSame($sorted, $list);
+    }
+
+    public function testRemoveDeletesDirectory(): void
+    {
+        $item = 'to-remove';
+        $dir = $this->tempDir.'/public/maxfields/'.$item;
+        mkdir($dir, 0777, true);
+        file_put_contents($dir.'/portals.txt', '');
+
+        $this->generator->remove($item);
+
+        $this->assertDirectoryDoesNotExist($dir);
+    }
+
+    public function testFindFramesReturnsZeroForNonExistentPath(): void
+    {
+        $this->assertSame(0, $this->generator->findFrames('nonexistent'));
+    }
+
+    public function testFindFramesReturnsHighestFrameNumber(): void
+    {
+        $item = 'my-field';
+        $framesDir = $this->tempDir.'/public/maxfields/'.$item.'/frames';
+        mkdir($framesDir, 0777, true);
+        file_put_contents($framesDir.'/frame_00001.png', '');
+        file_put_contents($framesDir.'/frame_00005.png', '');
+        file_put_contents($framesDir.'/frame_00003.png', '');
+
+        $this->assertSame(5, $this->generator->findFrames($item));
+    }
+
+    public function testFindFramesIgnoresNonMatchingFiles(): void
+    {
+        $item = 'my-field';
+        $framesDir = $this->tempDir.'/public/maxfields/'.$item.'/frames';
+        mkdir($framesDir, 0777, true);
+        file_put_contents($framesDir.'/something_else.png', '');
+
+        $this->assertSame(0, $this->generator->findFrames($item));
+    }
+
+    public function testFindImageReturnsFalseForNullId(): void
+    {
+        $helper = new WayPointHelper($this->tempDir, 'https://intel.ingress.com/intel');
+        $this->assertFalse($helper->findImage(null));
     }
 }
