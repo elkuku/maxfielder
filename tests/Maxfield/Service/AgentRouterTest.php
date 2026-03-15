@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Maxfield\Service;
 
+use Elkuku\MaxfieldBundle\Model\Assignment;
 use Elkuku\MaxfieldBundle\Model\Graph;
 use Elkuku\MaxfieldBundle\Service\AgentRouter;
 use PHPUnit\Framework\TestCase;
@@ -20,9 +21,10 @@ final class AgentRouterTest extends TestCase
     private function makeGraph(int $numPortals): Graph
     {
         $graph = new Graph();
-        for ($i = 0; $i < $numPortals; $i++) {
+        for ($i = 0; $i < $numPortals; ++$i) {
             $graph->addNode($i);
         }
+
         return $graph;
     }
 
@@ -30,11 +32,12 @@ final class AgentRouterTest extends TestCase
     private function uniformDists(int $n, int $distance = 100): array
     {
         $dists = [];
-        for ($i = 0; $i < $n; $i++) {
-            for ($j = 0; $j < $n; $j++) {
+        for ($i = 0; $i < $n; ++$i) {
+            for ($j = 0; $j < $n; ++$j) {
                 $dists[$i][$j] = ($i === $j) ? 0 : $distance;
             }
         }
+
         return $dists;
     }
 
@@ -50,6 +53,7 @@ final class AgentRouterTest extends TestCase
     {
         $graph = $this->makeGraph(2);
         $graph->addLink(0, 1);
+
         $dists = $this->uniformDists(2);
 
         $assignments = $this->router->routeAgents($graph, $dists, numAgents: 1);
@@ -134,8 +138,9 @@ final class AgentRouterTest extends TestCase
         $graph->addLink(1, 2);
 
         $assignments = $this->router->routeAgents($graph, $this->uniformDists(3, 10), numAgents: 2);
+        $counter = \count($assignments);
 
-        for ($i = 1; $i < \count($assignments); $i++) {
+        for ($i = 1; $i < $counter; ++$i) {
             $this->assertGreaterThanOrEqual($assignments[$i - 1]->arrive, $assignments[$i]->arrive);
         }
     }
@@ -149,7 +154,7 @@ final class AgentRouterTest extends TestCase
 
         $assignments = $this->router->routeAgents($graph, $this->uniformDists(4, 10), numAgents: 2);
 
-        $agentIds = array_unique(array_map(fn($a) => $a->agent, $assignments));
+        $agentIds = array_unique(array_map(fn(Assignment $a): int => $a->agent, $assignments));
         // With 2 agents and 3 independent links, both agents should be used
         $this->assertGreaterThanOrEqual(1, \count($agentIds));
     }

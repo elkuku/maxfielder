@@ -38,15 +38,17 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             throw new UnexpectedValueException('GTFO!');
         }
 
+        $badges = [new RememberMeBadge()];
+        if ('test' !== $this->appEnv) {
+            $badges[] = new CsrfTokenBadge(
+                'login',
+                (string) $request->request->get('_csrf_token')
+            );
+        }
+
         return new SelfValidatingPassport(
-            new UserBadge((string)$request->request->get('identifier')),
-            [
-                new CsrfTokenBadge(
-                    'login',
-                    (string)$request->request->get('_csrf_token')
-                ),
-                new RememberMeBadge(),
-            ]
+            new UserBadge((string) $request->request->get('identifier')),
+            $badges
         );
     }
 
