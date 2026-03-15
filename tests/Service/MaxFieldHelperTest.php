@@ -6,6 +6,7 @@ namespace App\Tests\Service;
 
 use InvalidArgumentException;
 use App\Service\MaxFieldHelper;
+use Elkuku\MaxfieldParser\MaxfieldParser;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
@@ -212,6 +213,24 @@ final class MaxFieldHelperTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $helper->getWaypointsIdMap('nonexistent');
+    }
+
+    public function testGetParserReturnsMaxfieldParser(): void
+    {
+        $helper = new MaxFieldHelper($this->tempDir, 6);
+
+        $parser = $helper->getParser('some-item');
+
+        $this->assertInstanceOf(MaxfieldParser::class, $parser);
+    }
+
+    public function testGetParserWithNoItemUsesRootDir(): void
+    {
+        $helper = new MaxFieldHelper($this->tempDir, 6);
+
+        $parser = $helper->getParser();
+
+        $this->assertInstanceOf(MaxfieldParser::class, $parser);
     }
 
     private function removeDirectory(string $dir): void

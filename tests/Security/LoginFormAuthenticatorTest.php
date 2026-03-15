@@ -49,6 +49,18 @@ final class LoginFormAuthenticatorTest extends WebTestCase
         self::assertResponseRedirects('/login');
     }
 
+    public function testLogoutRedirectsToLogin(): void
+    {
+        $client = self::createClient();
+        $user = UserFactory::createOne(['identifier' => 'logoutuser']);
+        $client->loginUser($user);
+
+        $client->request(Request::METHOD_GET, '/logout');
+
+        // Symfony's security intercepts /logout and redirects to the login page
+        self::assertResponseRedirects();
+    }
+
     public function testOnAuthenticationSuccessRedirectsToTargetPath(): void
     {
         $client = self::createClient();

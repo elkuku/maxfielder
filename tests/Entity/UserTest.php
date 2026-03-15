@@ -251,4 +251,32 @@ final class UserTest extends TestCase
 
         $this->assertNull($user->getPassword());
     }
+
+    public function testGetParamsReturnsArray(): void
+    {
+        $user = new User();
+        $user->setParams(['foo' => 'bar', 'baz' => 'qux']);
+
+        $this->assertSame(['foo' => 'bar', 'baz' => 'qux'], $user->getParams());
+    }
+
+    public function testEraseCredentialsDoesNotThrow(): void
+    {
+        $user = new User();
+
+        $user->eraseCredentials();
+
+        $this->addToAssertionCount(1);
+    }
+
+    public function testRemoveFavourite(): void
+    {
+        $user = new User();
+        $maxfield = new Maxfield();
+
+        $user->addFavourite($maxfield);
+        $user->removeFavourite($maxfield);
+
+        $this->assertCount(0, $user->getFavourites());
+    }
 }
