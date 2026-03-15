@@ -56,6 +56,8 @@ jobs:
         run: |
           mkdir -p _site
           cp -r coverage _site/coverage
+          cp .github/pages/index.html _site/index.html
+          cp .github/pages/style.css _site/style.css
 
           # Extract coverage percentage from clover.xml
           COVERAGE=$(php -r '
@@ -65,58 +67,6 @@ jobs:
             $covered = (int)$metrics["coveredelements"];
             echo $total > 0 ? round($covered / $total * 100, 1) : "N/A";
           ')
-
-          cat > _site/index.html << 'HTMLEOF'
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Maxfielder</title>
-            <style>
-              * { margin: 0; padding: 0; box-sizing: border-box; }
-              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; line-height: 1.6; }
-              .container { max-width: 800px; margin: 0 auto; padding: 2rem; }
-              h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-              .description { font-size: 1.2rem; color: #666; margin-bottom: 2rem; }
-              .card { background: #fff; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-              .card h2 { margin-bottom: 1rem; font-size: 1.3rem; }
-              .badge { display: inline-block; background: #e9ecef; border-radius: 4px; padding: 0.25rem 0.75rem; margin: 0.25rem; font-size: 0.9rem; }
-              .links a { display: inline-block; background: #0d6efd; color: #fff; text-decoration: none; padding: 0.5rem 1.25rem; border-radius: 6px; margin: 0.25rem; }
-              .links a:hover { background: #0b5ed7; }
-              .coverage-value { font-size: 2rem; font-weight: bold; color: #198754; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <h1>Maxfielder</h1>
-              <p class="description">A PHP frontend for the maxfield Python script — plan Ingress field operations with an interactive map interface.</p>
-
-              <div class="card">
-                <h2>Tech Stack</h2>
-                <span class="badge">PHP 8.3+</span>
-                <span class="badge">Symfony 8</span>
-                <span class="badge">PostgreSQL</span>
-                <span class="badge">Leaflet / Mapbox GL</span>
-                <span class="badge">Bootstrap 5</span>
-                <span class="badge">Stimulus</span>
-              </div>
-
-              <div class="card">
-                <h2>Code Coverage</h2>
-                <p class="coverage-value">COVERAGE_PLACEHOLDER%</p>
-                <p style="margin-top: 0.5rem;"><a href="coverage/">View full coverage report</a></p>
-              </div>
-
-              <div class="card links">
-                <h2>Links</h2>
-                <a href="https://github.com/elkuku/maxfielder">Repository</a>
-                <a href="coverage/">Coverage Report</a>
-              </div>
-            </div>
-          </body>
-          </html>
-          HTMLEOF
 
           # Replace placeholder with actual coverage value
           sed -i "s/COVERAGE_PLACEHOLDER/${COVERAGE}/" _site/index.html
