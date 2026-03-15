@@ -144,4 +144,18 @@ final class WaypointsControllerTest extends WebTestCase
 
         self::assertResponseRedirects('/');
     }
+
+    public function testEditSubmitsFormAndRedirects(): void
+    {
+        $client = self::createClient();
+        $admin = UserFactory::createOne(['role' => UserRole::ADMIN]);
+        $wp = WaypointFactory::createOne(['name' => 'Old Portal']);
+        $client->loginUser($admin);
+
+        $crawler = $client->request(Request::METHOD_GET, '/waypoint/'.$wp->getId());
+        $form = $crawler->filter('form')->form();
+        $client->submit($form, ['waypoint_form[name]' => 'New Portal Name']);
+
+        self::assertResponseRedirects('/');
+    }
 }

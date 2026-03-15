@@ -282,4 +282,62 @@ final class MaxFieldsControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertResponseFormatSame('json');
     }
+
+    public function testEditSubmitsFormAndRedirects(): void
+    {
+        $client = self::createClient();
+        $user = UserFactory::createOne(['role' => UserRole::AGENT]);
+        $maxfield = MaxfieldFactory::createOne(['owner' => $user, 'name' => 'Old Name']);
+        $client->loginUser($user);
+
+        $crawler = $client->request(Request::METHOD_GET, '/maxfield/edit/'.$maxfield->getId());
+        $form = $crawler->filter('form')->form();
+        $client->submit($form, ['maxfield_form[name]' => 'Updated Name']);
+
+        self::assertResponseRedirects('/maxfield/list');
+    }
+
+    public function testEditWithPartialRendersFormPartial(): void
+    {
+        $client = self::createClient();
+        $user = UserFactory::createOne(['role' => UserRole::AGENT]);
+        $maxfield = MaxfieldFactory::createOne(['owner' => $user]);
+        $client->loginUser($user);
+
+        $client->request(Request::METHOD_GET, '/maxfield/edit/'.$maxfield->getId(), ['partial' => '1']);
+
+        self::assertResponseIsSuccessful();
+    }
+
+    public function testDeleteWithRefererRedirectsToReferer(): void
+    {
+        $client = self::createClient();
+        $user = UserFactory::createOne(['role' => UserRole::AGENT]);
+        $maxfield = MaxfieldFactory::createOne(['owner' => $user, 'path' => 'no-such-dir']);
+        $client->loginUser($user);
+
+        $client->request(
+            Request::METHOD_GET,
+            '/maxfield/delete/'.$maxfield->getId(),
+            server: ['HTTP_REFERER' => 'http://localhost/maxfield/list'],
+        );
+
+        self::assertResponseRedirects('/maxfield/list');
+    }
+
+    public function testSubmitUserDataWithFarmDone(): void
+    {
+        $client = self::createClient();
+        $user = UserFactory::createOne(['role' => UserRole::AGENT]);
+        $maxfield = MaxfieldFactory::createOne(['owner' => $user]);
+        $client->loginUser($user);
+
+        $client->request(
+            Request::METHOD_POST,
+            '/maxfield/submit-user-data/'.$maxfield->getPath(),
+            content: json_encode(['agentNum' => 1, 'farm_done' => [1, 2]]) ?: '',
+        );
+
+        self::assertResponseIsSuccessful();
+    }
 }
