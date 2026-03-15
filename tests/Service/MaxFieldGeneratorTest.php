@@ -22,6 +22,7 @@ final class MaxFieldGeneratorTest extends TestCase
             '',
             'test-container',
             'https://intel.ingress.com/intel',
+            '0',
         );
     }
 

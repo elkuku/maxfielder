@@ -110,7 +110,7 @@ class MaxFieldsController extends BaseController
     }
 
     #[Route(path: 'maxfield/show/{path:maxfield}', name: 'max_fields_result', methods: ['GET'])]
-    public function display(MaxField $maxfield): Response
+    public function display(Maxfield $maxfield): Response
     {
         $path = $maxfield->getPath() ?? '';
         $info = $this->maxFieldHelper->getMaxField($path);
@@ -128,7 +128,7 @@ class MaxFieldsController extends BaseController
 
     #[Route(path: 'maxfield/clear-user-data/{path:maxfield}', name: 'maxfield_clear_user_data', methods: ['POST'])]
     public function clearUserData(
-        MaxField $maxfield,
+        Maxfield $maxfield,
         EntityManagerInterface $entityManager,
         Request $request,
     ): JsonResponse
@@ -156,7 +156,7 @@ class MaxFieldsController extends BaseController
 
     #[Route(path: 'maxfield/submit-user-data/{path:maxfield}', name: 'maxfield_submit_user_data', methods: ['POST'])]
     public function submitUserData(
-        MaxField $maxfield,
+        Maxfield $maxfield,
         Request $request,
         EntityManagerInterface $entityManager,
     ): JsonResponse
