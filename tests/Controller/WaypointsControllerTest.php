@@ -120,4 +120,28 @@ final class WaypointsControllerTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
     }
+
+    public function testRemoveRequiresAdmin(): void
+    {
+        $client = self::createClient();
+        $user = UserFactory::createOne(['role' => UserRole::USER]);
+        $wp = WaypointFactory::createOne();
+        $client->loginUser($user);
+
+        $client->request(Request::METHOD_GET, '/waypoint-remove/'.$wp->getId());
+
+        self::assertResponseStatusCodeSame(403);
+    }
+
+    public function testRemoveDeletesAndRedirects(): void
+    {
+        $client = self::createClient();
+        $admin = UserFactory::createOne(['role' => UserRole::ADMIN]);
+        $wp = WaypointFactory::createOne(['name' => 'Delete Me']);
+        $client->loginUser($admin);
+
+        $client->request(Request::METHOD_GET, '/waypoint-remove/'.$wp->getId());
+
+        self::assertResponseRedirects('/');
+    }
 }
