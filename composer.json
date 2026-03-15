@@ -3,12 +3,6 @@
     "description": "A maxfield frontend",
     "type": "project",
     "license": "WTFPL",
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../maxfield-php-2"
-        }
-    ],
     "require": {
         "php": ">=8.5",
         "ext-ctype": "*",
