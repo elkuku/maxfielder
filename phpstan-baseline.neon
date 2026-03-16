@@ -11,4 +11,3 @@ parameters:
 			identifier: property.unusedType
 			count: 1
 			path: src/Entity/Waypoint.php
-

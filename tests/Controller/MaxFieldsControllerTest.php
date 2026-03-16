@@ -376,4 +376,38 @@ final class MaxFieldsControllerTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
     }
+
+    public function testCheckWithDbMaxfieldLoopExecutes(): void
+    {
+        $client = self::createClient();
+        $admin = UserFactory::createOne(['role' => UserRole::ADMIN]);
+        MaxfieldFactory::createOne(['path' => 'nonexistent-path-xyz']);
+        $client->loginUser($admin);
+
+        $client->request(Request::METHOD_GET, '/maxfield/check');
+
+        self::assertResponseIsSuccessful();
+    }
+
+    public function testCheckWithMatchingFilesystemDirUnsets(): void
+    {
+        $testPath = 'test-check-coverage-dir';
+        $dir = dirname(__DIR__, 2).'/public/maxfields/'.$testPath;
+        @mkdir($dir, 0777, true);
+
+        try {
+            $client = self::createClient();
+            $admin = UserFactory::createOne(['role' => UserRole::ADMIN]);
+            MaxfieldFactory::createOne(['path' => $testPath]);
+            $client->loginUser($admin);
+
+            $client->request(Request::METHOD_GET, '/maxfield/check');
+
+            self::assertResponseIsSuccessful();
+        } finally {
+            if (is_dir($dir)) {
+                rmdir($dir);
+            }
+        }
+    }
 }

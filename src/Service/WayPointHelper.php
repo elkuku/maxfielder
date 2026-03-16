@@ -118,7 +118,6 @@ class WayPointHelper
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
 
         curl_exec($ch);
-        curl_close($ch);
         fclose($fp);
     }
 

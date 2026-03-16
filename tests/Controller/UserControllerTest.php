@@ -50,4 +50,30 @@ final class UserControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorExists('form');
     }
+
+    public function testProfileSubmitSavesParamsAndRedirects(): void
+    {
+        $client = self::createClient();
+        $user = UserFactory::createOne(['role' => UserRole::AGENT]);
+        $client->loginUser($user);
+
+        $crawler = $client->request(Request::METHOD_GET, '/profile');
+        $token = $crawler->filter('[name="profile_form[_token]"]')->attr('value');
+
+        $client->request(Request::METHOD_POST, '/profile', [
+            'profile_form' => [
+                '_token' => $token,
+                'agentName' => 'TestAgent',
+                'lat' => '48',
+                'lon' => '11',
+                'zoom' => '10',
+                'mapboxApiKey' => '',
+                'defaultStyle' => 'mapbox/standard',
+                'defaultProfile' => 'mapbox/driving',
+                'mapProvider' => 'leaflet',
+            ],
+        ]);
+
+        self::assertResponseRedirects('/');
+    }
 }

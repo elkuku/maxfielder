@@ -91,4 +91,75 @@ final class WayPointHelperThumbnailTest extends TestCase
 
         $this->assertSame($originalMtime, filemtime($imagePath));
     }
+
+    public function testFindImageCreatesRootDirWhenMissing(): void
+    {
+        $tempDir = sys_get_temp_dir().'/maxfielder_findimg_'.uniqid();
+
+        try {
+            $helper = new WayPointHelper($tempDir, 'https://intel.ingress.com/intel');
+
+            $result = $helper->findImage('some-guid');
+
+            $this->assertFalse($result);
+            $this->assertDirectoryExists($tempDir.'/public/wp_images');
+        } finally {
+            (new Filesystem())->remove($tempDir);
+        }
+    }
+
+    public function testGetThumbnailPathCreatesThumbsDirWhenMissing(): void
+    {
+        $tempDir = sys_get_temp_dir().'/maxfielder_thumbsdir_'.uniqid();
+        // Create rootDir but NOT thumbs dir
+        mkdir($tempDir.'/public/wp_images', 0777, true);
+
+        $wpId = 'test-nodelay-guid';
+
+        // Create a source JPEG image in rootDir
+        $srcPath = $tempDir.'/public/wp_images/'.$wpId.'.jpg';
+        $img = imagecreatetruecolor(100, 100);
+        $this->assertNotFalse($img);
+        imagejpeg($img, $srcPath);
+
+        try {
+            $helper = new WayPointHelper($tempDir, 'https://intel.ingress.com/intel');
+
+            // thumbs dir does not exist, but image exists locally → will mkdir thumbs and makeThumb
+            $thumbPath = $helper->getThumbnailPath($wpId, 'https://example.com/image.jpg');
+
+            $this->assertFileExists($thumbPath);
+            $this->assertDirectoryExists($tempDir.'/public/wp_images/thumbs');
+        } finally {
+            (new Filesystem())->remove($tempDir);
+        }
+    }
+
+    public function testGetThumbnailPathDownloadsImageViaFileUrl(): void
+    {
+        $tempDir = sys_get_temp_dir().'/maxfielder_fileurl_'.uniqid();
+        // No rootDir at all — will be created by getThumbnailPath
+
+        $wpId = 'test-fileurl-guid';
+
+        // Create a source JPEG somewhere accessible
+        $sourcePath = sys_get_temp_dir().'/maxfielder_src_'.uniqid().'.jpg';
+        $img = imagecreatetruecolor(100, 100);
+        $this->assertNotFalse($img);
+        imagejpeg($img, $sourcePath);
+
+        try {
+            $helper = new WayPointHelper($tempDir, 'https://intel.ingress.com/intel');
+
+            // Use file:// URL so curl downloads from local filesystem (no network)
+            $thumbPath = $helper->getThumbnailPath($wpId, 'file://'.$sourcePath);
+
+            $this->assertFileExists($thumbPath);
+        } finally {
+            (new Filesystem())->remove($tempDir);
+            if (file_exists($sourcePath)) {
+                unlink($sourcePath);
+            }
+        }
+    }
 }
