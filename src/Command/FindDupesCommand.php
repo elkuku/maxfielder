@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use Symfony\Component\Console\Helper\QuestionHelper;
+use App\Entity\Waypoint;
 use App\Repository\WaypointRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -37,7 +38,6 @@ class FindDupesCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $waypoints = $this->waypointRepository->findAll();
         $progressBar = new ProgressBar($output, count($waypoints));
-
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
 
@@ -49,86 +49,130 @@ class FindDupesCommand extends Command
             'Skip',
         ];
 
-        $question = new ChoiceQuestion(
-            'Please select [Skip]',
-            $choices,
-            4
-        );
+        $question = new ChoiceQuestion('Please select [Skip]', $choices, 4);
         $question->setErrorMessage('Choice %s is invalid.');
 
         $removals = 0;
 
         foreach ($waypoints as $waypoint) {
-            foreach ($waypoints as $test) {
-                if ($test->getGuid() === $waypoint->getGuid()
-                    && $test->getId() !== $waypoint->getId()) {
-                    $io->warning('@TODO Duplicated GUID found for: '.$waypoint->getName());
-                    // @todo handle Duplicated GUID
-                }
-
-                if ($test->getLat() === $waypoint->getLat()
-                    && $test->getLon() === $waypoint->getLon()
-                    && $test->getId() !== $waypoint->getId()
-                ) {
-                    $io->text(
-                        [
-                            '',
-                            sprintf(
-                                'A: %s - %d',
-                                $waypoint->getName(),
-                                $waypoint->getId()
-                            ),
-                            sprintf(
-                                'B: %s - %d',
-                                $test->getName(),
-                                $test->getId()
-                            ),
-                        ]
-                    );
-
-                    if ($waypoint->getName() !== $test->getName()) {
-                        $io->warning('Name mismatch!');
-                        $choice = $helper->ask($input, $output, $question);
-
-                        if ($choice === $choices[0]) {
-                            $this->entityManager->remove($waypoint);
-                            $this->entityManager->flush();
-                            ++$removals;
-                            break;
-                        } elseif ($choice === $choices[1]) {
-                            $this->entityManager->remove($test);
-                            $this->entityManager->flush();
-                            ++$removals;
-                        } elseif ($choice === $choices[2]) {
-                            $waypoint->setName((string)$test->getName());
-                            $this->entityManager->persist($waypoint);
-                            $this->entityManager->flush();
-                        } elseif ($choice === $choices[3]) {
-                            $test->setName((string)$waypoint->getName());
-                            $this->entityManager->persist($test);
-                            $this->entityManager->flush();
-                        }
-                    } else {
-                        $this->entityManager->remove($test);
-                        $this->entityManager->flush();
-                        ++$removals;
-                    }
-                }
-            }
-
+            $removals += $this->findDuplicatesForWaypoint($waypoint, $waypoints, $io, $helper, $input, $output, $choices, $question);
             $progressBar->advance();
         }
 
         $progressBar->finish();
 
         if ($removals !== 0) {
-            $io->warning(
-                sprintf('%d duplicates have been removed.', $removals)
-            );
+            $io->warning(sprintf('%d duplicates have been removed.', $removals));
         } else {
             $io->success('Database is clean :)');
         }
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * @param Waypoint[] $waypoints
+     * @param string[] $choices
+     */
+    private function findDuplicatesForWaypoint(
+        Waypoint $waypoint,
+        array $waypoints,
+        SymfonyStyle $io,
+        QuestionHelper $helper,
+        InputInterface $input,
+        OutputInterface $output,
+        array $choices,
+        ChoiceQuestion $question
+    ): int {
+        foreach ($waypoints as $test) {
+            if ($test->getId() === $waypoint->getId()) {
+                continue;
+            }
+
+            if ($test->getGuid() === $waypoint->getGuid()) {
+                $io->warning('@TODO Duplicated GUID found for: '.$waypoint->getName());
+            }
+
+            if ($test->getLat() === $waypoint->getLat() && $test->getLon() === $waypoint->getLon()) {
+                return $this->handleDuplicate(
+                    $waypoint,
+                    $test,
+                    $io,
+                    $helper,
+                    $input,
+                    $output,
+                    $choices,
+                    $question
+                );
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * @param string[] $choices
+     */
+    private function handleDuplicate(
+        Waypoint $waypoint,
+        Waypoint $test,
+        SymfonyStyle $io,
+        QuestionHelper $helper,
+        InputInterface $input,
+        OutputInterface $output,
+        array $choices,
+        ChoiceQuestion $question
+    ): int {
+        $io->text([
+            '',
+            sprintf('A: %s - %d', $waypoint->getName(), $waypoint->getId()),
+            sprintf('B: %s - %d', $test->getName(), $test->getId()),
+        ]);
+
+        if ($waypoint->getName() === $test->getName()) {
+            $this->entityManager->remove($test);
+            $this->entityManager->flush();
+            return 1;
+        }
+
+        $io->warning('Name mismatch!');
+        /** @var string $choice */
+        $choice = $helper->ask($input, $output, $question);
+
+        return $this->applyUserChoice($choice, $waypoint, $test, $choices);
+    }
+
+    /**
+     * @param string[] $choices
+     */
+    private function applyUserChoice(
+        string $choice,
+        Waypoint $waypoint,
+        Waypoint $test,
+        array $choices
+    ): int {
+        if ($choice === $choices[0]) {
+            $this->entityManager->remove($waypoint);
+            $this->entityManager->flush();
+            return 1;
+        }
+
+        if ($choice === $choices[1]) {
+            $this->entityManager->remove($test);
+            $this->entityManager->flush();
+            return 1;
+        }
+
+        if ($choice === $choices[2]) {
+            $waypoint->setName((string)$test->getName());
+            $this->entityManager->persist($waypoint);
+            $this->entityManager->flush();
+        } elseif ($choice === $choices[3]) {
+            $test->setName((string)$waypoint->getName());
+            $this->entityManager->persist($test);
+            $this->entityManager->flush();
+        }
+
+        return 0;
     }
 }

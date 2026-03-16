@@ -78,53 +78,72 @@ class ImportController extends AbstractController
     ): int
     {
         $currentWayPoints = $repository->findAll();
-
         $cnt = 0;
 
         foreach ($wayPoints as $wayPoint) {
-            foreach ($currentWayPoints as $currentWayPoint) {
-                if ($wayPoint->getLat() === $currentWayPoint->getLat()
-                    && $wayPoint->getLon() === $currentWayPoint->getLon()
-                ) {
-                    if ($currentWayPoint->getGuid() === $wayPoint->getGuid()) {
-                        // Waypoint already in DB
-                        if ($forceUpdate) {
-                            $currentWayPoint
-                                ->setName($wayPointHelper->cleanName((string)$wayPoint->getName()))
-                                ->setLat($wayPoint->getLat() ?? 0.0)
-                                ->setLon($wayPoint->getLon() ?? 0.0)
-                                ->setImage($wayPoint->getImage());
+            $existing = $this->findExistingWaypoint($wayPoint, $currentWayPoints);
 
-                            $entityManager->persist($currentWayPoint);
-                            ++$cnt;
-                        }
-
-                        continue 2;
-                    }
-
-                    if (!$currentWayPoint->getGuid() && $wayPoint->getGuid()) {
-                        // guid is missing
-                        $currentWayPoint->setGuid($wayPoint->getGuid());
-
-                        $entityManager->persist($currentWayPoint);
-                    }
-
-                    continue 2;
+            if ($existing instanceof Waypoint) {
+                if ($this->updateExistingWaypoint($existing, $wayPoint, $wayPointHelper, $entityManager, $forceUpdate)) {
+                    ++$cnt;
                 }
+
+                continue;
             }
 
-            // Waypoint not in DB
-            $wayPoint->setName(
-                $wayPointHelper->cleanName((string)$wayPoint->getName())
-            );
-
+            $wayPoint->setName($wayPointHelper->cleanName((string)$wayPoint->getName()));
             $entityManager->persist($wayPoint);
-
             ++$cnt;
         }
 
         $entityManager->flush();
 
         return $cnt;
+    }
+
+    /**
+     * @param Waypoint[] $existingWayPoints
+     */
+    private function findExistingWaypoint(Waypoint $newWayPoint, array $existingWayPoints): ?Waypoint
+    {
+        foreach ($existingWayPoints as $currentWayPoint) {
+            if ($newWayPoint->getLat() === $currentWayPoint->getLat()
+                && $newWayPoint->getLon() === $currentWayPoint->getLon()
+            ) {
+                return $currentWayPoint;
+            }
+        }
+
+        return null;
+    }
+
+    private function updateExistingWaypoint(
+        Waypoint $existing,
+        Waypoint $newWayPoint,
+        WayPointHelper $wayPointHelper,
+        EntityManagerInterface $entityManager,
+        bool $forceUpdate
+    ): bool {
+        if ($existing->getGuid() === $newWayPoint->getGuid()) {
+            if ($forceUpdate) {
+                $existing
+                    ->setName($wayPointHelper->cleanName((string)$newWayPoint->getName()))
+                    ->setLat($newWayPoint->getLat() ?? 0.0)
+                    ->setLon($newWayPoint->getLon() ?? 0.0)
+                    ->setImage($newWayPoint->getImage());
+
+                $entityManager->persist($existing);
+                return true;
+            }
+
+            return false;
+        }
+
+        if (!$existing->getGuid() && $newWayPoint->getGuid()) {
+            $existing->setGuid($newWayPoint->getGuid());
+            $entityManager->persist($existing);
+        }
+
+        return false;
     }
 }

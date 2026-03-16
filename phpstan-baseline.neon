@@ -1,18 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Cognitive complexity for "App\\Command\\FindDupesCommand\:\:execute\(\)" is 25, keep it under 10$#'
-			identifier: complexity.functionLike
-			count: 1
-			path: src/Command/FindDupesCommand.php
-
-		-
-			message: '#^Cognitive complexity for "App\\Controller\\ImportController\:\:storeWayPoints\(\)" is 20, keep it under 10$#'
-			identifier: complexity.functionLike
-			count: 1
-			path: src/Controller/ImportController.php
-
-		-
 			message: '#^Property App\\Entity\\Maxfield\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
 			identifier: property.unusedType
 			count: 1
