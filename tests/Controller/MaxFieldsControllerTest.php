@@ -340,4 +340,40 @@ final class MaxFieldsControllerTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
     }
+
+    public function testGetUserDataReturnsDataWhenExists(): void
+    {
+        $client = self::createClient();
+        $user = UserFactory::createOne(['role' => UserRole::AGENT]);
+        $maxfield = MaxfieldFactory::createOne(['owner' => $user, 'userData' => [1 => ['current_point' => '5']]]);
+        $client->loginUser($user);
+
+        $client->request(
+            Request::METHOD_POST,
+            '/maxfield/get-user-data/'.$maxfield->getPath(),
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: json_encode(['userId' => 1]) ?: '',
+        );
+
+        self::assertResponseIsSuccessful();
+        self::assertResponseFormatSame('json');
+        /** @var array<string, mixed> $data */
+        $data = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertSame('5', $data['current_point']);
+    }
+
+    public function testPlayRendersMapboxTemplateForMapboxUser(): void
+    {
+        $client = self::createClient();
+        $user = UserFactory::createOne([
+            'role' => UserRole::AGENT,
+            'params' => ['mapProvider' => 'mapbox', 'mapboxApiKey' => 'pk.test123'],
+        ]);
+        $maxfield = MaxfieldFactory::createOne(['owner' => $user]);
+        $client->loginUser($user);
+
+        $client->request(Request::METHOD_GET, '/maxfield/play/'.$maxfield->getPath());
+
+        self::assertResponseIsSuccessful();
+    }
 }
