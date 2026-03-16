@@ -36,7 +36,6 @@ final class WaypointsThumbnailControllerTest extends WebTestCase
         $img = imagecreatetruecolor(60, 60);
         $this->assertNotFalse($img);
         imagejpeg($img, $this->thumbsDir.'/'.self::TEST_GUID.'.jpg');
-        imagedestroy($img);
     }
 
     protected function tearDown(): void

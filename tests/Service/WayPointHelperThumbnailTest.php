@@ -34,7 +34,6 @@ final class WayPointHelperThumbnailTest extends TestCase
         $this->assertNotFalse($color);
         imagefill($img, 0, 0, $color);
         imagejpeg($img, $path);
-        imagedestroy($img);
     }
 
     public function testGetThumbnailPathCreatesThumb(): void

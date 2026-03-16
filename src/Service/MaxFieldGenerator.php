@@ -58,7 +58,7 @@ class MaxFieldGenerator
         }
 
         foreach ($wayPointMap as $fields) {
-            fputcsv($fp, $fields);
+            fputcsv($fp, $fields, escape: '\\');
         }
 
         fclose($fp);

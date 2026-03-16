@@ -152,22 +152,28 @@ readonly class MaxFieldHelper
     {
         $path = $this->rootDir.sprintf('/%s/portals_id_map.csv', $item);
         $map = [];
-        if (false !== ($handle = fopen($path, 'r'))) {
-            while (false !== ($data = fgetcsv($handle, 1000, ','))) {
-                $waypoint = new WaypointMap();
-
-                $waypoint->mapNo = (int)$data[0];
-                $waypoint->dbId = (int)$data[1];
-                $waypoint->guid = (string)$data[2];
-                $waypoint->name = (string)$data[3];
-
-                $map[] = $waypoint;
-            }
-
-            fclose($handle);
-        } else {
+        if (!file_exists($path)) {
             throw new InvalidArgumentException('Can not open '.$path);
         }
+
+        $handle = fopen($path, 'r');
+
+        if (false === $handle) {
+            throw new InvalidArgumentException('Can not open '.$path);
+        }
+
+        while (false !== ($data = fgetcsv($handle, 1000, ',', '"', escape: '\\'))) {
+            $waypoint = new WaypointMap();
+
+            $waypoint->mapNo = (int)$data[0];
+            $waypoint->dbId = (int)$data[1];
+            $waypoint->guid = (string)$data[2];
+            $waypoint->name = (string)$data[3];
+
+            $map[] = $waypoint;
+        }
+
+        fclose($handle);
 
         return $map;
     }
