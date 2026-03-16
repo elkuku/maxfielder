@@ -38,6 +38,7 @@ final class UserAdminCommandTest extends TestCase
         $ref = new ReflectionMethod($this->command, 'setRole');
         $result = $ref->invoke($this->command, $user, UserRole::ADMIN->value);
 
+        $this->assertInstanceOf(User::class, $result);
         $this->assertContains(UserRole::ADMIN->value, $result->getRoles());
     }
 }
