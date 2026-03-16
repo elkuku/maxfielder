@@ -72,6 +72,7 @@
         "symfony/stopwatch": "*",
         "symfony/var-dumper": "*",
         "symfony/web-profiler-bundle": "*",
+        "tomasvotruba/cognitive-complexity": "^1.0",
         "tomasvotruba/type-coverage": "^2.0",
         "zenstruck/foundry": "^2.9"
     },

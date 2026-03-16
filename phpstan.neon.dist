@@ -9,5 +9,8 @@ parameters:
 		param: 100
 		property: 100
 #		declare: 5
+	cognitive_complexity:
+		class: 50
+		function: 10
 includes:
 	- phpstan-baseline.neon
