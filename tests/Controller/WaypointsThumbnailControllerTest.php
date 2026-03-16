@@ -30,7 +30,7 @@ final class WaypointsThumbnailControllerTest extends WebTestCase
     {
         parent::setUp();
         $this->thumbsDir = dirname(__DIR__, 2).'/public/wp_images/thumbs';
-        (new Filesystem())->mkdir($this->thumbsDir);
+        new Filesystem()->mkdir($this->thumbsDir);
 
         // Create a minimal 60×60 JPEG as a pre-cached thumbnail
         $img = imagecreatetruecolor(60, 60);
@@ -40,7 +40,7 @@ final class WaypointsThumbnailControllerTest extends WebTestCase
 
     protected function tearDown(): void
     {
-        (new Filesystem())->remove($this->thumbsDir.'/'.self::TEST_GUID.'.jpg');
+        new Filesystem()->remove($this->thumbsDir.'/'.self::TEST_GUID.'.jpg');
         parent::tearDown();
     }
 

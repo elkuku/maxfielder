@@ -35,7 +35,7 @@ final class MaxFieldGeneratorTest extends TestCase
 
     protected function tearDown(): void
     {
-        (new Filesystem())->remove($this->tempDir);
+        new Filesystem()->remove($this->tempDir);
     }
 
     public function testConvertWayPointsToMaxFields(): void

@@ -95,7 +95,7 @@ class MaxFieldGenerator
                 '-v',
             ];
 
-            return ['sh', '-c', implode(' ', array_map('escapeshellarg', $command)).' > '.escapeshellarg($logFile).' 2>&1'];
+            return ['sh', '-c', implode(' ', array_map(escapeshellarg(...), $command)).' > '.escapeshellarg($logFile).' 2>&1'];
         }
 
         if ($this->dockerContainer !== '' && $this->dockerContainer !== '0') {
@@ -148,7 +148,7 @@ class MaxFieldGenerator
         $command[] = '--verbose';
 
         // Wrap in shell to redirect output to log file and run in background
-        return ['sh', '-c', implode(' ', array_map('escapeshellarg', $command)).' > '.escapeshellarg($logFile).' 2>&1'];
+        return ['sh', '-c', implode(' ', array_map(escapeshellarg(...), $command)).' > '.escapeshellarg($logFile).' 2>&1'];
     }
 
     /**

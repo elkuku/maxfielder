@@ -90,7 +90,7 @@ class MaxFieldsController extends BaseController
         $dbMaxfields = $this->maxfieldRepository->findAll();
         $maxfields = [];
         foreach ($dbMaxfields as $maxfield) {
-            $maxfieldStatus = (new MaxfieldStatus($this->maxFieldHelper))
+            $maxfieldStatus = new MaxfieldStatus($this->maxFieldHelper)
                 ->fromMaxfield($maxfield);
             $maxfields[] = $maxfieldStatus;
 
@@ -230,7 +230,7 @@ class MaxFieldsController extends BaseController
             'maxfield/play.html.twig',
             [
                 'maxfield' => $maxfield,
-                'jsonData' => (new JsonHelper())
+                'jsonData' => new JsonHelper()
                     ->getJson($this->maxFieldHelper->getParser($path)),
                 'waypointIdMap' => $this->maxFieldHelper->getWaypointsIdMap($path),
             ]
@@ -241,7 +241,7 @@ class MaxFieldsController extends BaseController
     public function getData(Maxfield $maxfield): JsonResponse
     {
         $path = $maxfield->getPath() ?? '';
-        $json = (new JsonHelper())
+        $json = new JsonHelper()
             ->getJsonData($this->maxFieldHelper->getParser($path));
 
         return $this->json([
@@ -301,7 +301,7 @@ class MaxFieldsController extends BaseController
             $options
         );
 
-        $maxfield = (new Maxfield())
+        $maxfield = new Maxfield()
             ->setName($maxfieldType->buildName)
             ->setPath($projectName)
             ->setOwner($this->getUser());
@@ -411,7 +411,7 @@ class MaxFieldsController extends BaseController
     #[Route(path: 'maxfield/status/{id}', name: 'maxfield_status', methods: ['GET'])]
     public function status(Maxfield $maxfield): JsonResponse
     {
-        $status = (new MaxfieldStatus($this->maxFieldHelper))
+        $status = new MaxfieldStatus($this->maxFieldHelper)
             ->fromMaxfield($maxfield);
 
         return $this->json($status);

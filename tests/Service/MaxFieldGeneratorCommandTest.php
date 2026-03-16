@@ -21,7 +21,7 @@ final class MaxFieldGeneratorCommandTest extends TestCase
 
     protected function tearDown(): void
     {
-        (new Filesystem())->remove($this->tempDir);
+        new Filesystem()->remove($this->tempDir);
     }
 
     /**

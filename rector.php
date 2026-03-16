@@ -19,6 +19,7 @@ try {
         ->withSymfonyContainerXml(__DIR__.'/var/cache/dev/App_KernelDevDebugContainer.xml')
         ->withSymfonyContainerPhp(__DIR__.'/tests/symfony-container.php')
         ->registerService(SymfonyRoutesProvider::class, SymfonyRoutesProviderInterface::class)
+        ->withPhpSets(php85: true)
         ->withPreparedSets(
             deadCode: true,
             codeQuality: true,

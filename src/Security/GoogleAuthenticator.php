@@ -75,7 +75,7 @@ class GoogleAuthenticator extends AbstractAuthenticator
         $email = $googleUser->getEmail();
         /** @var string $googleId */
         $googleId = $googleUser->getId();
-        $user = (new User())
+        $user = new User()
             ->setIdentifier($email)
             ->setGoogleId($googleId);
 

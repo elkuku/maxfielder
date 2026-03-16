@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use Override;
 use App\Entity\Waypoint;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
@@ -19,6 +20,7 @@ class WaypointCrudController extends AbstractCrudController
         return Waypoint::class;
     }
 
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         return [

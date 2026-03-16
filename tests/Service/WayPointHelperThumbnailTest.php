@@ -23,7 +23,7 @@ final class WayPointHelperThumbnailTest extends TestCase
 
     protected function tearDown(): void
     {
-        (new Filesystem())->remove($this->tempDir);
+        new Filesystem()->remove($this->tempDir);
     }
 
     private function createTestJpeg(string $path): void
@@ -104,7 +104,7 @@ final class WayPointHelperThumbnailTest extends TestCase
             $this->assertFalse($result);
             $this->assertDirectoryExists($tempDir.'/public/wp_images');
         } finally {
-            (new Filesystem())->remove($tempDir);
+            new Filesystem()->remove($tempDir);
         }
     }
 
@@ -131,7 +131,7 @@ final class WayPointHelperThumbnailTest extends TestCase
             $this->assertFileExists($thumbPath);
             $this->assertDirectoryExists($tempDir.'/public/wp_images/thumbs');
         } finally {
-            (new Filesystem())->remove($tempDir);
+            new Filesystem()->remove($tempDir);
         }
     }
 
@@ -156,7 +156,7 @@ final class WayPointHelperThumbnailTest extends TestCase
 
             $this->assertFileExists($thumbPath);
         } finally {
-            (new Filesystem())->remove($tempDir);
+            new Filesystem()->remove($tempDir);
             if (file_exists($sourcePath)) {
                 unlink($sourcePath);
             }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
+use Override;
 use App\Entity\Maxfield;
 use App\Entity\Waypoint;
 use App\Service\MaxFieldHelper;
@@ -18,6 +19,7 @@ class AppExtension extends AbstractExtension
         private readonly MaxFieldHelper $maxFieldHelper,
     ) {}
 
+    #[Override]
     public function getFunctions(): array
     {
         return [

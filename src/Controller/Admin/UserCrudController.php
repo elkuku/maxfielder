@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use Override;
 use App\Entity\User;
 use App\Enum\UserRole;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -21,6 +22,7 @@ class UserCrudController extends AbstractCrudController
         return User::class;
     }
 
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         return [

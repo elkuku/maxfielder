@@ -55,7 +55,7 @@ abstract class AbstractParser
         string $image,
     ): Waypoint
     {
-        return (new Waypoint())
+        return new Waypoint()
             ->setGuid($guid)
             ->setName($name)
             ->setLat($lat)

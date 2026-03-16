@@ -23,7 +23,7 @@ final class MaxfieldStatusTest extends TestCase
 
         $maxfield = $this->createMaxfield(1, 'Test Field', 'test-path');
 
-        $status = (new MaxfieldStatus($helper))->fromMaxfield($maxfield);
+        $status = new MaxfieldStatus($helper)->fromMaxfield($maxfield);
 
         $this->assertSame(1, $status->getId());
         $this->assertSame('Test Field', $status->getName());
@@ -45,7 +45,7 @@ final class MaxfieldStatusTest extends TestCase
 
         $maxfield = $this->createMaxfield(2, 'Error Field', 'error-path');
 
-        $status = (new MaxfieldStatus($helper))->fromMaxfield($maxfield);
+        $status = new MaxfieldStatus($helper)->fromMaxfield($maxfield);
 
         $this->assertSame('error', $status->getStatus());
         $this->assertFalse($status->isFilesFinished());
@@ -61,7 +61,7 @@ final class MaxfieldStatusTest extends TestCase
 
         $maxfield = $this->createMaxfield(3, 'Running Field', 'running-path');
 
-        $status = (new MaxfieldStatus($helper))->fromMaxfield($maxfield);
+        $status = new MaxfieldStatus($helper)->fromMaxfield($maxfield);
 
         $this->assertSame('running', $status->getStatus());
     }
@@ -76,7 +76,7 @@ final class MaxfieldStatusTest extends TestCase
 
         $maxfield = $this->createMaxfield(4, 'Missing Field', 'missing-path');
 
-        $status = (new MaxfieldStatus($helper))->fromMaxfield($maxfield);
+        $status = new MaxfieldStatus($helper)->fromMaxfield($maxfield);
 
         $this->assertSame('X', $status->getStatus());
     }

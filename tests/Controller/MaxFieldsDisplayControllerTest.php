@@ -36,7 +36,7 @@ final class MaxFieldsDisplayControllerTest extends WebTestCase
 
     protected function tearDown(): void
     {
-        (new Filesystem())->remove($this->fixtureDir);
+        new Filesystem()->remove($this->fixtureDir);
         parent::tearDown();
     }
 

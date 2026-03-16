@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use Override;
 use App\Entity\Maxfield;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -20,6 +21,7 @@ class MaxfieldsCrudController extends AbstractCrudController
         return Maxfield::class;
     }
 
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         return [

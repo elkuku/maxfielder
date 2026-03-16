@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use Override;
 use App\Entity\Maxfield;
 use App\Entity\User;
 use App\Entity\Waypoint;
@@ -22,6 +23,7 @@ class DashboardController extends AbstractDashboardController
 {
     public function __construct(private readonly UserRepository $userRepository) {}
 
+    #[Override]
     public function index(): Response
     {
         $users = $this->userRepository->findAll();
@@ -31,12 +33,14 @@ class DashboardController extends AbstractDashboardController
         ]);
     }
 
+    #[Override]
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
             ->setTitle('Playground One Admin');
     }
 
+    #[Override]
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToCrud('Users', 'fa fa-users', User::class);
