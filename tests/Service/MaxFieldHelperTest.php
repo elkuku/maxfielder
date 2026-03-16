@@ -7,6 +7,7 @@ namespace App\Tests\Service;
 use InvalidArgumentException;
 use App\Service\MaxFieldHelper;
 use Elkuku\MaxfieldParser\MaxfieldParser;
+use Elkuku\MaxfieldParser\Type\MaxField;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
@@ -231,6 +232,22 @@ final class MaxFieldHelperTest extends TestCase
         $parser = $helper->getParser();
 
         $this->assertInstanceOf(MaxfieldParser::class, $parser);
+    }
+
+    public function testGetMaxFieldParsesFixtureFiles(): void
+    {
+        $item = 'test-field';
+        $root = $this->tempDir.'/public/maxfields/'.$item;
+        mkdir($root, 0777, true);
+        file_put_contents($root.'/portals.txt', "Portal Alpha; https://intel.ingress.com/intel?pll=48.0,11.0\n");
+        file_put_contents($root.'/key_preparation.csv', "KeysNeeded, KeysHave, KeysRemaining, PortalNum, PortalName\n0, 0, 0, 0, Portal Alpha\n");
+        file_put_contents($root.'/agent_assignments.csv', "LinkNum, Agent, OriginNum, OriginName, DestinationNum, DestinationName\n");
+        file_put_contents($root.'/agent_key_preparation.csv', "Agent, PortalNum, PortalName, KeysNeeded\n");
+
+        $helper = new MaxFieldHelper($this->tempDir, 6);
+        $maxField = $helper->getMaxField($item);
+
+        $this->assertInstanceOf(MaxField::class, $maxField);
     }
 
     private function removeDirectory(string $dir): void

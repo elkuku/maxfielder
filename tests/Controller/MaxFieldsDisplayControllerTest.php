@@ -115,4 +115,27 @@ final class MaxFieldsDisplayControllerTest extends WebTestCase
         $data = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('result', $data);
     }
+
+    public function testSubmitUserDataWithNoMatchingKeysReturnsError(): void
+    {
+        $client = self::createClient();
+        $user = UserFactory::createOne(['role' => UserRole::AGENT]);
+        MaxfieldFactory::createOne(['owner' => $user, 'path' => self::TEST_PATH]);
+        $client->loginUser($user);
+
+        // Keys string with a guid that does NOT match anything in portals_id_map.csv
+        $keys = "Name\tLink\tGUID\tCount\tCapsules\n"
+            ."Unknown Portal\thttp://intel\tnon-matching-guid\t1\tcapsule-1";
+
+        $client->request(
+            Request::METHOD_POST,
+            '/maxfield/submit-user-data/'.self::TEST_PATH,
+            content: json_encode(['agentNum' => 1, 'keys' => $keys]) ?: '',
+        );
+
+        self::assertResponseStatusCodeSame(404);
+        /** @var array<string, mixed> $data */
+        $data = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('error', $data);
+    }
 }
