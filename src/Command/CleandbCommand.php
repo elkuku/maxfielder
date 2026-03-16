@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Entity\Waypoint;
 use App\Repository\WaypointRepository;
 use App\Service\WayPointHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,43 +44,9 @@ class CleandbCommand extends Command
         $progressBar = new ProgressBar($output, count($waypoints));
 
         foreach ($waypoints as $waypoint) {
-            if (!$waypoint->getLat() || !$waypoint->getLon()) {
-                $io->error(
-                    sprintf('"%s" missing location', $waypoint->getName())
-                );
-                ++$errorCount;
-                $this->entityManager->remove($waypoint);
-            }
-
-            if (!$waypoint->getName()) {
-                $io->error(sprintf('"%s" missing name', $waypoint->getName()));
-                ++$errorCount;
-                $this->entityManager->remove($waypoint);
-            }
-
-            if ('undefined' === $waypoint->getName()) {
-                $io->error(sprintf('"%s" name', $waypoint->getName()));
-                ++$errorCount;
-                $this->entityManager->remove($waypoint);
-            }
-
-            $cleanName = $this->wayPointHelper->cleanName(
-                (string)$waypoint->getName()
-            );
-
-            if ($waypoint->getName() !== $cleanName) {
-                $io->warning(
-                    sprintf(
-                        '"%s" dirty title "%s" clean title',
-                        $waypoint->getName(),
-                        $cleanName
-                    )
-                );
-                ++$warningCount;
-                $waypoint->setName($cleanName);
-                $this->entityManager->persist($waypoint);
-            }
-
+            [$errs, $warns] = $this->processWaypoint($waypoint, $io);
+            $errorCount += $errs;
+            $warningCount += $warns;
             $progressBar->advance();
         }
 
@@ -102,5 +69,45 @@ class CleandbCommand extends Command
         }
 
         return Command::FAILURE;
+    }
+
+    /**
+     * @return array{int, int}
+     */
+    private function processWaypoint(Waypoint $waypoint, SymfonyStyle $io): array
+    {
+        $errorCount = 0;
+        $warningCount = 0;
+
+        if (!$waypoint->getLat() || !$waypoint->getLon()) {
+            $io->error(sprintf('"%s" missing location', $waypoint->getName()));
+            ++$errorCount;
+            $this->entityManager->remove($waypoint);
+        }
+
+        if (!$waypoint->getName()) {
+            $io->error(sprintf('"%s" missing name', $waypoint->getName()));
+            ++$errorCount;
+            $this->entityManager->remove($waypoint);
+        }
+
+        if ('undefined' === $waypoint->getName()) {
+            $io->error(sprintf('"%s" name', $waypoint->getName()));
+            ++$errorCount;
+            $this->entityManager->remove($waypoint);
+        }
+
+        $cleanName = $this->wayPointHelper->cleanName((string) $waypoint->getName());
+
+        if ($waypoint->getName() !== $cleanName) {
+            $io->warning(
+                sprintf('"%s" dirty title "%s" clean title', $waypoint->getName(), $cleanName)
+            );
+            ++$warningCount;
+            $waypoint->setName($cleanName);
+            $this->entityManager->persist($waypoint);
+        }
+
+        return [$errorCount, $warningCount];
     }
 }

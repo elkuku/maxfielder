@@ -11,6 +11,6 @@ parameters:
 #		declare: 5
 	cognitive_complexity:
 		class: 50
-		function: 10
+		function: 8
 includes:
 	- phpstan-baseline.neon

@@ -98,6 +98,24 @@ class MaxFieldGenerator
             return ['sh', '-c', implode(' ', array_map(escapeshellarg(...), $command)).' > '.escapeshellarg($logFile).' 2>&1'];
         }
 
+        $command = $this->buildExternalCommand($projectRoot, $fileName, $playersNum, $options);
+
+        // Wrap in shell to redirect output to log file and run in background
+        return ['sh', '-c', implode(' ', array_map(escapeshellarg(...), $command)).' > '.escapeshellarg($logFile).' 2>&1'];
+    }
+
+    /**
+     * @param array<string, bool> $options
+     *
+     * @return list<string>
+     */
+    private function buildExternalCommand(
+        string $projectRoot,
+        string $fileName,
+        int $playersNum,
+        array $options,
+    ): array
+    {
         if ($this->dockerContainer !== '' && $this->dockerContainer !== '0') {
             $command = [
                 'docker', 'run',
@@ -137,6 +155,17 @@ class MaxFieldGenerator
             $command[] = $this->googleApiSecret;
         }
 
+        return $this->appendCommandOptions($command, $options);
+    }
+
+    /**
+     * @param list<string> $command
+     * @param array<string, bool> $options
+     *
+     * @return list<string>
+     */
+    private function appendCommandOptions(array $command, array $options): array
+    {
         if ($options['skip_plots']) {
             $command[] = '--skip_plots';
         }
@@ -147,8 +176,7 @@ class MaxFieldGenerator
 
         $command[] = '--verbose';
 
-        // Wrap in shell to redirect output to log file and run in background
-        return ['sh', '-c', implode(' ', array_map(escapeshellarg(...), $command)).' > '.escapeshellarg($logFile).' 2>&1'];
+        return $command;
     }
 
     /**
