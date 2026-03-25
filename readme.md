@@ -23,17 +23,6 @@ bin/stop
 
 Two import formats are supported. Paste the JSON data into the corresponding field on the import page.
 
-**Multi Export JSON** (portal multi export by modkin)
-
-Use the IITC plugin to export portals in JSON format:
-
-* https://raw.githubusercontent.com/IITC-CE/Community-plugins/master/dist/modkin/multi_export.user.js
-
-Expected format:
-```json
-[{"guid":"...","title":"Portal Name","coordinates":{"lat":0.0,"lng":0.0},"image":"..."}]
-```
-
 **KExport** (IITC export by elkuku)
 
 Use the IITC community plugin:
@@ -43,6 +32,17 @@ Use the IITC community plugin:
 Expected format:
 ```json
 [{"guid":"...","title":"Portal Name","lat":0.0,"lng":0.0,"image":"..."}]
+```
+
+**Multi Export JSON** (portal multi export by modkin)
+
+Use the IITC plugin to export portals in JSON format:
+
+* https://raw.githubusercontent.com/IITC-CE/Community-plugins/master/dist/modkin/multi_export.user.js
+
+Expected format:
+```json
+[{"guid":"...","title":"Portal Name","coordinates":{"lat":0.0,"lng":0.0},"image":"..."}]
 ```
 
 Both formats support an optional **Import Images** checkbox to download portal images, and a **Force Update** checkbox to overwrite existing waypoints with matching coordinates.
