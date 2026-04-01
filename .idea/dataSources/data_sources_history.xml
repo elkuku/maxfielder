@@ -1,11 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="dataSourceStorageLocal" created-in="PS-261.22158.283">
-    <data-source name="main@localhost" uuid="c0cdd19a-8434-48d8-b232-87e9bff9ec47">
+<DataSourcesHistory>
+  <DataSourceFromHistory isRemovedFromProject="false">
+    <data-source source="LOCAL" name="main@localhost" uuid="c0cdd19a-8434-48d8-b232-87e9bff9ec47">
       <database-info product="PostgreSQL" version="13.12" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.6.0" dbms="POSTGRES" exact-version="13.12" exact-driver-version="42.6">
         <identifier-quote-string>&quot;</identifier-quote-string>
       </database-info>
       <case-sensitivity plain-identifiers="lower" quoted-identifiers="exact" />
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:32769/main</jdbc-url>
       <secret-storage>master_key</secret-storage>
       <user-name>main</user-name>
       <schema-mapping>
@@ -23,12 +26,19 @@
           </node>
         </introspection-scope>
       </schema-mapping>
+      <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source name="postgres_test@localhost" uuid="f928eadd-a351-4a66-b292-5fa79420e180">
+  </DataSourceFromHistory>
+  <DataSourceFromHistory isRemovedFromProject="false">
+    <data-source source="LOCAL" name="postgres_test@localhost" uuid="f928eadd-a351-4a66-b292-5fa79420e180">
       <database-info product="PostgreSQL" version="13.1" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.2.5" dbms="POSTGRES" exact-version="13.1" exact-driver-version="42.2">
         <identifier-quote-string>&quot;</identifier-quote-string>
       </database-info>
       <case-sensitivity plain-identifiers="lower" quoted-identifiers="exact" />
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:32770/main_test</jdbc-url>
       <secret-storage>master_key</secret-storage>
       <user-name>main</user-name>
       <schema-mapping>
@@ -38,6 +48,7 @@
           </node>
         </introspection-scope>
       </schema-mapping>
+      <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-  </component>
-</project>
+  </DataSourceFromHistory>
+</DataSourcesHistory>
