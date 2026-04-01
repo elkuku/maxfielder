@@ -248,22 +248,31 @@ export default class extends Controller {
 
     handleDraw(e) {
         const polygon = e.features[0]
+        const source = this.map.getSource('waypoints')
 
-        const points = this.map.queryRenderedFeatures({
-            layers: ['unclustered-point']
-        })
-
+        const points = this.map.queryRenderedFeatures({ layers: ['unclustered-point'] })
         points.forEach(f => {
-            if (
-                booleanPointInPolygon(
-                    f.geometry.coordinates,
-                    polygon.geometry
-                )
-            ) {
+            if (booleanPointInPolygon(f.geometry.coordinates, polygon.geometry)) {
                 this.selectionMode === 'remove'
                     ? this.removeMarker(f.id)
                     : this.addMarker(f.id)
             }
+        })
+
+        const clusters = this.map.queryRenderedFeatures({ layers: ['clusters'] })
+        clusters.forEach(cluster => {
+            const clusterId = cluster.properties.cluster_id
+            const pointCount = cluster.properties.point_count
+            source.getClusterLeaves(clusterId, pointCount, 0, (err, leaves) => {
+                if (err) return
+                leaves.forEach(leaf => {
+                    if (booleanPointInPolygon(leaf.geometry.coordinates, polygon.geometry)) {
+                        this.selectionMode === 'remove'
+                            ? this.removeMarker(leaf.id)
+                            : this.addMarker(leaf.id)
+                    }
+                })
+            })
         })
 
         this.draw.deleteAll()
