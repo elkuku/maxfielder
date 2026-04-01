@@ -62,9 +62,35 @@ export default class extends Controller {
 
         this.map.on('moveend', () => this.loadMarkers())
 
+        this.map.on('click', 'clusters', (e) => {
+            const features = this.map.queryRenderedFeatures(e.point, { layers: ['clusters'] })
+            const clusterId = features[0].properties.cluster_id
+            this.map.getSource('waypoints').getClusterExpansionZoom(clusterId, (err, zoom) => {
+                if (err) return
+                this.map.easeTo({
+                    center: features[0].geometry.coordinates,
+                    zoom
+                })
+            })
+        })
+
         this.map.on('click', 'unclustered-point', (e) => {
             const id = e.features[0].id
             this.toggleMarker(id)
+        })
+
+        this.map.on('mouseenter', 'clusters', () => {
+            this.map.getCanvas().style.cursor = 'pointer'
+        })
+        this.map.on('mouseleave', 'clusters', () => {
+            this.map.getCanvas().style.cursor = ''
+        })
+
+        this.map.on('mouseenter', 'unclustered-point', () => {
+            this.map.getCanvas().style.cursor = 'pointer'
+        })
+        this.map.on('mouseleave', 'unclustered-point', () => {
+            this.map.getCanvas().style.cursor = ''
         })
 
         this.map.on('draw.create', (e) => this.handleDraw(e))
