@@ -26,6 +26,10 @@ export default class extends Controller {
     selectedMarkers = []
     selectionMode = 'add'
 
+    rectDrawing = false
+    rectStart = null
+    rectEl = null
+
     connect() {
         mapboxgl.accessToken = this.tokenValue
 
@@ -45,7 +49,6 @@ export default class extends Controller {
             displayControlsDefault: false,
             controls: {
                 polygon: true,
-                rectangle: true
             }
         })
 
@@ -56,6 +59,7 @@ export default class extends Controller {
             this.initLayers()
             this.loadMarkers()
             this.initControls()
+            this.initRectEvents()
 
             // Fix for map only showing partial content on initial load
             setTimeout(() => this.map.resize(), 100)
@@ -111,6 +115,68 @@ export default class extends Controller {
 
         wrapControl(document.getElementById('selection-count'))
         wrapControl(document.getElementById('controls-container'))
+    }
+
+    initRectEvents() {
+        const canvas = this.map.getCanvas()
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (!this.rectDrawing) return
+            const rect = canvas.getBoundingClientRect()
+            this.rectStart = { x: e.clientX - rect.left, y: e.clientY - rect.top }
+
+            this.rectEl = document.createElement('div')
+            this.rectEl.style.cssText = 'position:absolute;border:2px dashed #fff;background:rgba(255,255,255,0.15);pointer-events:none;z-index:1;'
+            this.rectEl.style.left = this.rectStart.x + 'px'
+            this.rectEl.style.top = this.rectStart.y + 'px'
+            this.map.getCanvasContainer().appendChild(this.rectEl)
+        })
+
+        document.addEventListener('mousemove', (e) => {
+            if (!this.rectDrawing || !this.rectStart || !this.rectEl) return
+            const rect = canvas.getBoundingClientRect()
+            const x = e.clientX - rect.left
+            const y = e.clientY - rect.top
+            Object.assign(this.rectEl.style, {
+                left: Math.min(x, this.rectStart.x) + 'px',
+                top: Math.min(y, this.rectStart.y) + 'px',
+                width: Math.abs(x - this.rectStart.x) + 'px',
+                height: Math.abs(y - this.rectStart.y) + 'px'
+            })
+        })
+
+        document.addEventListener('mouseup', (e) => {
+            if (!this.rectDrawing || !this.rectStart) return
+            this.rectDrawing = false
+            this.map.getCanvas().style.cursor = ''
+            this.map.dragPan.enable()
+
+            if (this.rectEl) {
+                this.rectEl.remove()
+                this.rectEl = null
+            }
+
+            const rect = canvas.getBoundingClientRect()
+            const endX = e.clientX - rect.left
+            const endY = e.clientY - rect.top
+
+            const sw = this.map.unproject([Math.min(endX, this.rectStart.x), Math.max(endY, this.rectStart.y)])
+            const ne = this.map.unproject([Math.max(endX, this.rectStart.x), Math.min(endY, this.rectStart.y)])
+
+            const polygon = {
+                type: 'Polygon',
+                coordinates: [[
+                    [sw.lng, sw.lat],
+                    [ne.lng, sw.lat],
+                    [ne.lng, ne.lat],
+                    [sw.lng, ne.lat],
+                    [sw.lng, sw.lat]
+                ]]
+            }
+
+            this.selectWithPolygon(polygon)
+            this.rectStart = null
+        })
     }
 
     /* -----------------------------
@@ -275,12 +341,16 @@ export default class extends Controller {
      * ----------------------------- */
 
     handleDraw(e) {
-        const polygon = e.features[0]
+        this.selectWithPolygon(e.features[0].geometry)
+        this.draw.deleteAll()
+    }
+
+    selectWithPolygon(polygon) {
         const source = this.map.getSource('waypoints')
 
         const points = this.map.queryRenderedFeatures({ layers: ['unclustered-point'] })
         points.forEach(f => {
-            if (booleanPointInPolygon(f.geometry.coordinates, polygon.geometry)) {
+            if (booleanPointInPolygon(f.geometry.coordinates, polygon)) {
                 this.selectionMode === 'remove'
                     ? this.removeMarker(f.id)
                     : this.addMarker(f.id)
@@ -294,7 +364,7 @@ export default class extends Controller {
             source.getClusterLeaves(clusterId, pointCount, 0, (err, leaves) => {
                 if (err) return
                 leaves.forEach(leaf => {
-                    if (booleanPointInPolygon(leaf.geometry.coordinates, polygon.geometry)) {
+                    if (booleanPointInPolygon(leaf.geometry.coordinates, polygon)) {
                         this.selectionMode === 'remove'
                             ? this.removeMarker(leaf.id)
                             : this.addMarker(leaf.id)
@@ -302,8 +372,6 @@ export default class extends Controller {
                 })
             })
         })
-
-        this.draw.deleteAll()
     }
 
     /* -----------------------------
@@ -311,7 +379,9 @@ export default class extends Controller {
      * ----------------------------- */
 
     drawRect() {
-        this.draw.changeMode('draw_rectangle')
+        this.rectDrawing = true
+        this.map.getCanvas().style.cursor = 'crosshair'
+        this.map.dragPan.disable()
     }
 
     drawPoly() {
