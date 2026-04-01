@@ -55,6 +55,7 @@ export default class extends Controller {
             this.initSource()
             this.initLayers()
             this.loadMarkers()
+            this.initControls()
 
             // Fix for map only showing partial content on initial load
             setTimeout(() => this.map.resize(), 100)
@@ -96,6 +97,20 @@ export default class extends Controller {
         this.map.on('draw.create', (e) => this.handleDraw(e))
 
         this.modal = new Modal(this.modalTarget)
+    }
+
+    initControls() {
+        const container = document.querySelector('.mapboxgl-ctrl-top-left')
+
+        const wrapControl = (el) => {
+            const wrapper = document.createElement('div')
+            wrapper.className = 'mapboxgl-ctrl'
+            wrapper.appendChild(el)
+            container.appendChild(wrapper)
+        }
+
+        wrapControl(document.getElementById('selection-count'))
+        wrapControl(document.getElementById('controls-container'))
     }
 
     /* -----------------------------

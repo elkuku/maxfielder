@@ -12,10 +12,6 @@ html, body, #map {
 }
 
 #selection-count {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 1;
     font-size: 3em;
     color: #07bf05;
     text-shadow: 2px 2px #666666;
@@ -23,8 +19,5 @@ html, body, #map {
 }
 
 #controls-container {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 1;
+    padding: 5px;
 }
