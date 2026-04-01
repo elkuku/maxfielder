@@ -138,7 +138,12 @@ export default class extends Controller {
             filter: ['has', 'point_count'],
             paint: {
                 'circle-radius': 18,
-                'circle-color': '#ff9900'
+                'circle-color': [
+                    'case',
+                    ['==', ['coalesce', ['feature-state', 'selectedCount'], 0], ['get', 'point_count']], '#ff0000',
+                    ['>', ['coalesce', ['feature-state', 'selectedCount'], 0], 0], '#ffff00',
+                    '#ff9900'
+                ]
             }
         })
 
@@ -207,6 +212,8 @@ export default class extends Controller {
                 { selected: true }
             )
         })
+
+        this.map.once('idle', () => this.updateClusterColors())
     }
 
     /* -----------------------------
@@ -228,6 +235,7 @@ export default class extends Controller {
             { selected: true }
         )
         this.counterTarget.innerText = this.selectedMarkers.length
+        this.updateClusterColors()
     }
 
     removeMarker(id) {
@@ -240,6 +248,26 @@ export default class extends Controller {
             { selected: false }
         )
         this.counterTarget.innerText = this.selectedMarkers.length
+        this.updateClusterColors()
+    }
+
+    updateClusterColors() {
+        const source = this.map.getSource('waypoints')
+        if (!source) return
+
+        const clusters = this.map.queryRenderedFeatures({ layers: ['clusters'] })
+        clusters.forEach(cluster => {
+            const clusterId = cluster.properties.cluster_id
+            const pointCount = cluster.properties.point_count
+            source.getClusterLeaves(clusterId, pointCount, 0, (err, leaves) => {
+                if (err) return
+                const selectedCount = leaves.filter(leaf => this.selectedMarkers.includes(leaf.id)).length
+                this.map.setFeatureState(
+                    { source: 'waypoints', id: clusterId },
+                    { selectedCount }
+                )
+            })
+        })
     }
 
     /* -----------------------------
