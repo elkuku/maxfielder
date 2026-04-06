@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\DeadCode\Rector\Cast\RecastingRemovalRector;
 use Rector\Exception\Configuration\InvalidConfigurationException;
 use Rector\Symfony\Bridge\Symfony\Routing\SymfonyRoutesProvider;
 use Rector\Symfony\Contract\Bridge\Symfony\Routing\SymfonyRoutesProviderInterface;
@@ -14,7 +15,12 @@ try {
             __DIR__.'/src',
             __DIR__.'/tests',
         ])
-        ->withSkip([__DIR__.'/src/Service/PhpXlsxGenerator.php',])
+        ->withSkip([
+            __DIR__.'/src/Service/PhpXlsxGenerator.php',
+            RecastingRemovalRector::class => [
+                __DIR__.'/src/Entity/User.php',
+            ],
+        ])
         //
         ->withSymfonyContainerXml(__DIR__.'/var/cache/dev/App_KernelDevDebugContainer.xml')
         ->withSymfonyContainerPhp(__DIR__.'/tests/symfony-container.php')
