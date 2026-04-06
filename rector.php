@@ -17,6 +17,7 @@ try {
         ])
         ->withSkip([
             __DIR__.'/src/Service/PhpXlsxGenerator.php',
+            __DIR__.'/tests/bootstrap.php',
             RecastingRemovalRector::class => [
                 __DIR__.'/src/Entity/User.php',
             ],

@@ -14,11 +14,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserController extends BaseController
 {
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
+
     #[Route('/profile', name: 'app_profile', methods: ['GET', 'POST'])]
     #[IsGranted(UserRole::USER->value)]
     public function profile(
         Request $request,
-        EntityManagerInterface $entityManager,
     ): Response
     {
         $user = $this->getUser();
@@ -30,7 +33,7 @@ class UserController extends BaseController
             $params = (array) $form->getData();
             $user?->setParams($params);
 
-            $entityManager->flush();
+            $this->entityManager->flush();
 
             $this->addFlash('success', 'User data have been saved.');
 

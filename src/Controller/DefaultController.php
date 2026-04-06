@@ -29,7 +29,8 @@ class DefaultController extends BaseController
         if ($partial) {
             if (in_array(
                 $partial,
-                ['searchPreview', 'favourites', 'contentList']
+                ['searchPreview', 'favourites', 'contentList'],
+                true
             )
             ) {
                 $template = '_' . $partial;

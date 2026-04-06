@@ -24,7 +24,8 @@ class WaypointsController extends AbstractController
 {
     public function __construct(
         private readonly WaypointRepository $repository,
-        private readonly WayPointHelper $wayPointHelper
+        private readonly WayPointHelper $wayPointHelper,
+        private readonly EntityManagerInterface $entityManager
     ) {}
 
     #[Route(path: '/waypoint/{id}', name: 'waypoints_edit', methods: [
@@ -34,8 +35,7 @@ class WaypointsController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function edit(
         Request $request,
-        Waypoint $waypoint,
-        EntityManagerInterface $entityManager
+        Waypoint $waypoint
     ): RedirectResponse|Response
     {
         $form = $this->createForm(WaypointFormType::class, $waypoint);
@@ -43,8 +43,8 @@ class WaypointsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $waypoint = $form->getData();
-            $entityManager->persist($waypoint);
-            $entityManager->flush();
+            $this->entityManager->persist($waypoint);
+            $this->entityManager->flush();
             $this->addFlash('success', 'Waypoint updated!');
 
             return $this->redirectToRoute('default');
@@ -62,13 +62,12 @@ class WaypointsController extends AbstractController
     #[Route(path: '/waypoint-remove/{id}', name: 'waypoints_remove', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function remove(
-        Waypoint $waypoint,
-        EntityManagerInterface $entityManager
+        Waypoint $waypoint
     ): RedirectResponse
     {
-        $entityManager->remove($waypoint);
+        $this->entityManager->remove($waypoint);
 
-        $entityManager->flush();
+        $this->entityManager->flush();
 
         $this->addFlash('success', 'Waypoint removed!');
 

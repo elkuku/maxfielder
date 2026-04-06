@@ -24,12 +24,12 @@ class ImportController extends AbstractController
         private readonly WaypointRepository $waypointRepo,
         private readonly WayPointParser $wayPointParser,
         private readonly WayPointHelper $wayPointHelper,
+        private readonly EntityManagerInterface $entityManager,
     ) {}
 
     #[Route(path: '/import', name: 'import', methods: ['GET', 'POST'])]
     public function index(
         Request $request,
-        EntityManagerInterface $entityManager,
     ): Response
     {
         $form = $this->createForm(ImportFormType::class);
@@ -43,7 +43,7 @@ class ImportController extends AbstractController
                     $waypoints,
                     $this->waypointRepo,
                     $this->wayPointHelper,
-                    $entityManager,
+                    $this->entityManager,
                     isset($data['forceUpdate']) && (bool) $data['forceUpdate'],
                 );
                 if ($count !== 0) {

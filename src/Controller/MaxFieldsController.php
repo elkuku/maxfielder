@@ -44,7 +44,8 @@ class MaxFieldsController extends BaseController
         private readonly IngressHelper $ingressHelper,
         private readonly WaypointRepository $repository,
         private readonly MaxFieldGenerator $maxFieldGenerator,
-        private readonly RouterInterface $router
+        private readonly RouterInterface $router,
+        private readonly EntityManagerInterface $entityManager
     ) {}
 
     #[Route(path: 'maxfield/list', name: 'maxfields', methods: ['GET'])]
@@ -64,7 +65,8 @@ class MaxFieldsController extends BaseController
         if ($partial) {
             if (in_array(
                 $partial,
-                ['list_lg', 'list_sm']
+                ['list_lg', 'list_sm'],
+                true
             )
             ) {
                 $template = '_' . $partial;
@@ -130,7 +132,6 @@ class MaxFieldsController extends BaseController
     #[Route(path: 'maxfield/clear-user-data/{path:maxfield}', name: 'maxfield_clear_user_data', methods: ['POST'])]
     public function clearUserData(
         Maxfield $maxfield,
-        EntityManagerInterface $entityManager,
         Request $request,
     ): JsonResponse
     {
@@ -144,7 +145,7 @@ class MaxFieldsController extends BaseController
             $maxfield->setCurrentPointWithUser('-1', $agentNum);
             $maxfield->setFarmDoneWithUser([], $agentNum);
             $maxfield->setUserKeysWithUser([], $agentNum);
-            $entityManager->flush();
+            $this->entityManager->flush();
             $response ['result'] = 'cleared';
             $code = 200;
         } catch (Exception $exception) {
@@ -159,7 +160,6 @@ class MaxFieldsController extends BaseController
     public function submitUserData(
         Maxfield $maxfield,
         Request $request,
-        EntityManagerInterface $entityManager,
     ): JsonResponse
     {
         $response = [];
@@ -176,12 +176,12 @@ class MaxFieldsController extends BaseController
 
         if ($currentPoint !== null) {
             $maxfield->setCurrentPointWithUser((string) $currentPoint, $agentNum);
-            $entityManager->flush();
+            $this->entityManager->flush();
         }
 
         if ($farmDone !== null) {
             $maxfield->setFarmDoneWithUser($farmDone, $agentNum);
-            $entityManager->flush();
+            $this->entityManager->flush();
         }
 
         if ($keys) {
@@ -192,7 +192,7 @@ class MaxFieldsController extends BaseController
                     $maxfield->setUserKeysWithUser($existingKeys, $agentNum);
                     $response['result'] = sprintf('Added keyinfo for %d portals.', count($existingKeys));
 
-                    $entityManager->flush();
+                    $this->entityManager->flush();
                 } else {
                     $response['error'] = 'No keys found :(';
                     $status = 404;
@@ -270,7 +270,6 @@ class MaxFieldsController extends BaseController
 
     #[Route(path: 'maxfield/export', name: 'export-maxfields', methods: ['POST'])]
     public function generateMaxFields(
-        EntityManagerInterface $entityManager,
         Request $request,
         //   #[MapRequestPayload] MaxfieldCreateType $maxfieldType,
 
@@ -311,8 +310,8 @@ class MaxFieldsController extends BaseController
             ->setPath($projectName)
             ->setOwner($this->getUser());
 
-        $entityManager->persist($maxfield);
-        $entityManager->flush();
+        $this->entityManager->persist($maxfield);
+        $this->entityManager->flush();
 
         return $this->render(
             'maxfield/status.html.twig',
@@ -328,7 +327,6 @@ class MaxFieldsController extends BaseController
     ])]
     public function edit(
         Maxfield $maxfield,
-        EntityManagerInterface $entityManager,
         Request $request,
     ): RedirectResponse|Response
     {
@@ -343,8 +341,8 @@ class MaxFieldsController extends BaseController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $maxfield = $form->getData();
-            $entityManager->persist($maxfield);
-            $entityManager->flush();
+            $this->entityManager->persist($maxfield);
+            $this->entityManager->flush();
             $this->addFlash('success', 'Maxfield updated!');
 
             return $this->redirectToRoute('maxfields');
@@ -362,7 +360,6 @@ class MaxFieldsController extends BaseController
 
     #[Route(path: 'maxfield/delete/{id}', name: 'max_fields_delete', methods: ['GET'])]
     public function delete(
-        EntityManagerInterface $entityManager,
         Maxfield $maxfield,
         Request $request,
     ): RedirectResponse
@@ -377,8 +374,8 @@ class MaxFieldsController extends BaseController
         try {
             $this->maxFieldGenerator->remove((string)$item);
 
-            $entityManager->remove($maxfield);
-            $entityManager->flush();
+            $this->entityManager->remove($maxfield);
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'success',
@@ -435,13 +432,12 @@ class MaxFieldsController extends BaseController
 
     #[Route(path: 'maxfield/toggle-favourite/{id}', name: 'maxfield_toggle_favourite', methods: ['GET'])]
     public function toggleFavourite(
-        Maxfield $maxfield,
-        EntityManagerInterface $entityManager
+        Maxfield $maxfield
     ): JsonResponse
     {
         $newState = $this->getUser()?->toggleFavourite($maxfield);
 
-        $entityManager->flush();
+        $this->entityManager->flush();
 
         return $this->json([
             'new-state' => $newState,
