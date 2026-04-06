@@ -36,7 +36,7 @@ return [
         'version' => '0.52.3',
     ],
     'sweetalert2' => [
-        'version' => '11.26.4',
+        'version' => '11.26.24',
     ],
     'leaflet' => [
         'version' => '1.9.4',
@@ -83,10 +83,10 @@ return [
         'type' => 'css',
     ],
     'mapbox-gl' => [
-        'version' => '3.17.0',
+        'version' => '3.21.0',
     ],
     'mapbox-gl/dist/mapbox-gl.min.css' => [
-        'version' => '3.17.0',
+        'version' => '3.21.0',
         'type' => 'css',
     ],
     'turf-linestring' => [
@@ -117,10 +117,10 @@ return [
         'version' => '1.0.0',
     ],
     'leaflet.locatecontrol' => [
-        'version' => '0.85.1',
+        'version' => '0.89.0',
     ],
     'leaflet.locatecontrol/dist/L.Control.Locate.css' => [
-        'version' => '0.85.1',
+        'version' => '0.89.0',
         'type' => 'css',
     ],
     'leaflet-routing-machine' => [
@@ -141,13 +141,13 @@ return [
         'version' => '0.2.2',
     ],
     'nanoid/non-secure' => [
-        'version' => '5.1.6',
+        'version' => '5.1.7',
     ],
     '@mapbox/point-geometry' => [
         'version' => '1.1.0',
     ],
     '@turf/projection' => [
-        'version' => '7.2.0',
+        'version' => '7.3.4',
     ],
     'fast-deep-equal' => [
         'version' => '3.1.3',
@@ -163,28 +163,28 @@ return [
         'version' => '0.0.0',
     ],
     '@turf/meta' => [
-        'version' => '7.2.0',
+        'version' => '7.3.4',
     ],
     '@turf/helpers' => [
-        'version' => '7.3.1',
+        'version' => '7.3.4',
     ],
     '@turf/clone' => [
-        'version' => '7.2.0',
+        'version' => '7.3.4',
     ],
     '@turf/boolean-point-in-polygon' => [
-        'version' => '7.3.1',
+        'version' => '7.3.4',
     ],
     'point-in-polygon-hao' => [
         'version' => '1.2.4',
     ],
     '@turf/invariant' => [
-        'version' => '7.3.1',
+        'version' => '7.3.4',
     ],
     'robust-predicates' => [
-        'version' => '3.0.2',
+        'version' => '3.0.3',
     ],
     'mapbox-gl/dist/mapbox-gl.css' => [
-        'version' => '3.17.0',
+        'version' => '3.21.0',
         'type' => 'css',
     ],
     '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css' => [
