@@ -7,6 +7,7 @@ namespace App\Settings;
 use App\Enum\MapBoxProfilesEnum;
 use App\Enum\MapBoxStylesEnum;
 use App\Enum\MapProvidersEnum;
+use App\Enum\MaxfieldEngineEnum;
 
 class UserSettings
 {
@@ -25,4 +26,8 @@ class UserSettings
     public MapProvidersEnum $mapProvider = MapProvidersEnum::leaflet;
 
     public ?string $mapboxApiKey = '';
+
+    public MaxfieldEngineEnum $maxfieldEngine = MaxfieldEngineEnum::php;
+
+    public string $dockerContainer = '';
 }

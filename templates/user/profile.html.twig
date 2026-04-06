@@ -10,6 +10,7 @@
         lon: app.user.param('lon'),
         zoom: app.user.param('zoom'),
         mapProvider: form.mapProvider.vars.data.value,
+        maxfieldEngine: form.maxfieldEngine.vars.data.value,
     }) }}>
         <div class="col-sm-6">
             <p>Identifier: <code>{{ app.user.userIdentifier }}</code></p>
@@ -18,6 +19,17 @@
             {{ form_errors(form) }}
 
             {{ form_row(form.agentName) }}
+            <div class="row">
+                <div class="col">
+                    {{ form_row(form.maxfieldEngine, {'attr':{'data-action':'profile#checkEngineOptions'}}) }}
+                </div>
+                <div class="col">
+                    <div data-profile-target="dockerOptions">
+                        {{ form_row(form.dockerContainer) }}
+                    </div>
+                </div>
+            </div>
+
             {{ form_row(form.mapProvider, {'attr':{'data-action':'profile#checkMapOptions'}}) }}
             <div data-profile-target="mapOptions">
                 <div class="row">

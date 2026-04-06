@@ -6,6 +6,7 @@ namespace App\Service;
 
 use RuntimeException;
 use App\Entity\Waypoint;
+use App\Enum\MaxfieldEngineEnum;
 use DirectoryIterator;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
@@ -24,9 +25,7 @@ class MaxFieldGenerator
         #[Autowire('%env(MAXFIELD_VERSION)%')] private readonly int $maxfieldVersion,
         #[Autowire('%env(GOOGLE_API_KEY)%')] private readonly string $googleApiKey,
         #[Autowire('%env(GOOGLE_API_SECRET)%')] private readonly string $googleApiSecret,
-        #[Autowire('%env(APP_DOCKER_CONTAINER)%')] private readonly string $dockerContainer,
         #[Autowire('%env(INTEL_URL)%')] private readonly string $intelUrl,
-        #[Autowire('%env(USE_PHP_MAXFIELD)%')] private readonly string $usePhpMaxfield,
     )
     {
         $this->rootDir = $projectDir.'/public/maxfields';
@@ -41,7 +40,9 @@ class MaxFieldGenerator
         string $wayPointList,
         array $wayPointMap,
         int $playersNum,
-        array $options
+        array $options,
+        MaxfieldEngineEnum $engine = MaxfieldEngineEnum::php,
+        string $dockerContainer = '',
     ): void
     {
         $fileSystem = new Filesystem();
@@ -63,7 +64,7 @@ class MaxFieldGenerator
 
         fclose($fp);
 
-        $command = $this->buildCommand($projectRoot, $fileName, $playersNum, $options);
+        $command = $this->buildCommand($projectRoot, $fileName, $playersNum, $options, $engine, $dockerContainer);
 
         $fileSystem->dumpFile($projectRoot.'/command.txt', implode(' ', $command));
 
@@ -81,11 +82,13 @@ class MaxFieldGenerator
         string $fileName,
         int $playersNum,
         array $options,
+        MaxfieldEngineEnum $engine = MaxfieldEngineEnum::php,
+        string $dockerContainer = '',
     ): array
     {
         $logFile = $projectRoot.'/log.txt';
 
-        if ($this->usePhpMaxfield === 'true' || $this->usePhpMaxfield === '1') {
+        if ($engine === MaxfieldEngineEnum::php) {
             $command = [
                 PHP_BINARY, $this->projectDir.'/bin/console',
                 'maxfield:plan', $fileName,
@@ -98,7 +101,7 @@ class MaxFieldGenerator
             return ['sh', '-c', implode(' ', array_map(escapeshellarg(...), $command)).' > '.escapeshellarg($logFile).' 2>&1'];
         }
 
-        $command = $this->buildExternalCommand($projectRoot, $fileName, $playersNum, $options);
+        $command = $this->buildExternalCommand($projectRoot, $fileName, $playersNum, $options, $engine, $dockerContainer);
 
         // Wrap in shell to redirect output to log file and run in background
         return ['sh', '-c', implode(' ', array_map(escapeshellarg(...), $command)).' > '.escapeshellarg($logFile).' 2>&1'];
@@ -114,13 +117,15 @@ class MaxFieldGenerator
         string $fileName,
         int $playersNum,
         array $options,
+        MaxfieldEngineEnum $engine = MaxfieldEngineEnum::python,
+        string $dockerContainer = '',
     ): array
     {
-        if ($this->dockerContainer !== '' && $this->dockerContainer !== '0') {
+        if ($engine === MaxfieldEngineEnum::docker) {
             $command = [
                 'docker', 'run',
                 '-v', $projectRoot.':/app/share',
-                '-t', $this->dockerContainer,
+                '-t', $dockerContainer,
                 '/app/share/portals.txt',
                 '--outdir', '/app/share',
                 '--num_agents', (string) $playersNum,

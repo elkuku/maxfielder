@@ -7,6 +7,7 @@ namespace App\Form;
 use App\Enum\MapBoxProfilesEnum;
 use App\Enum\MapBoxStylesEnum;
 use App\Enum\MapProvidersEnum;
+use App\Enum\MaxfieldEngineEnum;
 use App\Settings\UserSettings;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -74,6 +75,23 @@ class ProfileFormType extends AbstractType
                 [
                     'class' => MapProvidersEnum::class,
                     'choice_label' => fn(MapProvidersEnum $element): string => ucfirst($element->name),
+                ]
+            )
+            ->add(
+                'maxfieldEngine',
+                EnumType::class,
+                [
+                    'class' => MaxfieldEngineEnum::class,
+                    'choice_label' => fn(MaxfieldEngineEnum $element): string => ucfirst($element->name),
+                ]
+            )
+            ->add(
+                'dockerContainer',
+                null,
+                [
+                    'required' => false,
+                    'empty_data' => '',
+                    'label' => 'Docker Container ID',
                 ]
             );
     }

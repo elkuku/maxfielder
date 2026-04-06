@@ -15,9 +15,10 @@ export default class extends Controller {
         lon: Number,
         zoom: Number,
         mapProvider: String,
+        maxfieldEngine: String,
     }
 
-    static targets = ['lat', 'lon', 'zoom', 'mapOptions']
+    static targets = ['lat', 'lon', 'zoom', 'mapOptions', 'dockerOptions']
 
     map = null
 
@@ -47,6 +48,7 @@ export default class extends Controller {
         this.map.on('zoomend', () => this.updateFields())
 
         this._updateMapOptions(this.mapProviderValue)
+        this._updateDockerOptions(this.maxfieldEngineValue)
     }
 
     updateFields() {
@@ -59,6 +61,14 @@ export default class extends Controller {
 
     checkMapOptions(event) {
         this._updateMapOptions(event.target.value)
+    }
+
+    checkEngineOptions(event) {
+        this._updateDockerOptions(event.target.value)
+    }
+
+    _updateDockerOptions(engine) {
+        this.dockerOptionsTarget.style.display = engine === 'docker' ? 'block' : 'none'
     }
 
     _updateMapOptions(provider) {

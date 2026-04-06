@@ -71,6 +71,8 @@ final class UserControllerTest extends WebTestCase
                 'defaultStyle' => 'mapbox/standard',
                 'defaultProfile' => 'mapbox/driving',
                 'mapProvider' => 'leaflet',
+                'maxfieldEngine' => 'php',
+                'dockerContainer' => '',
             ],
         ]);
 

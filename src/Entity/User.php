@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Enum\MapBoxProfilesEnum;
 use App\Enum\MapBoxStylesEnum;
 use App\Enum\MapProvidersEnum;
+use App\Enum\MaxfieldEngineEnum;
 use App\Enum\UserRole;
 use App\Repository\UserRepository;
 use App\Settings\UserSettings;
@@ -155,6 +156,10 @@ class User implements UserInterface, Stringable
         $settings->mapProvider = $this->getParam('mapProvider') !== '' && $this->getParam('mapProvider') !== '0'
             ? (MapProvidersEnum::tryFrom($this->getParam('mapProvider')) ?? MapProvidersEnum::leaflet)
             : MapProvidersEnum::leaflet;
+        $settings->maxfieldEngine = $this->getParam('maxfieldEngine') !== ''
+            ? (MaxfieldEngineEnum::tryFrom($this->getParam('maxfieldEngine')) ?? MaxfieldEngineEnum::php)
+            : MaxfieldEngineEnum::php;
+        $settings->dockerContainer = $this->getParam('dockerContainer');
 
         return $settings;
     }

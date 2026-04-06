@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
+use App\Enum\MaxfieldEngineEnum;
 use App\Service\MaxFieldGenerator;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
@@ -28,12 +29,19 @@ final class MaxFieldGeneratorCommandTest extends TestCase
      * @param array<string, bool> $options
      * @return list<string>
      */
-    private function buildCommand(MaxFieldGenerator $generator, string $projectRoot, string $fileName, int $players, array $options): array
-    {
+    private function buildCommand(
+        MaxFieldGenerator $generator,
+        string $projectRoot,
+        string $fileName,
+        int $players,
+        array $options,
+        MaxfieldEngineEnum $engine = MaxfieldEngineEnum::python,
+        string $dockerContainer = '',
+    ): array {
         $method = new ReflectionMethod(MaxFieldGenerator::class, 'buildCommand');
 
         /** @var list<string> */
-        return $method->invoke($generator, $projectRoot, $fileName, $players, $options);
+        return $method->invoke($generator, $projectRoot, $fileName, $players, $options, $engine, $dockerContainer);
     }
 
     /** @return array<string, bool> */
@@ -43,9 +51,7 @@ final class MaxFieldGeneratorCommandTest extends TestCase
     }
 
     private function makeGenerator(
-        string $dockerContainer = '',
         int $version = 4,
-        string $usePhp = '0',
         string $googleKey = '',
         string $googleSecret = '',
     ): MaxFieldGenerator {
@@ -55,34 +61,24 @@ final class MaxFieldGeneratorCommandTest extends TestCase
             $version,
             $googleKey,
             $googleSecret,
-            $dockerContainer,
             'https://intel.ingress.com/intel',
-            $usePhp,
         );
     }
 
     public function testBuildCommandUsesPhpMaxfieldWhenEnabled(): void
     {
-        $gen = $this->makeGenerator(usePhp: 'true');
-        $cmd = $this->buildCommand($gen, '/tmp/project', '/tmp/project/portals.txt', 2, $this->defaultOptions());
+        $gen = $this->makeGenerator();
+        $cmd = $this->buildCommand($gen, '/tmp/project', '/tmp/project/portals.txt', 2, $this->defaultOptions(), MaxfieldEngineEnum::php);
 
         $this->assertSame('sh', $cmd[0]);
         $this->assertStringContainsString('maxfield:plan', $cmd[2]);
         $this->assertStringContainsString('--num-agents', $cmd[2]);
     }
 
-    public function testBuildCommandUsesPhpMaxfieldWhenEnabledWithOne(): void
+    public function testBuildCommandUsesDockerWhenEngineIsDocker(): void
     {
-        $gen = $this->makeGenerator(usePhp: '1');
-        $cmd = $this->buildCommand($gen, '/tmp/project', '/tmp/project/portals.txt', 1, $this->defaultOptions());
-
-        $this->assertStringContainsString('maxfield:plan', $cmd[2]);
-    }
-
-    public function testBuildCommandUsesDockerWhenContainerSet(): void
-    {
-        $gen = $this->makeGenerator(dockerContainer: 'my-container');
-        $cmd = $this->buildCommand($gen, '/tmp/project', '/tmp/project/portals.txt', 3, $this->defaultOptions());
+        $gen = $this->makeGenerator();
+        $cmd = $this->buildCommand($gen, '/tmp/project', '/tmp/project/portals.txt', 3, $this->defaultOptions(), MaxfieldEngineEnum::docker, 'my-container');
 
         $this->assertStringContainsString('docker', $cmd[2]);
         $this->assertStringContainsString('my-container', $cmd[2]);

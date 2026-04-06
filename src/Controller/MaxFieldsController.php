@@ -9,6 +9,7 @@ use App\Entity\Maxfield;
 use App\Enum\MapBoxProfilesEnum;
 use App\Enum\MapBoxStylesEnum;
 use App\Enum\MapProvidersEnum;
+use App\Enum\MaxfieldEngineEnum;
 use App\Form\MaxfieldFormType;
 use App\Repository\MaxfieldRepository;
 use App\Repository\WaypointRepository;
@@ -293,12 +294,16 @@ class MaxFieldsController extends BaseController
 
         $projectName = $maxfieldType->getProjectName();
 
+        $userSettings = $this->getUser()?->getUserParams();
+
         $this->maxFieldGenerator->generate(
             $projectName,
             $maxField,
             $waypointMap,
             $maxfieldType->getPlayersNum(),
-            $options
+            $options,
+            $userSettings?->maxfieldEngine ?? MaxfieldEngineEnum::php,
+            $userSettings?->dockerContainer ?? '',
         );
 
         $maxfield = new Maxfield()
