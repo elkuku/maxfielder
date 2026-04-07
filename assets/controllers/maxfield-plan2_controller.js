@@ -47,9 +47,6 @@ export default class extends Controller {
 
         this.draw = new MapboxDraw({
             displayControlsDefault: false,
-            controls: {
-                polygon: true,
-            }
         })
 
         this.map.addControl(this.draw, 'top-left')
@@ -88,14 +85,14 @@ export default class extends Controller {
             this.map.getCanvas().style.cursor = 'pointer'
         })
         this.map.on('mouseleave', 'clusters', () => {
-            this.map.getCanvas().style.cursor = ''
+            this.map.getCanvas().style.cursor = this.isSelectionDrawMode() ? 'crosshair' : ''
         })
 
         this.map.on('mouseenter', 'unclustered-point', () => {
             this.map.getCanvas().style.cursor = 'pointer'
         })
         this.map.on('mouseleave', 'unclustered-point', () => {
-            this.map.getCanvas().style.cursor = ''
+            this.map.getCanvas().style.cursor = this.isSelectionDrawMode() ? 'crosshair' : ''
         })
 
         this.map.on('draw.create', (e) => this.handleDraw(e))
@@ -150,6 +147,7 @@ export default class extends Controller {
             this.rectDrawing = false
             this.map.getCanvas().style.cursor = ''
             this.map.dragPan.enable()
+            this.clearDrawButtonActive()
 
             if (this.rectEl) {
                 this.rectEl.remove()
@@ -343,6 +341,7 @@ export default class extends Controller {
     handleDraw(e) {
         this.selectWithPolygon(e.features[0].geometry)
         this.draw.deleteAll()
+        this.clearDrawButtonActive()
     }
 
     selectWithPolygon(polygon) {
@@ -378,14 +377,41 @@ export default class extends Controller {
      * Draw controls
      * ----------------------------- */
 
+    isSelectionDrawMode() {
+        return this.rectDrawing || this.draw.getMode() === 'draw_polygon'
+    }
+
     drawRect() {
         this.rectDrawing = true
         this.map.getCanvas().style.cursor = 'crosshair'
         this.map.dragPan.disable()
+        this.setDrawButtonActive('selectRect')
     }
 
     drawPoly() {
         this.draw.changeMode('draw_polygon')
+        this.setDrawButtonActive('selectPoly')
+    }
+
+    setDrawButtonActive(activeId) {
+        ['selectRect', 'selectPoly'].forEach(id => {
+            const btn = document.getElementById(id)
+            if (id === activeId) {
+                btn.classList.remove('btn-outline-secondary')
+                btn.classList.add('btn-secondary')
+            } else {
+                btn.classList.remove('btn-secondary')
+                btn.classList.add('btn-outline-secondary')
+            }
+        })
+    }
+
+    clearDrawButtonActive() {
+        ['selectRect', 'selectPoly'].forEach(id => {
+            const btn = document.getElementById(id)
+            btn.classList.remove('btn-secondary')
+            btn.classList.add('btn-outline-secondary')
+        })
     }
 
     /* -----------------------------
@@ -398,14 +424,14 @@ export default class extends Controller {
 
         if (this.selectionMode === 'remove') {
             this.selectionMode = 'add'
-            button.classList.add('btn-outline-success')
-            button.classList.remove('btn-outline-danger')
+            button.classList.add('btn-success')
+            button.classList.remove('btn-danger')
             span.classList.add('bi-plus-lg')
             span.classList.remove('bi-dash-lg')
         } else {
             this.selectionMode = 'remove'
-            button.classList.add('btn-outline-danger')
-            button.classList.remove('btn-outline-success')
+            button.classList.add('btn-danger')
+            button.classList.remove('btn-success')
             span.classList.add('bi-dash-lg')
             span.classList.remove('bi-plus-lg')
         }
