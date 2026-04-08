@@ -26,6 +26,7 @@ class MaxFieldGenerator
         #[Autowire('%env(GOOGLE_API_KEY)%')] private readonly string $googleApiKey,
         #[Autowire('%env(GOOGLE_API_SECRET)%')] private readonly string $googleApiSecret,
         #[Autowire('%env(INTEL_URL)%')] private readonly string $intelUrl,
+        #[Autowire('%env(PHP_BINARY)%')] private readonly string $phpBinary = PHP_BINARY,
     )
     {
         $this->rootDir = $projectDir.'/public/maxfields';
@@ -90,7 +91,7 @@ class MaxFieldGenerator
 
         if ($engine === MaxfieldEngineEnum::php) {
             $command = [
-                PHP_BINARY, $this->projectDir.'/bin/console',
+                $this->phpBinary, $this->projectDir.'/bin/console',
                 'maxfield:plan', $fileName,
                 '--outdir', $projectRoot,
                 '--num-agents', (string) $playersNum,
