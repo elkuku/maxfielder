@@ -45,18 +45,52 @@ export default class extends Controller {
     connect() {
         this.maxfieldData = JSON.parse(this.jsonDataValue)
         this.waypointIdMap = JSON.parse(this.waypointIdMapValue)
+        
         this.modal = new Modal('#exampleModal')
         this.links = this.maxfieldData.links
         this.setupMap()
         this.displayMaxFieldData()
 
-        // Fix for map only showing partial content on initial load
-        setTimeout(() => this.map.invalidateSize(), 100)
+        // Center on waypoints or default Ecuador
+        const defaultCenter = [-0.248018, -79.148760]
+        
+        setTimeout(() => {
+            const bounds = this.farmLayer.getBounds()
+            const validBounds = bounds.isValid()
+            const wpCount = this.maxfieldData.waypoints?.length || 0
+            
+            // Calculate zoom based on number of waypoints
+            let zoomLevel
+            if (wpCount <= 3) {
+                zoomLevel = 17
+            } else if (wpCount <= 6) {
+                zoomLevel = 16
+            } else if (wpCount <= 12) {
+                zoomLevel = 15
+            } else if (wpCount <= 20) {
+                zoomLevel = 14
+            } else {
+                zoomLevel = 13
+            }
+            
+            if (validBounds && wpCount > 1) {
+                // Multiple waypoints - fit to all with calculated maxZoom
+                this.map.fitBounds(bounds, { padding: [50, 50], maxZoom: zoomLevel })
+            } else if (wpCount === 1) {
+                // Single waypoint - center on it with higher zoom
+                const wp = this.maxfieldData.waypoints[0]
+                this.map.setView([wp.lat, wp.lon], 17)
+            } else {
+                // No waypoints or bounds - use default Ecuador
+                this.map.setView(defaultCenter, 15)
+            }
+            this.map.invalidateSize()
+        }, 300)
     }
 
     displayMaxFieldData() {
         this.loadFarmLayer()
-        this.loadFarmLayer2()
+        // loadFarmLayer2() - disabled: requires /maxfield/get-user-keys/ route
         this.loadLinkLayer()
 
         this.addLinkSelector()
@@ -114,8 +148,8 @@ export default class extends Controller {
             });
 
         this.map = L.map('map', {
-            center: [0, 0],
-            zoom: 3,
+            center: [-0.248018, -79.148760],
+            zoom: 15,
             layers: [CartoDB_PositronNoLabels, this.farmLayer],
             fullscreenControl: true,
             zoomControl: false
@@ -155,14 +189,20 @@ export default class extends Controller {
 
         zoomControl.addTo(this.map)
 
-        // Locate control
-        L.control.locate({
-            keepCurrentZoomLevel: true,
-            position: 'bottomright',
-            locateOptions: {
-                enableHighAccuracy: true
+        // Locate control - optional feature, wrapped in try-catch
+        if (typeof L.control.locate === 'function') {
+            try {
+                L.control.locate({
+                    keepCurrentZoomLevel: true,
+                    position: 'bottomright',
+                    locateOptions: {
+                        enableHighAccuracy: true
+                    }
+                }).addTo(this.map)
+            } catch (e) {
+                console.warn('Locate control not available:', e)
             }
-        }).addTo(this.map)
+        }
 
         this.map.on('locationfound', this.onLocationFound.bind(this))
 
@@ -261,12 +301,9 @@ export default class extends Controller {
 
             this.farmLayer.addLayer(marker)
         }.bind(this))
-
-        this.map.fitBounds(this.farmLayer.getBounds())
     }
 
     async loadFarmLayer2() {
-        return
         this.farmLayer2.clearLayers()
 
         const response = await fetch('/maxfield/get-user-keys/' + this.pathValue)
