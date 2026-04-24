@@ -46,7 +46,7 @@ class User implements UserInterface, Stringable
     /**
      * @var array<string>
      */
-    #[Column(type: Types::JSON, nullable: true)]
+    #[Column(type: Types::JSON, nullable: false, options: ['default' => '[]'])]
     private array $params = [];
 
     #[Column(length: 100, nullable: true)]
@@ -120,6 +120,7 @@ class User implements UserInterface, Stringable
     }
 
     public function setRole(UserRole $role): User
+
     {
         $this->role = $role;
 

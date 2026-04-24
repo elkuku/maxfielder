@@ -27,4 +27,16 @@ final class UserCrudControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorNotExists('div.alert-danger');
     }
+
+    public function testProfileRendersForGoogleAgentUser(): void
+    {
+        $client = self::createClient();
+        $user = UserFactory::createOne(['role' => UserRole::AGENT, 'googleId' => 'google-id-123']);
+        $client->loginUser($user);
+
+        $client->request(Request::METHOD_GET, '/profile');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorNotExists('div.alert-danger');
+    }
 }
