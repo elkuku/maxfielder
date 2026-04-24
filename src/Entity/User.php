@@ -102,6 +102,9 @@ class User implements UserInterface, Stringable
     {
         $this->id = $data['id'] ?? null;
         $this->identifier = (string)($data['identifier'] ?? null);
+        $this->params = [];
+        $this->maxfields = new ArrayCollection();
+        $this->favourites = new ArrayCollection();
     }
 
     public function eraseCredentials(): void {}
