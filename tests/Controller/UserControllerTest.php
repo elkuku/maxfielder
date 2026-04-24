@@ -27,6 +27,18 @@ final class UserControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
     }
 
+    public function testProfileRendersWithoutErrorsForAgentUser(): void
+    {
+        $client = self::createClient();
+        $user = UserFactory::createOne(['role' => UserRole::AGENT]);
+        $client->loginUser($user);
+
+        $client->request(Request::METHOD_GET, '/profile');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorNotExists('div.alert-danger');
+    }
+
     public function testProfileRedirectsForAnonymousUser(): void
     {
         $client = self::createClient();

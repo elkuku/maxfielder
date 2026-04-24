@@ -55,10 +55,12 @@ class UserCrudController extends AbstractCrudController
                     return false;
                 }),
             ChoiceField::new('roles')
-                ->setChoices(UserRole::cases())
+                ->setChoices(array_combine(
+                    array_map(static fn(UserRole $r) => $r->label(), UserRole::cases()),
+                    array_map(static fn(UserRole $r) => $r->value, UserRole::cases()),
+                ))
                 ->allowMultipleChoices()
-                ->renderExpanded()
-                ->renderAsBadges(),
+                ->renderExpanded(),
         ];
     }
 }
