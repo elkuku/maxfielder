@@ -39,4 +39,32 @@ final class UserCrudControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorNotExists('div.alert-danger');
     }
+
+    public function testAdminCanPromoteAgentUserToAdmin(): void
+    {
+        $client = self::createClient();
+
+        $admin = UserFactory::new()->asAdmin()->create();
+        $agent = UserFactory::createOne(['role' => UserRole::AGENT]);
+
+        $client->loginUser($admin);
+
+        $agentId = $agent->getId();
+        $crawler = $client->request(Request::METHOD_GET, '/admin/user/'.$agentId.'/edit');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorNotExists('div.alert-danger');
+
+        // Use getPhpValues() to preserve the CSRF token, then override roles
+        $form = $crawler->selectButton('Save changes')->form();
+        $values = $form->getPhpValues();
+        $values['User']['roles'] = [UserRole::ADMIN->value];
+
+        $client->request(Request::METHOD_POST, '/admin/user/'.$agentId.'/edit', $values);
+
+        self::assertResponseRedirects();
+        $client->followRedirect();
+        self::assertResponseIsSuccessful();
+        self::assertSelectorNotExists('div.alert-danger');
+    }
 }

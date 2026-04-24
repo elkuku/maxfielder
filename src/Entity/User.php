@@ -119,6 +119,11 @@ class User implements UserInterface, Stringable
         return \array_unique($roles);
     }
 
+    public function getRole(): UserRole
+    {
+        return $this->role;
+    }
+
     public function setRole(UserRole $role): User
 
     {
