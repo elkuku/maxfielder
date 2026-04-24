@@ -483,4 +483,69 @@ class MaxFieldsController extends BaseController
             'token' => $userSettings->mapboxApiKey ?? '',
         ]);
     }
+
+    #[Route(path: 'maxfield/export-mobile/{path:maxfield}', name: 'maxfield_export_mobile', methods: ['GET'])]
+    public function exportMobile(
+        Maxfield $maxfield,
+        Request $request,
+        #[Autowire('%kernel.project_dir%')] string $projectDir,
+    ): Response
+    {
+        $path = $maxfield->getPath() ?? '';
+        $info = $this->maxFieldHelper->getMaxField($path);
+        $waypointIdMap = $this->maxFieldHelper->getWaypointsIdMap($path);
+
+        // Get agent names from URL params
+        $agentNamesParam = $request->query->all('agent') ?: [];
+        $numAgentsParam = (int)$request->query->get('count', '1');
+        
+        // Get user's base agent name
+        $user = $this->getUser();
+        $baseAgentName = $user?->getUserParams()?->agentName ?? '';
+
+        // Build agent names array - use actual number of agents
+        $numAgents = max($numAgentsParam, count($info->agentsInfo));
+        $agentNames = [];
+        for ($i = 1; $i <= $numAgents; $i++) {
+            $name = $agentNamesParam[$i] ?? null;
+            if ($name) {
+                $agentNames[$i] = $name;
+            } elseif ($baseAgentName) {
+                $agentNames[$i] = $baseAgentName . ' ' . $i;
+            } else {
+                $agentNames[$i] = 'Agent ' . $i;
+            }
+        }
+
+        // Get frames as base64
+        $framesDir = $projectDir . '/public/maxfields/' . $path . '/frames';
+        $frames = [];
+
+        if (is_dir($framesDir)) {
+            $files = scandir($framesDir);
+            foreach ($files as $file) {
+                if (preg_match('/^frame_\d+\.gif$/', $file)) {
+                    $fullPath = $framesDir . '/' . $file;
+                    $frames[$file] = 'data:image/gif;base64,' . base64_encode(file_get_contents($fullPath));
+                }
+            }
+        }
+
+        ksort($frames);
+
+        $html = $this->renderView('maxfield/export.html.twig', [
+            'maxfield' => $maxfield,
+            'info' => $info,
+            'waypointIdMap' => $waypointIdMap,
+            'frames' => $frames,
+            'agentNames' => $agentNames,
+            'numAgents' => $numAgents,
+        ]);
+
+        // Remove Symfony toolbar
+        $html = preg_replace('/<div id="sfWdt[^>]*>.*?<\/div>/s', '', $html);
+        $html = preg_replace('/<svg class="sf-toolbar[^"]*"[^>]*>.*?<\/svg>/s', '', $html);
+
+        return new Response($html, 200, ['Content-Type' => 'text/html; charset=UTF-8']);
+    }
 }

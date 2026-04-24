@@ -5,6 +5,11 @@
 {% block body %}
     <div class="float-end">
         <a href="{{ path('maxfield_play', {'path': maxfield.path}) }}" class="btn btn-outline-success">Play</a>
+        <a href="{{ path('maxfield_export_mobile', {'path': maxfield.path}) }}" 
+           class="btn btn-outline-primary" 
+           target="_blank"
+           onclick="return exportMobile(this, '{{ maxfield.path }}')"
+           id="btnMobile"><i class="bi-phone"></i> Mobile</a>
         <a href="{{ path('max_fields_delete', {'id': maxfield.id}) }}" class="btn btn-outline-danger">Delete</a>
     </div>
 
@@ -247,5 +252,40 @@
 
 
     </div>
+
+    <script>
+    function exportMobile(btn, path) {
+        // Get agent names from sessionStorage
+        const storageKey = 'maxfield-agents-' + path;
+        let agentNames = {};
+        try {
+            const data = sessionStorage.getItem(storageKey);
+            if (data) agentNames = JSON.parse(data);
+        } catch(e) {}
+        
+        // Get number of agents from the page data
+        const maxFramesEl = document.querySelector('[data-max-frames-value]');
+        const stepsData = maxFramesEl ? JSON.parse(maxFramesEl.dataset.stepsValue || '[]') : [];
+        // Count unique agents
+        const agents = new Set();
+        stepsData.forEach(s => { if (s.agentNum) agents.add(s.agentNum); });
+        const numAgents = agents.size || 1;
+        
+        // Build URL with agent names as query params
+        const params = new URLSearchParams();
+        params.set('count', numAgents.toString());
+        for (const [agentNum, name] of Object.entries(agentNames)) {
+            params.append('agent[' + agentNum + ']', name);
+        }
+        
+        let url = btn.href;
+        if (params.toString()) {
+            url += '?' + params.toString();
+        }
+        
+        window.open(url, '_blank');
+        return false;
+    }
+    </script>
 
 {% endblock %}
