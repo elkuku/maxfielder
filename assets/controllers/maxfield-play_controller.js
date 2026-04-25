@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css'
 import 'leaflet-fullscreen'
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css'
 
-import 'leaflet.locatecontrol'
+import {locate} from 'leaflet.locatecontrol'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.css'
 
 import 'leaflet-routing-machine'
@@ -156,7 +156,7 @@ export default class extends Controller {
         zoomControl.addTo(this.map)
 
         // Locate control
-        L.control.locate({
+        locate({
             keepCurrentZoomLevel: true,
             position: 'bottomright',
             locateOptions: {
