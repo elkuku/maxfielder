@@ -9,6 +9,7 @@
         * { box-sizing: border-box; }
         html, body { margin: 0; padding: 0; height: 100%; }
         body { background: #1a1a1a; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; padding-bottom: 70px; }
+        .sf-toolbar, #sfWdt, [class*="sf-toolbar"] { display: none !important; visibility: hidden !important; }
         
         .tabs { display: flex; background: #262626; position: sticky; top: 0; z-index: 100; }
         .tab-btn { flex: 1; padding: 14px; background: none; border: none; color: #9ca3af; font-size: 14px; cursor: pointer; }
@@ -19,13 +20,18 @@
         .play-content { padding: 10px; padding-bottom: 80px; overflow-y: auto; height: calc(100vh - 50px); }
         .frame-image { max-width: 100%; height: auto; border-radius: 8px; min-height: 200px; max-height: 50vh; }
         
-        .step-info { background: #262626; border-radius: 8px; padding: 10px; margin: 10px 0; }
-        .step-info .row { padding: 4px 0; border-bottom: 1px solid #333; }
-        .step-info .row:last-child { border-bottom: none; }
-        .step-info .label { display: inline-block; min-width: 50px; margin-right: 6px; color: #9ca3af; }
-        .step-info .value { display: inline-block; margin-right: 16px; }
-        .step-info .inline { display: inline; border-bottom: none; padding-right: 12px; }
-        .step-info .agent-name { color: #4ade80; }
+        .step-info { background: #262626; border-radius: 8px; padding: 8px; margin: 8px 0; font-size: 13px; }
+        .step-info .row { display: inline-block; margin-right: 12px; border-bottom: none; padding: 2px 0; }
+        .step-info .row.block { display: block; margin-right: 0; margin-top: 4px; }
+        .step-info .frame-row { display: block; margin-bottom: 6px; }
+        .step-info .label { margin-right: 4px; color: #9ca3af; font-size: 12px; }
+        .step-info .value { margin-right: 0; font-size: 13px; }
+        .step-info .value.type-link { background: #4ade80; color: #1a1a1a; padding: 1px 4px; border-radius: 3px; }
+        .step-info .value.type-move { background: #a78bfa; color: #1a1a1a; padding: 1px 4px; border-radius: 3px; }
+        .step-info .agent-name { color: #4ade80; font-weight: bold; }
+        .step-info .frame-num { color: #4ade80; font-weight: bold; }
+        .step-info .frame-row .value.type-link,
+        .step-info .frame-row .value.type-move { margin-left: 8px; }
         
         .done-badge { display: none; background: #4ade80; color: #1a1a1a; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 8px; }
         .done-badge.active { display: inline; }
@@ -54,33 +60,16 @@
     </div>
     
     <div class="tab-content">
-        <!-- PLAY TAB -->
         <div class="tab-pane active" id="play">
             <div class="play-content">
                 <img id="currentFrame" class="frame-image" src="" alt="Frame">
-                <span id="doneBadge" class="done-badge">DONE</span>
                 
                 <div class="step-info">
-                    <div class="row">
-                        <span class="label">Action:</span>
-                        <span class="value" id="actionType">-</span>
-                    </div>
-                    <div class="row">
-                        <span class="label">Agent:</span>
-                        <span class="value agent-name" id="agentName">-</span>
-                    </div>
-                    <div class="row">
-                        <span class="label">#:</span>
-                        <span class="value" id="linkNum">-</span>
-                    </div>
-                    <div class="row">
-                        <span class="label">From:</span>
-                        <span class="value" id="fromPortal">-</span>
-                    </div>
-                    <div class="row">
-                        <span class="label">To:</span>
-                        <span class="value" id="toPortal">-</span>
-                    </div>
+                    <div class="row frame-row"><span class="label">Frame</span><span class="value frame-num" id="frameNum">1</span><span class="label">/</span><span id="totalFrames">{{ info.steps|length }}</span><span class="value type-link" id="actionType">LINK</span><span id="doneBadge" class="done-badge">✓ DONE</span></div>
+                    <div class="row"><span class="label">#:</span><span class="value" id="linkNum">1</span></div>
+                    <div class="row"><span class="label">Agent:</span><span class="value agent-name" id="agentName">Samuel</span></div>
+                    <div class="row block"><span class="label">From:</span><span class="value" id="fromPortal">Mural Skater (17)</span></div>
+                    <div class="row block"><span class="label">To:</span><span class="value" id="toPortal">Mural Ganster (26)</span></div>
                 </div>
                 
                 <div class="frame-nav">
@@ -92,7 +81,6 @@
             </div>
         </div>
         
-        <!-- KEYS TAB -->
         <div class="tab-pane" id="keys">
             <div class="keys-list">
                 {% for wayPoint in info.keyPrep.wayPoints %}
@@ -113,6 +101,10 @@
     <script>
     (function() {
         'use strict';
+        
+        // Hide Symfony toolbar if present
+        var toolbar = document.querySelector('.sf-toolbar');
+        if (toolbar) { toolbar.style.display = 'none'; }
         
         const STORAGE_KEY = 'maxfield_{{ maxfield.path }}';
         const frames = {{ frames|json_encode|raw }};
@@ -146,6 +138,7 @@
         }
         
         const frameImg = document.getElementById('currentFrame');
+        const frameNumEl = document.getElementById('frameNum');
         const actionTypeEl = document.getElementById('actionType');
         const linkNumEl = document.getElementById('linkNum');
         const agentNameEl = document.getElementById('agentName');
@@ -165,15 +158,27 @@
             frameImg.src = frames[name];
             progressFill.style.width = ((currentFrame + 1) / totalFrames * 100) + '%';
             
-            if (steps && steps[currentFrame]) {
-                const step = steps[currentFrame];
-                const actionType = getActionType(step);
+            // Update frame counter (Frame X / Y)
+            frameNumEl.textContent = (currentFrame + 1);
+            
+            // steps son 1-indexed (steps[1] = frame 1), entonces usamos currentFrame - 1
+            if (currentFrame > 0 && steps && steps[currentFrame - 1]) {
+                const step = steps[currentFrame - 1];
+                const actionType = step.action === 2 || (!step.linkNum) ? 'MOVE' : 'LINK';
                 actionTypeEl.textContent = actionType;
                 actionTypeEl.className = 'value ' + (actionType === 'LINK' ? 'type-link' : 'type-move');
                 linkNumEl.textContent = step.linkNum || '-';
                 agentNameEl.textContent = getAgentName(step.agentNum || 1);
                 fromPortalEl.textContent = step.originName ? (step.originName + ' (' + step.originNum + ')') : '-';
                 toPortalEl.textContent = step.destinationName ? (step.destinationName + ' (' + step.destinationNum + ')') : '-';
+            } else {
+                // Initial o Final
+                actionTypeEl.textContent = currentFrame === 0 ? 'INIT' : 'DONE';
+                actionTypeEl.className = 'value';
+                linkNumEl.textContent = '-';
+                agentNameEl.textContent = '-';
+                fromPortalEl.textContent = '-';
+                toPortalEl.textContent = '-';
             }
             
             const data = loadData();
