@@ -5,6 +5,11 @@
 {% block body %}
     <div class="float-end">
         <a href="{{ path('maxfield_play', {'path': maxfield.path}) }}" class="btn btn-outline-success">Play</a>
+        <a href="{{ path('maxfield_export_mobile', {'path': maxfield.path}) }}" 
+           class="btn btn-outline-primary" 
+           target="_blank"
+           onclick="return exportMobile(this, '{{ maxfield.path }}')"
+           id="btnMobile"><i class="bi-phone"></i> Mobile</a>
         <a href="{{ path('max_fields_delete', {'id': maxfield.id}) }}" class="btn btn-outline-danger">Delete</a>
     </div>
 
@@ -47,6 +52,7 @@
                 <a class="nav-link" href="#" data-id="agent-{{ agentInfo.agentNumber }}"
                         {{ stimulus_action('maxfield-view', 'showTab', 'click', {tab:'agent-'~agentInfo.agentNumber}) }}
                         {{ stimulus_target('maxfield-view', 'tabBtn') }}
+                        data-agent-num="{{ agentInfo.agentNumber }}"
                 >
                     Agent {{ agentInfo.agentNumber }}
                 </a>
@@ -88,38 +94,47 @@
             <div class="row">
                 <div class="col">
                     <h4>Key Preparation Total</h4>
+                    <div class="mb-2">
+                        <label for="sortKeys">Ordenar por:</label>
+                        <select id="sortKeys" {{ stimulus_action('maxfield-view', 'sortKeys', 'change') }}>
+                            <option value="mapNo">Map No (default)</option>
+                            <option value="keysAsc">Keys ↑ ascendente</option>
+                            <option value="keysDesc">Keys ↓ descendente</option>
+                            <option value="nameAsc">Nombre A-Z</option>
+                            <option value="nameDesc">Nombre Z-A</option>
+                        </select>
+                    </div>
                     <table>
                         <tr>
                             <th>Map No</th>
                             <th>Keys</th>
+                            <th>Tengo</th>
+                            <th>Faltan</th>
                             <th>Name</th>
-                            {% for agentInfo in info.agentsInfo %}
-                                <th>Agent {{ agentInfo.agentNumber }} Keys</th>
-                            {% endfor %}
                         </tr>
-                        {% set userKeys = maxfield.userData?maxfield.userData[1].keys ?: [] %}
+                        {% set userKeys = maxfield.userData ? maxfield.userData[1].keys is defined ? maxfield.userData[1].keys : [] : [] %}
 
                         {% for wayPoint in info.keyPrep.wayPoints %}
-                            <tr>
+                            {% set wpGuid = waypointIdMap[wayPoint.mapNo].guid %}
+                            {% set myCount = 0 %}
+                            {% for k in userKeys %}
+                                {% if k.guid == wpGuid %}
+                                    {% set myCount = k.count %}
+                                {% endif %}
+                            {% endfor %}
+                            <tr data-map-no="{{ wayPoint.mapNo }}" data-keys="{{ wayPoint.keysNeeded }}" data-name="{{ wayPoint.name|lower }}">
                                 <th>{{ wayPoint.mapNo }}</th>
                                 <td>{{ wayPoint.keysNeeded }}</td>
+                                <td>
+                                    <input type="number" min="0" 
+                                           data-map-no="{{ wayPoint.mapNo }}"
+                                           data-guid="{{ wpGuid }}"
+                                           {{ stimulus_action('maxfield-view', 'updateMyKeys', 'change') }}
+                                           value="{{ myCount }}"
+                                           style="width: 60px;" class="form-control form-control-sm">
+                                </td>
+                                <td data-faltan>{{ wayPoint.keysNeeded - myCount }}</td>
                                 <td>{{ wayPoint.name }}</td>
-                                {% for agentInfo in info.agentsInfo %}
-                                    <td>
-                                        {% set found = 0 %}
-                                        {% set keys = userKeys[agentInfo.agentNumber] is defined ? userKeys[agentInfo.agentNumber]: [] %}
-                                        {% for k in keys %}
-                                            {% if k.guid == waypointIdMap[wayPoint.mapNo].guid %}
-                                                {% if found %}
-                                                    DUP:
-{#                                                    SCREEEEEEEAM ...#}
-                                                {% endif %}
-                                                {{ k.count }}
-                                                {% set found = 1 %}
-                                            {% endif %}
-                                        {% endfor %}
-                                    </td>
-                                {% endfor %}
                             </tr>
                         {% endfor %}
                     </table>
@@ -130,10 +145,18 @@
         {% for agentInfo in info.agentsInfo %}
             <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none"
                                                                data-id="agent-{{ agentInfo.agentNumber }}">
-                <div class="row">
+                <div class="row mb-2">
+                    <div class="col-auto">
+                        <label for="agent-name-{{ agentInfo.agentNumber }}">Nombre Agent:</label>
+                        <input type="text" 
+                               id="agent-name-{{ agentInfo.agentNumber }}" 
+                               class="form-control"
+                               placeholder="Agent {{ agentInfo.agentNumber }}"
+                               data-agent-num="{{ agentInfo.agentNumber }}"
+                               {{ stimulus_action('maxfield-view', 'updateAgentName', 'input') }}>
+                    </div>
                     <div class="col">
-                        <label for="email-agent-{{ agentInfo.agentNumber }}">Agent {{ agentInfo.agentNumber }} - Send
-                            e-mail to </label>
+                        <label for="email-agent-{{ agentInfo.agentNumber }}">Send e-mail to </label>
                         <input type="text" id="email-agent-{{ agentInfo.agentNumber }}">
                         <button class="btn btn-outline-success sendMail" id="{{ agentInfo.agentNumber }}">
                             Send
@@ -145,13 +168,45 @@
                 <div class="row">
                     <div class="col-lg">
                         <h4>Keys for agent {{ agentInfo.agentNumber }}</h4>
-                        <table class="table table-sm">
+                        <div class="mb-2">
+                            <select class="sort-keys-agent" data-agent="{{ agentInfo.agentNumber }}" {{ stimulus_action('maxfield-view', 'sortKeysAgent', 'change') }}>
+                                <option value="mapNo">Map No (default)</option>
+                                <option value="keysAsc">Keys ↑ ascendente</option>
+                                <option value="keysDesc">Keys ↓ descendente</option>
+                                <option value="nameAsc">Nombre A-Z</option>
+                                <option value="nameDesc">Nombre Z-A</option>
+                            </select>
+                        </div>
+                        <table class="table table-sm" data-agent-table="{{ agentInfo.agentNumber }}">
+                            <tr>
+                                <th>Map No</th>
+                                <th>Keys</th>
+                                <th>Tengo</th>
+                                <th>Faltan</th>
+                                <th>Name</th>
+                            </tr>
                             {% for point in agentInfo.keys.wayPoints %}
                                 {% if point.agentNum + 1 == agentInfo.agentNumber %}
-                                    <tr>
+                                    {% set wpGuid = waypointIdMap[point.mapNo].guid %}
+                                    {% set myCount = 0 %}
+                                    {% for k in userKeys %}
+                                        {% if k.guid == wpGuid %}
+                                            {% set myCount = k.count %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    <tr data-map-no="{{ point.mapNo }}" data-keys="{{ point.keysNeeded }}" data-name="{{ point.name|lower }}">
                                         <td>{{ point.mapNo }}</td>
-                                        <td>{{ point.name }}</td>
                                         <td>{{ point.keysNeeded ?: '-' }}</td>
+                                        <td>
+                                            <input type="number" min="0" 
+                                                   data-map-no="{{ point.mapNo }}"
+                                                   data-guid="{{ wpGuid }}"
+                                                   {{ stimulus_action('maxfield-view', 'updateMyKeys', 'change') }}
+                                                   value="{{ myCount }}"
+                                                   style="width: 50px;" class="form-control form-control-sm">
+                                        </td>
+                                        <td data-faltan>{{ point.keysNeeded > 0 ? point.keysNeeded - myCount : '-' }}</td>
+                                        <td>{{ point.name }}</td>
                                     </tr>
                                 {% endif %}
                             {% endfor %}
@@ -197,5 +252,40 @@
 
 
     </div>
+
+    <script>
+    function exportMobile(btn, path) {
+        // Get agent names from sessionStorage
+        const storageKey = 'maxfield-agents-' + path;
+        let agentNames = {};
+        try {
+            const data = sessionStorage.getItem(storageKey);
+            if (data) agentNames = JSON.parse(data);
+        } catch(e) {}
+        
+        // Get number of agents from the page data
+        const maxFramesEl = document.querySelector('[data-max-frames-value]');
+        const stepsData = maxFramesEl ? JSON.parse(maxFramesEl.dataset.stepsValue || '[]') : [];
+        // Count unique agents
+        const agents = new Set();
+        stepsData.forEach(s => { if (s.agentNum) agents.add(s.agentNum); });
+        const numAgents = agents.size || 1;
+        
+        // Build URL with agent names as query params
+        const params = new URLSearchParams();
+        params.set('count', numAgents.toString());
+        for (const [agentNum, name] of Object.entries(agentNames)) {
+            params.append('agent[' + agentNum + ']', name);
+        }
+        
+        let url = btn.href;
+        if (params.toString()) {
+            url += '?' + params.toString();
+        }
+        
+        window.open(url, '_blank');
+        return false;
+    }
+    </script>
 
 {% endblock %}

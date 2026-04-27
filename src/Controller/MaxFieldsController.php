@@ -23,6 +23,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Elkuku\MaxfieldParser\JsonHelper;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -482,5 +483,95 @@ class MaxFieldsController extends BaseController
             'zoom' => $zoom,
             'token' => $userSettings->mapboxApiKey ?? '',
         ]);
+    }
+
+    #[Route(path: 'maxfield/export-mobile/{path:maxfield}', name: 'maxfield_export_mobile', methods: ['GET'])]
+    public function exportMobile(
+        Maxfield $maxfield,
+        Request $request,
+        #[Autowire('%kernel.project_dir%')] string $projectDir,
+        ?Profiler $profiler,
+    ): Response
+    {
+        if ($profiler !== null) {
+            $profiler->disable();
+        }
+        
+        $path = $maxfield->getPath() ?? '';
+        $info = $this->maxFieldHelper->getMaxField($path);
+        $waypointIdMap = $this->maxFieldHelper->getWaypointsIdMap($path);
+
+        // Get agent names from URL params
+        $agentNamesParam = $request->query->all('agent') ?: [];
+        $numAgentsParam = (int)$request->query->get('count', '1');
+        
+        // Get user's base agent name
+        $user = $this->getUser();
+        $baseAgentName = $user?->getUserParams()?->agentName ?? '';
+
+        // Build agent names array - use actual number of agents
+        $numAgents = max($numAgentsParam, count($info->agentsInfo));
+        $agentNames = [];
+        for ($i = 1; $i <= $numAgents; $i++) {
+            $name = $agentNamesParam[$i] ?? null;
+            if ($name) {
+                $agentNames[$i] = $name;
+            } elseif ($baseAgentName) {
+                $agentNames[$i] = $baseAgentName . ' ' . $i;
+            } else {
+                $agentNames[$i] = 'Agent ' . $i;
+            }
+        }
+
+        // Get frames as base64
+        $framesDir = $projectDir . '/public/maxfields/' . $path . '/frames';
+        $frames = [];
+
+        if (is_dir($framesDir)) {
+            $files = scandir($framesDir);
+            foreach ($files as $file) {
+                if (preg_match('/^frame_\d+\.gif$/', $file)) {
+                    $fullPath = $framesDir . '/' . $file;
+                    $frames[$file] = 'data:image/gif;base64,' . base64_encode(file_get_contents($fullPath));
+                }
+            }
+        }
+
+        ksort($frames);
+
+        $html = $this->renderView('maxfield/export.html.twig', [
+            'maxfield' => $maxfield,
+            'info' => $info,
+            'waypointIdMap' => $waypointIdMap,
+            'frames' => $frames,
+            'agentNames' => $agentNames,
+            'numAgents' => $numAgents,
+        ]);
+
+        // Remove Symfony toolbar - the toolbar is injected by WebDebugToolbarListener after render
+        // The toolbar is inserted right before </body> so we need to cut it there
+        // First, close </body></html> if missing (our template should have them)
+        if (strpos($html, '</body>') !== false) {
+            $html = substr($html, 0, strpos($html, '</body>')) . '</body></html>';
+        } elseif (strpos($html, '</html>') !== false) {
+            $html = substr($html, 0, strpos($html, '</html>')) . '</html>';
+        }
+
+        // Force remove toolbar by finding its position in HTML and cutting
+        $toolbarStart = strpos($html, '<!-- START of Symfony Web Debug Toolbar -->');
+        if ($toolbarStart !== false) {
+            $toolbarEnd = strpos($html, '<!-- END of Symfony Web Debug Toolbar -->', $toolbarStart);
+            if ($toolbarEnd !== false) {
+                $toolbarEnd += strlen('<!-- END of Symfony Web Debug Toolbar -->');
+                $html = substr($html, 0, $toolbarStart) . substr($html, $toolbarEnd);
+            }
+        }
+
+        // Add closing tags if needed
+        if (strpos($html, '</body>') === false && strpos($html, '</html>') === false) {
+            $html .= '</body></html>';
+        }
+
+        return new Response($html, 200, ['Content-Type' => 'text/html; charset=UTF-8']);
     }
 }

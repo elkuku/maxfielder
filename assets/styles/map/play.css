@@ -1,15 +1,28 @@
-html, body, #map {
+html, body {
     margin: 0;
-    height: 100%;
+    padding: 0;
     width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 body {
-    padding-top: 55px;
+    padding-top: 56px;
 }
 
 #map {
-    margin-bottom: -40px;
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    z-index: 1;
+}
+
+.navbar {
+    z-index: 1030 !important;
 }
 
 .link-layer h4 {

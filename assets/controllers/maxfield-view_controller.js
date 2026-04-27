@@ -14,19 +14,47 @@ export default class extends Controller {
     static targets = ['frameNum', 'framesImage', 'frameLinkInfo', 'btnShowForeign', 'tab', 'tabBtn']
 
     displayForeign = true
+    storageKeys = 'maxfield-keys'
+    storageAgents = 'maxfield-agents'
+
+    getStorageId() {
+        return this.itemValue
+    }
 
     connect() {
         this.changeFrame()
+        this.loadFromStorage()
+    }
 
-        // const triggerTabList = [].slice.call(document.querySelectorAll('#accordionExample button'));
-        // triggerTabList.forEach(function (triggerEl) {
-        //     const tabTrigger = new Tab(triggerEl);
-        //
-        //     triggerEl.addEventListener('click', function (event) {
-        //         event.preventDefault()
-        //         tabTrigger.show()
-        //     })
-        // })
+    loadFromStorage() {
+        // Load keys
+        const keysData = sessionStorage.getItem(this.storageKeys + '-' + this.getStorageId())
+        if (keysData) {
+            const keys = JSON.parse(keysData)
+            for (const [guid, count] of Object.entries(keys)) {
+                const input = document.querySelector(`input[data-guid="${guid}"]`)
+                if (input) {
+                    input.value = count
+                    // Update faltan
+                    const row = input.closest('tr')
+                    const needed = parseInt(row.dataset.keys)
+                    const faltan = Math.max(0, needed - count)
+                    row.querySelector('[data-faltan]').textContent = faltan
+                }
+            }
+        }
+
+        // Load agent names
+        const agentsData = sessionStorage.getItem(this.storageAgents + '-' + this.getStorageId())
+        if (agentsData) {
+            const agents = JSON.parse(agentsData)
+            for (const [agentNum, name] of Object.entries(agents)) {
+                const input = document.querySelector(`input[data-agent-num="${agentNum}"]`)
+                const navLink = document.querySelector(`.nav-link[data-id="agent-${agentNum}"]`)
+                if (input) input.value = name
+                if (navLink) navLink.textContent = name
+            }
+        }
     }
 
     framePlus() {
@@ -76,14 +104,27 @@ export default class extends Controller {
         this.frameLinkInfoTarget.innerHTML = msg
     }
 
+    getAgentName(agentNum) {
+        const storageKey = this.storageAgents + '-' + this.getStorageId()
+        const agentsData = sessionStorage.getItem(storageKey)
+        if (agentsData) {
+            const agents = JSON.parse(agentsData)
+            if (agents[agentNum]) {
+                return agents[agentNum]
+            }
+        }
+        return 'Agent ' + agentNum
+    }
+
     getEventLine(event, isCurrent) {
         let css = isCurrent ? 'linkCurrent' : 'link'
         let cssMsg = event.action === 1 ? 'msgLink' : 'msgMove'
         let msg = event.action === 1 ? 'Link' : 'Move'
         let num = event.linkNum > 0 ? event.linkNum : ''
+        const agentName = this.getAgentName(event.agentNum)
 
         return '<div class="' + css + '">'
-            + '<span class="' + cssMsg + '"> ' + msg + ' </span> ' + num + ' - agent: ' + event.agentNum
+            + '<span class="' + cssMsg + '"> ' + msg + ' </span> ' + num + ' - ' + agentName
             + ' - ' + event.originName + ' (' + event.originNum + ')'
             + ' &rArr; ' + event.destinationName + ' (' + event.destinationNum + ')'
             + '</div>'
@@ -110,5 +151,112 @@ export default class extends Controller {
                 btn.classList.remove('active')
             }
         }
+    }
+
+    sortKeys(event) {
+        const sortType = event.target.value
+        const table = event.target.closest('.col').querySelector('table')
+        const header = table.querySelector('tr')
+        const rows = Array.from(table.querySelectorAll('tr[data-map-no]'))
+
+        rows.sort((a, b) => {
+            const aMapNo = parseInt(a.dataset.mapNo)
+            const bMapNo = parseInt(b.dataset.mapNo)
+            const aKeys = parseInt(a.dataset.keys)
+            const bKeys = parseInt(b.dataset.keys)
+            const aName = a.dataset.name
+            const bName = b.dataset.name
+
+            switch (sortType) {
+                case 'keysAsc':
+                    return aKeys - bKeys
+                case 'keysDesc':
+                    return bKeys - aKeys
+                case 'nameAsc':
+                    return aName.localeCompare(bName)
+                case 'nameDesc':
+                    return bName.localeCompare(aName)
+                default: // mapNo
+                    return aMapNo - bMapNo
+            }
+        })
+
+        // Remove all data rows, keep header
+        rows.forEach(row => row.remove())
+        // Reappend in new order after header
+        rows.forEach(row => table.appendChild(row))
+    }
+
+    sortKeysAgent(event) {
+        const sortType = event.target.value
+        const agent = event.target.dataset.agent
+        const table = document.querySelector(`table[data-agent-table="${agent}"]`)
+        if (!table) return
+
+        const header = table.querySelector('tr')
+        const rows = Array.from(table.querySelectorAll('tr[data-map-no]'))
+
+        rows.sort((a, b) => {
+            const aMapNo = parseInt(a.dataset.mapNo)
+            const bMapNo = parseInt(b.dataset.mapNo)
+            const aKeys = parseInt(a.dataset.keys) || 0
+            const bKeys = parseInt(b.dataset.keys) || 0
+            const aName = a.dataset.name
+            const bName = b.dataset.name
+
+            switch (sortType) {
+                case 'keysAsc':
+                    return aKeys - bKeys
+                case 'keysDesc':
+                    return bKeys - aKeys
+                case 'nameAsc':
+                    return aName.localeCompare(bName)
+                case 'nameDesc':
+                    return bName.localeCompare(aName)
+                default: // mapNo
+                    return aMapNo - bMapNo
+            }
+        })
+
+        rows.forEach(row => row.remove())
+        rows.forEach(row => table.appendChild(row))
+    }
+
+    updateMyKeys(event) {
+        const input = event.target
+        const row = input.closest('tr')
+        const needed = parseInt(row.dataset.keys)
+        const have = parseInt(input.value) || 0
+        const faltan = Math.max(0, needed - have)
+        row.querySelector('[data-faltan]').textContent = faltan
+
+        // Save to sessionStorage
+        const guid = input.dataset.guid
+        const storageKey = this.storageKeys + '-' + this.getStorageId()
+        let keysData = {}
+        const existing = sessionStorage.getItem(storageKey)
+        if (existing) keysData = JSON.parse(existing)
+        keysData[guid] = have
+        sessionStorage.setItem(storageKey, JSON.stringify(keysData))
+    }
+
+    updateAgentName(event) {
+        const input = event.target
+        const agentNum = input.dataset.agentNum
+        const name = input.value || 'Agent ' + agentNum
+        
+        // Update nav link text
+        const navLink = document.querySelector(`.nav-link[data-id="agent-${agentNum}"]`)
+        if (navLink) {
+            navLink.textContent = name
+        }
+
+        // Save to sessionStorage
+        const storageKey = this.storageAgents + '-' + this.getStorageId()
+        let agentsData = {}
+        const existing = sessionStorage.getItem(storageKey)
+        if (existing) agentsData = JSON.parse(existing)
+        agentsData[agentNum] = name
+        sessionStorage.setItem(storageKey, JSON.stringify(agentsData))
     }
 }
