@@ -216,6 +216,84 @@ final class MaxFieldHelperTest extends TestCase
         $helper->getWaypointsIdMap('nonexistent');
     }
 
+    public function testParsePlanResultsExtractsCorrectValues(): void
+    {
+        $helper = new MaxFieldHelper($this->tempDir, 6);
+
+        $logContent = <<<LOG
+Some output here...
+===============================
+Maxfield Plan Results:
+portals = 36
+links = 94
+fields = 84
+max keys needed = 10
+AP from portals = 63000
+AP from links = 29422
+AP from fields = 105000
+TOTAL AP = 197422
+===============================
+Optimizing agent link assignments...
+LOG;
+
+        $results = $helper->parsePlanResults($logContent);
+
+        $this->assertNotNull($results);
+        $this->assertSame(36, $results['portals']);
+        $this->assertSame(94, $results['links']);
+        $this->assertSame(84, $results['fields']);
+        $this->assertSame(10, $results['max_keys_needed']);
+        $this->assertSame(63000, $results['ap_from_portals']);
+        $this->assertSame(29422, $results['ap_from_links']);
+        $this->assertSame(105000, $results['ap_from_fields']);
+        $this->assertSame(197422, $results['total_ap']);
+    }
+
+    public function testParsePlanResultsReturnsNullWhenSectionMissing(): void
+    {
+        $helper = new MaxFieldHelper($this->tempDir, 6);
+
+        $logContent = 'Some random log output without the results section.';
+
+        $results = $helper->parsePlanResults($logContent);
+
+        $this->assertNull($results);
+    }
+
+    public function testParsePlanResultsReturnsPartialResultsWhenSectionIncomplete(): void
+    {
+        $helper = new MaxFieldHelper($this->tempDir, 6);
+
+        $logContent = <<<LOG
+===============================
+Maxfield Plan Results:
+portals = 36
+===============================
+LOG;
+
+        $results = $helper->parsePlanResults($logContent);
+
+        $this->assertNotNull($results);
+        $this->assertSame(36, $results['portals']);
+        $this->assertArrayNotHasKey('links', $results);
+        $this->assertArrayNotHasKey('fields', $results);
+    }
+
+    public function testParsePlanResultsReturnsNullWhenOnlyHeader(): void
+    {
+        $helper = new MaxFieldHelper($this->tempDir, 6);
+
+        $logContent = <<<LOG
+===============================
+Maxfield Plan Results:
+===============================
+LOG;
+
+        $results = $helper->parsePlanResults($logContent);
+
+        $this->assertNull($results);
+    }
+
     public function testGetParserReturnsMaxfieldParser(): void
     {
         $helper = new MaxFieldHelper($this->tempDir, 6);

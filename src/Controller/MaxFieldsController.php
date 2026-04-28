@@ -414,10 +414,21 @@ class MaxFieldsController extends BaseController
     #[Route(path: 'maxfield/status/{id}', name: 'maxfield_status', methods: ['GET'])]
     public function status(Maxfield $maxfield): JsonResponse
     {
-        $status = new MaxfieldStatus($this->maxFieldHelper)
+        $maxfieldStatus = new MaxfieldStatus($this->maxFieldHelper)
             ->fromMaxfield($maxfield);
 
-        return $this->json($status);
+        $status = $maxfieldStatus->getStatus();
+
+        if ($status === 'finished' && $maxfield->getPlanResults() === null) {
+            $logContent = $this->maxFieldHelper->getLog($maxfield->getPath());
+            $planResults = $this->maxFieldHelper->parsePlanResults($logContent);
+            if ($planResults !== null) {
+                $maxfield->setPlanResults($planResults);
+                $this->entityManager->flush();
+            }
+        }
+
+        return $this->json($maxfieldStatus);
     }
 
     #[Route(path: 'maxfield/view-status/{id}', name: 'maxfield_view_status', methods: ['GET'])]

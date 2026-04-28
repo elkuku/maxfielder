@@ -44,6 +44,9 @@ class Maxfield
     #[Column(type: Types::JSON, nullable: true)]
     private ?array $userData = null;
 
+    #[Column(type: Types::JSON, nullable: true)]
+    private ?array $planResults = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -105,6 +108,18 @@ class Maxfield
     public function setUserData(array $userData): self
     {
         $this->userData = $userData;
+
+        return $this;
+    }
+
+    public function getPlanResults(): ?array
+    {
+        return $this->planResults;
+    }
+
+    public function setPlanResults(?array $planResults): static
+    {
+        $this->planResults = $planResults;
 
         return $this;
     }

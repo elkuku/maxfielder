@@ -118,6 +118,55 @@ readonly class MaxFieldHelper
         return $this->maxfieldVersion;
     }
 
+    /**
+     * Parse "Maxfield Plan Results" section from log.txt content.
+     * Returns associative array with keys: portals, links, fields, max_keys_needed,
+     * ap_from_portals, ap_from_links, ap_from_fields, total_ap
+     * or null if section not found.
+     */
+    public function parsePlanResults(string $logContent): ?array
+    {
+        $lines = explode("\n", $logContent);
+        $inResults = false;
+        $results = [];
+
+        $keyMap = [
+            'portals' => 'portals',
+            'links' => 'links',
+            'fields' => 'fields',
+            'max keys needed' => 'max_keys_needed',
+            'AP from portals' => 'ap_from_portals',
+            'AP from links' => 'ap_from_links',
+            'AP from fields' => 'ap_from_fields',
+            'TOTAL AP' => 'total_ap',
+        ];
+
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+
+            if (str_contains($trimmed, 'Maxfield Plan Results:')) {
+                $inResults = true;
+                continue;
+            }
+
+            if ($inResults && $trimmed === '===============================') {
+                break; // End of results section
+            }
+
+            if ($inResults && str_contains($trimmed, '=')) {
+                [$key, $value] = explode('=', $trimmed, 2);
+                $key = trim($key);
+                $value = trim($value);
+
+                if (array_key_exists($key, $keyMap)) {
+                    $results[$keyMap[$key]] = (int) $value;
+                }
+            }
+        }
+
+        return !empty($results) ? $results : null;
+    }
+
     public function getPreviewImage(string $item): string
     {
         $path = $this->rootDir.sprintf('/%s/link_map.png', $item);
