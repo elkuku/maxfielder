@@ -150,49 +150,53 @@
 
         <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none" data-id="plan-results">
             {% if maxfield.planResults %}
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Metric</th>
-                                <th>Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Portals</strong></td>
-                                <td>{{ maxfield.planResults.portals }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Links</strong></td>
-                                <td>{{ maxfield.planResults.links }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Fields</strong></td>
-                                <td>{{ maxfield.planResults.fields }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Max Keys Needed</strong></td>
-                                <td>{{ maxfield.planResults.max_keys_needed }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>AP from Portals</strong></td>
-                                <td>{{ maxfield.planResults.ap_from_portals|number_format }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>AP from Links</strong></td>
-                                <td>{{ maxfield.planResults.ap_from_links|number_format }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>AP from Fields</strong></td>
-                                <td>{{ maxfield.planResults.ap_from_fields|number_format }}</td>
-                            </tr>
-                            <tr class="table-success">
-                                <td><strong>TOTAL AP</strong></td>
-                                <td><strong>{{ maxfield.planResults.total_ap|number_format }}</strong></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="row justify-content-center">
+                    <div class="col-12 col-lg-6">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Metric</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Portals</strong></td>
+                                        <td>{{ maxfield.planResults.portals }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Links</strong></td>
+                                        <td>{{ maxfield.planResults.links }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Fields</strong></td>
+                                        <td>{{ maxfield.planResults.fields }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Max Keys Needed</strong></td>
+                                        <td>{{ maxfield.planResults.max_keys_needed }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>AP from Portals</strong></td>
+                                        <td>{{ maxfield.planResults.ap_from_portals|number_format }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>AP from Links</strong></td>
+                                        <td>{{ maxfield.planResults.ap_from_links|number_format }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>AP from Fields</strong></td>
+                                        <td>{{ maxfield.planResults.ap_from_fields|number_format }}</td>
+                                    </tr>
+                                    <tr class="table-success">
+                                        <td><strong>TOTAL AP</strong></td>
+                                        <td><strong>{{ maxfield.planResults.total_ap|number_format }}</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             {% else %}
                 <div class="alert alert-info">

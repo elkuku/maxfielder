@@ -18,7 +18,10 @@
             {{ form_start(form) }}
             {{ form_errors(form) }}
 
-            {{ form_row(form.agentName) }}
+             {{ form_row(form.agentName, {
+                 'attr': {'data-action':'profile#validateAgentName', 'data-profile-target':'agentName'},
+                 'label_attr': {'data-profile-target':'agentNameLabel'}
+             }) }}
             <div class="row">
                 <div class="col">
                     {{ form_row(form.maxfieldEngine, {'attr':{'data-action':'profile#checkEngineOptions'}}) }}

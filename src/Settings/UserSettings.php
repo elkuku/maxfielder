@@ -11,7 +11,7 @@ use App\Enum\MaxfieldEngineEnum;
 
 class UserSettings
 {
-    public string $agentName = '';
+    public ?string $agentName = null;
 
     public float $lat = 0;
 

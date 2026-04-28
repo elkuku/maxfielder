@@ -18,7 +18,7 @@ export default class extends Controller {
         maxfieldEngine: String,
     }
 
-    static targets = ['lat', 'lon', 'zoom', 'mapOptions', 'dockerOptions']
+    static targets = ['lat', 'lon', 'zoom', 'mapOptions', 'dockerOptions', 'agentName', 'agentNameLabel']
 
     map = null
 
@@ -47,8 +47,15 @@ export default class extends Controller {
         this.map.on('dragend', () => this.updateFields())
         this.map.on('zoomend', () => this.updateFields())
 
+        // Initialize map options visibility on page load
         this._updateMapOptions(this.mapProviderValue)
         this._updateDockerOptions(this.maxfieldEngineValue)
+        
+        // Add form submit handler for validation
+        const form = this.agentNameTarget.closest('form')
+        if (form) {
+            form.addEventListener('submit', (e) => this._handleSubmit(e))
+        }
     }
 
     updateFields() {
@@ -59,12 +66,52 @@ export default class extends Controller {
         this.zoomTarget.value = this.map.getZoom()
     }
 
+    validateAgentName() {
+        const value = this.agentNameTarget.value.trim()
+        const formGroup = this.agentNameTarget.closest('.mb-3') || this.agentNameTarget.parentNode
+        
+        if (value === '') {
+            // Show Bootstrap validation error
+            this.agentNameTarget.classList.add('is-invalid')
+            this.agentNameTarget.classList.remove('is-valid')
+            
+            // Create or update invalid feedback message
+            let feedback = formGroup.querySelector('.invalid-feedback')
+            if (!feedback) {
+                feedback = document.createElement('div')
+                feedback.className = 'invalid-feedback'
+                formGroup.appendChild(feedback)
+            }
+            feedback.textContent = 'El nombre del agente no puede estar vacío.'
+            return false
+        } else {
+            // Clear validation error
+            this.agentNameTarget.classList.remove('is-invalid')
+            this.agentNameTarget.classList.add('is-valid')
+            
+            // Remove invalid feedback if exists
+            const feedback = formGroup.querySelector('.invalid-feedback')
+            if (feedback) {
+                feedback.remove()
+            }
+            return true
+        }
+    }
+
     checkMapOptions(event) {
         this._updateMapOptions(event.target.value)
     }
 
     checkEngineOptions(event) {
         this._updateDockerOptions(event.target.value)
+    }
+
+    _handleSubmit(event) {
+        const isValid = this.validateAgentName()
+        if (!isValid) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
     }
 
     _updateDockerOptions(engine) {
@@ -74,7 +121,7 @@ export default class extends Controller {
     _updateMapOptions(provider) {
         if ('mapbox' === provider) {
             this.mapOptionsTarget.style.display = 'block'
-        }else {
+        } else {
             this.mapOptionsTarget.style.display = 'none'
         }
     }

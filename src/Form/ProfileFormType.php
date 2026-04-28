@@ -25,7 +25,11 @@ class ProfileFormType extends AbstractType
     ): void
     {
         $builder
-            ->add('agentName')
+            ->add('agentName', null, [
+                'required' => false,
+                'empty_data' => '',
+                'label' => 'Nombre del Agente',
+            ])
             ->add(
                 'lat',
                 NumberType::class,
