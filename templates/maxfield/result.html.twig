@@ -150,6 +150,18 @@
 
         <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none" data-id="plan-results">
             {% if maxfield.planResults %}
+                {# 
+                    TEMPORAL: Orion Global Op Event Column
+                    - Event dates: 24 abr 2026 - 11 may 2026
+                    - Shows points calculation: Links × 2, Fields × 4
+                    - Column auto-hides outside event dates via Twig date condition
+                    - For future similar events: adjust dates and multipliers in startDate/endDate
+                #}
+                {% set now = date() %}
+                {% set startDate = date('2026-04-24') %}
+                {% set endDate = date('2026-05-11 23:59:59') %}
+                {% set showEventColumn = now >= startDate and now <= endDate %}
+
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-6">
                         <div class="table-responsive">
@@ -158,40 +170,57 @@
                                     <tr>
                                         <th>Metric</th>
                                         <th>Value</th>
+                                        {% if showEventColumn %}
+                                            <th>Orion Global Op (x2 Links, x4 Fields)</th>
+                                        {% endif %}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td><strong>Portals</strong></td>
                                         <td>{{ maxfield.planResults.portals }}</td>
+                                        {% if showEventColumn %}<td>-</td>{% endif %}
                                     </tr>
                                     <tr>
                                         <td><strong>Links</strong></td>
                                         <td>{{ maxfield.planResults.links }}</td>
+                                        {% if showEventColumn %}
+                                            <td>{{ (maxfield.planResults.links * 2)|number_format }}</td>
+                                        {% endif %}
                                     </tr>
                                     <tr>
                                         <td><strong>Fields</strong></td>
                                         <td>{{ maxfield.planResults.fields }}</td>
+                                        {% if showEventColumn %}
+                                            <td>{{ (maxfield.planResults.fields * 4)|number_format }}</td>
+                                        {% endif %}
                                     </tr>
                                     <tr>
                                         <td><strong>Max Keys Needed</strong></td>
                                         <td>{{ maxfield.planResults.max_keys_needed }}</td>
+                                        {% if showEventColumn %}<td>-</td>{% endif %}
                                     </tr>
                                     <tr>
                                         <td><strong>AP from Portals</strong></td>
                                         <td>{{ maxfield.planResults.ap_from_portals|number_format }}</td>
+                                        {% if showEventColumn %}<td>-</td>{% endif %}
                                     </tr>
                                     <tr>
                                         <td><strong>AP from Links</strong></td>
                                         <td>{{ maxfield.planResults.ap_from_links|number_format }}</td>
+                                        {% if showEventColumn %}<td>-</td>{% endif %}
                                     </tr>
                                     <tr>
                                         <td><strong>AP from Fields</strong></td>
                                         <td>{{ maxfield.planResults.ap_from_fields|number_format }}</td>
+                                        {% if showEventColumn %}<td>-</td>{% endif %}
                                     </tr>
                                     <tr class="table-success">
                                         <td><strong>TOTAL AP</strong></td>
                                         <td><strong>{{ maxfield.planResults.total_ap|number_format }}</strong></td>
+                                        {% if showEventColumn %}
+                                            <td><strong>{{ ((maxfield.planResults.links * 2) + (maxfield.planResults.fields * 4))|number_format }}</strong></td>
+                                        {% endif %}
                                     </tr>
                                 </tbody>
                             </table>
