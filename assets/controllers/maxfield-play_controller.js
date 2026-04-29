@@ -51,41 +51,10 @@ export default class extends Controller {
         this.setupMap()
         this.displayMaxFieldData()
 
-        // Center on waypoints or default Ecuador
-        const defaultCenter = [-0.248018, -79.148760]
-        
+        // Use zoomAll() which properly fits bounds after data is loaded
         setTimeout(() => {
-            const bounds = this.farmLayer.getBounds()
-            const validBounds = bounds.isValid()
-            const wpCount = this.maxfieldData.waypoints?.length || 0
-            
-            // Calculate zoom based on number of waypoints
-            let zoomLevel
-            if (wpCount <= 3) {
-                zoomLevel = 17
-            } else if (wpCount <= 6) {
-                zoomLevel = 16
-            } else if (wpCount <= 12) {
-                zoomLevel = 15
-            } else if (wpCount <= 20) {
-                zoomLevel = 14
-            } else {
-                zoomLevel = 13
-            }
-            
-            if (validBounds && wpCount > 1) {
-                // Multiple waypoints - fit to all with calculated maxZoom
-                this.map.fitBounds(bounds, { padding: [50, 50], maxZoom: zoomLevel })
-            } else if (wpCount === 1) {
-                // Single waypoint - center on it with higher zoom
-                const wp = this.maxfieldData.waypoints[0]
-                this.map.setView([wp.lat, wp.lon], 17)
-            } else {
-                // No waypoints or bounds - use default Ecuador
-                this.map.setView(defaultCenter, 15)
-            }
-            this.map.invalidateSize()
-        }, 300)
+            this.zoomAll()
+        }, 500)
     }
 
     displayMaxFieldData() {
