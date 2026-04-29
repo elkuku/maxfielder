@@ -382,8 +382,8 @@ class MaxFieldsController extends BaseController
                     'maxfield' => $newMaxfield,
                 ]
             );
-        } catch (\Exception $e) {
-            $this->addFlash('danger', 'Error generando variante: '.$e->getMessage());
+        } catch (Exception $exception) {
+            $this->addFlash('danger', 'Error generando variante: '.$exception->getMessage());
             return $this->redirectToRoute('max_fields_result', ['path' => $originalPath]);
         }
     }
@@ -570,7 +570,7 @@ class MaxFieldsController extends BaseController
         ?Profiler $profiler,
     ): Response
     {
-        if ($profiler !== null) {
+        if ($profiler instanceof Profiler) {
             $profiler->disable();
         }
         
@@ -579,7 +579,7 @@ class MaxFieldsController extends BaseController
         $waypointIdMap = $this->maxFieldHelper->getWaypointsIdMap($path);
 
         // Get agent names from URL params
-        $agentNamesParam = $request->query->all('agent') ?: [];
+        $agentNamesParam = $request->query->all('agent');
         $numAgentsParam = (int)$request->query->get('count', '1');
         
         // Get user's base agent name
@@ -589,7 +589,7 @@ class MaxFieldsController extends BaseController
         // Build agent names array - use actual number of agents
         $numAgents = max($numAgentsParam, count($info->agentsInfo));
         $agentNames = [];
-        for ($i = 1; $i <= $numAgents; $i++) {
+        for ($i = 1; $i <= $numAgents; ++$i) {
             $name = $agentNamesParam[$i] ?? null;
             if ($name) {
                 $agentNames[$i] = $name;
@@ -628,9 +628,9 @@ class MaxFieldsController extends BaseController
         // Remove Symfony toolbar - the toolbar is injected by WebDebugToolbarListener after render
         // The toolbar is inserted right before </body> so we need to cut it there
         // First, close </body></html> if missing (our template should have them)
-        if (strpos($html, '</body>') !== false) {
+        if (str_contains($html, '</body>')) {
             $html = substr($html, 0, strpos($html, '</body>')) . '</body></html>';
-        } elseif (strpos($html, '</html>') !== false) {
+        } elseif (str_contains($html, '</html>')) {
             $html = substr($html, 0, strpos($html, '</html>')) . '</html>';
         }
 
@@ -645,10 +645,10 @@ class MaxFieldsController extends BaseController
         }
 
         // Add closing tags if needed
-        if (strpos($html, '</body>') === false && strpos($html, '</html>') === false) {
+        if (str_contains($html, '</body>') === false && str_contains($html, '</html>') === false) {
             $html .= '</body></html>';
         }
 
-        return new Response($html, 200, ['Content-Type' => 'text/html; charset=UTF-8']);
+        return new Response($html, Response::HTTP_OK, ['Content-Type' => 'text/html; charset=UTF-8']);
     }
 }

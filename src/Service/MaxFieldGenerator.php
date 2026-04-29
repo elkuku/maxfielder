@@ -259,7 +259,7 @@ class MaxFieldGenerator
 
         foreach (new DirectoryIterator($path) as $file) {
             if (preg_match(
-                '/frame_(\d\d\d\d)/',
+                '/frame_(\d+)/',
                 $file->getFilename(),
                 $matches
             )
