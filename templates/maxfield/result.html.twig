@@ -10,6 +10,9 @@
            target="_blank"
            onclick="return exportMobile(this, '{{ maxfield.path }}')"
            id="btnMobile"><i class="bi-phone"></i> Mobile</a>
+        <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#variantModal">
+            <i class="bi-shuffle"></i> Generar Variante
+        </button>
         <a href="{{ path('max_fields_delete', {'id': maxfield.id}) }}" class="btn btn-outline-danger">Delete</a>
     </div>
 
@@ -343,6 +346,32 @@
         {% endfor %}
 
 
+     </div>
+
+    <!-- Modal Generar Variante -->
+    <div class="modal fade" id="variantModal" tabindex="-1" aria-labelledby="variantModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="variantModalLabel"><i class="bi-shuffle"></i> Generar Variante</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{{ path('maxfield_generate_variant', {'id': maxfield.id}) }}" target="_blank">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="playersNum" class="form-label">Número de Agents</label>
+                            <input type="number" class="form-control" id="playersNum" name="playersNum" 
+                                   value="{{ info.agentsInfo|length }}" min="1" max="10" required>
+                        </div>
+                        <small class="text-muted">Se mezclará el orden de los portales para generar una nueva distribución.</small>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-warning">Generar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -378,6 +407,20 @@
         window.open(url, '_blank');
         return false;
     }
+    </script>
+
+    <script>
+    // Close variant modal after form submit
+    document.querySelector('#variantModal form')?.addEventListener('submit', function() {
+        const modalEl = document.getElementById('variantModal');
+        if (modalEl) {
+            modalEl.style.display = 'none';
+            modalEl.classList.remove('show');
+            document.body.classList.remove('modal-open');
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) backdrop.remove();
+        }
+    });
     </script>
 
 {% endblock %}

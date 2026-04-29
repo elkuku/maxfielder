@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use RuntimeException;
 use App\Entity\Waypoint;
 use App\Enum\MaxfieldEngineEnum;
 use DirectoryIterator;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
@@ -259,7 +259,7 @@ class MaxFieldGenerator
 
         foreach (new DirectoryIterator($path) as $file) {
             if (preg_match(
-                '/frame_(\d\d\d\d\d)/',
+                '/frame_(\d\d\d\d)/',
                 $file->getFilename(),
                 $matches
             )
@@ -270,5 +270,129 @@ class MaxFieldGenerator
         }
 
         return $frames;
+    }
+
+    /**
+     * Generate a variant of an existing maxfield by shuffling portal order.
+     *
+     * @param array<string, bool> $options
+     */
+    public function generateVariant(
+        string $originalProjectName,
+        int $playersNum,
+        array $options,
+        MaxfieldEngineEnum $engine = MaxfieldEngineEnum::php,
+        string $dockerContainer = '',
+    ): string {
+        $originalRoot = $this->rootDir.'/'.$originalProjectName;
+
+        // Read original portals.txt
+        $portalsFile = $originalRoot.'/portals.txt';
+        if (!file_exists($portalsFile)) {
+            throw new RuntimeException('Original portals.txt not found: '.$portalsFile);
+        }
+
+        $portalsContent = file_get_contents($portalsFile);
+        if ($portalsContent === false) {
+            throw new RuntimeException('Cannot read original portals.txt');
+        }
+
+        // Read original portals_id_map.csv
+        $mapFile = $originalRoot.'/portals_id_map.csv';
+        if (!file_exists($mapFile)) {
+            throw new RuntimeException('Original portals_id_map.csv not found: '.$mapFile);
+        }
+
+        $mapContent = file_get_contents($mapFile);
+        if ($mapContent === false) {
+            throw new RuntimeException('Cannot read original portals_id_map.csv');
+        }
+
+        // Parse portals into array
+        $portals = explode("\n", trim($portalsContent));
+
+        // Parse map into array of CSV lines (each line is an array)
+        $mapLines = explode("\n", trim($mapContent));
+        $mapData = [];
+        foreach ($mapLines as $line) {
+            $mapData[] = str_getcsv($line, ',', '"', '\\');
+        }
+
+        // Shuffle - create indices array and shuffle it
+        $indices = range(0, count($portals) - 1);
+        shuffle($indices);
+
+        // Rebuild portals.txt with shuffled order
+        $shuffledPortals = [];
+        $shuffledMap = [];
+        foreach ($indices as $i) {
+            $shuffledPortals[] = $portals[$i];
+            $shuffledMap[] = $mapData[$i];
+        }
+
+        // Generate new project name with -v{N} suffix
+        $newProjectName = $this->generateVariantName($originalProjectName);
+
+        // Create new directory and write files
+        $newRoot = $this->rootDir.'/'.$newProjectName;
+        $fileSystem = new Filesystem();
+        $fileSystem->mkdir($newRoot);
+
+        // Write shuffled portals.txt
+        $fileSystem->dumpFile($newRoot.'/portals.txt', implode("\n", $shuffledPortals));
+
+        // Write shuffled portals_id_map.csv
+        $fp = fopen($newRoot.'/portals_id_map.csv', 'w');
+        if ($fp === false) {
+            throw new RuntimeException('Cannot create portals_id_map.csv in '.$newRoot);
+        }
+        foreach ($shuffledMap as $fields) {
+            fputcsv($fp, $fields, escape: '\\');
+        }
+        fclose($fp);
+
+        // Build the wayPointList and wayPointMap from shuffled data
+        $wayPointList = implode("\n", $shuffledPortals);
+        $wayPointMap = $shuffledMap;
+
+        // Generate the variant
+        $command = $this->buildCommand($newRoot, $newRoot.'/portals.txt', $playersNum, $options, $engine, $dockerContainer);
+        $fileSystem->dumpFile($newRoot.'/command.txt', implode(' ', $command));
+
+        $process = new Process($command);
+        $process->start();
+
+        return $newProjectName;
+    }
+
+    /**
+     * Generate next variant name: "foo-v1", "foo-v2", etc.
+     */
+    private function generateVariantName(string $originalName): string
+    {
+        // Check if original already ends with -v{N}
+        if (preg_match('/^(.+)-v(\d+)$/', $originalName, $matches)) {
+            $baseName = $matches[1];
+            $nextNum = (int)$matches[2] + 1;
+        } else {
+            $baseName = $originalName;
+            $nextNum = 1;
+        }
+
+        // Find next available number
+        $dirs = glob($this->rootDir.'/'.$baseName.'-v*', GLOB_ONLYDIR) ?: [];
+        $existingNums = [];
+        foreach ($dirs as $dir) {
+            if (preg_match('/-v(\d+)$/', $dir, $m)) {
+                $existingNums[] = (int)$m[1];
+            }
+        }
+
+        // Include the nextNum from above in check
+        while (in_array($nextNum, $existingNums, true)) {
+            $nextNum++;
+        }
+
+        return $baseName.'-v'.$nextNum;
     }
 }

@@ -322,6 +322,72 @@ class MaxFieldsController extends BaseController
         );
     }
 
+    #[Route(path: 'maxfield/generate-variant/{id}', name: 'maxfield_generate_variant', methods: ['POST'])]
+    public function generateVariant(
+        Maxfield $maxfield,
+        Request $request,
+    ): Response
+    {
+        $playersNum = (int)$request->request->get('playersNum', 1);
+
+        if ($playersNum < 1 || $playersNum > 10) {
+            $this->addFlash('danger', 'Número de agents inválido');
+            return $this->redirectToRoute('max_fields_result', ['path' => $maxfield->getPath()]);
+        }
+
+        $originalPath = $maxfield->getPath() ?? '';
+
+        // Read original options from command.txt if available
+        $options = [
+            'skip_plots' => false,
+            'skip_step_plots' => false,
+        ];
+
+        $commandFile = $this->maxFieldGenerator->getImagePath($originalPath, 'command.txt');
+        if (file_exists($commandFile)) {
+            $commandContent = file_get_contents($commandFile);
+            if ($commandContent !== false) {
+                $options['skip_plots'] = str_contains($commandContent, '--skip_plots');
+                $options['skip_step_plots'] = str_contains($commandContent, '--skip_step_plots');
+            }
+        }
+
+        $userSettings = $this->getUser()?->getUserParams() ?? new UserSettings();
+
+        try {
+            $newProjectName = $this->maxFieldGenerator->generateVariant(
+                $originalPath,
+                $playersNum,
+                $options,
+                $userSettings->maxfieldEngine,
+                $userSettings->dockerContainer,
+            );
+
+            // Extract the -vN suffix (e.g., "-v2", "-v3")
+            preg_match('/-v\d+$/', $newProjectName, $matches);
+            $vSuffix = $matches[0] ?? '-v1';
+            
+            $newMaxfield = new Maxfield()
+                ->setName($maxfield->getName().' '.$vSuffix)
+                ->setPath($newProjectName)
+                ->setOwner($this->getUser());
+
+            $this->entityManager->persist($newMaxfield);
+            $this->entityManager->flush();
+
+            // Render the status page directly (form has target="_blank")
+            return $this->render(
+                'maxfield/status.html.twig',
+                [
+                    'maxfield' => $newMaxfield,
+                ]
+            );
+        } catch (\Exception $e) {
+            $this->addFlash('danger', 'Error generando variante: '.$e->getMessage());
+            return $this->redirectToRoute('max_fields_result', ['path' => $originalPath]);
+        }
+    }
+
     #[Route(path: 'maxfield/edit/{id}', name: 'maxfield_edit', methods: [
         'GET',
         'POST',
