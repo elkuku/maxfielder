@@ -75,13 +75,23 @@ export default class extends Controller {
         this.changeFrame()
     }
 
+    frameStart() {
+        this.frameNumValue = 0
+        this.changeFrame()
+    }
+
+    frameEnd() {
+        this.frameNumValue = this.maxFramesValue
+        this.changeFrame()
+    }
+
     changeFrame() {
         const s = '000000000' + this.frameNumValue
         const num = s.substring(s.length - 5)
         let msg = ''
 
         this.framesImageTarget.src = '/maxfields/' + this.itemValue + '/frames/frame_' + num + '.gif'
-        this.frameNumTarget.innerText = this.frameNumValue + ' / ' + this.maxFramesValue
+        this.frameNumTarget.innerText = (this.frameNumValue + 1) + ' / ' + (this.maxFramesValue + 1)
 
         if (0 === this.frameNumValue) {
             msg = 'Initial'

@@ -593,10 +593,14 @@ class MaxFieldsController extends BaseController
             $name = $agentNamesParam[$i] ?? null;
             if ($name) {
                 $agentNames[$i] = $name;
-            } elseif ($baseAgentName) {
-                $agentNames[$i] = $baseAgentName . ' ' . $i;
-            } else {
+            } elseif ($numAgents === 1 && $baseAgentName) {
+                // Single agent: use logged-in user's name
+                $agentNames[$i] = $baseAgentName;
+            } elseif ($numAgents > 1) {
+                // Multiple agents: use "Agent N" format
                 $agentNames[$i] = 'Agent ' . $i;
+            } else {
+                $agentNames[$i] = 'Agent';
             }
         }
 

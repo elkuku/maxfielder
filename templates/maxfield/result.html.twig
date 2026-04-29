@@ -84,11 +84,17 @@
         <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none" data-id="frames">
             <div class="row">
                 <div class="col">
+                    <button class="btn btn-outline-secondary" {{ stimulus_action('maxfield-view', 'frameStart') }} title="First frame">
+                        <span class="bi-skip-backward-fill"></span>
+                    </button>
                     <button class="btn btn-outline-secondary" {{ stimulus_action('maxfield-view', 'frameMinus') }}>
                         <span class="bi-dash-lg"></span>
                     </button>
                     <button class="btn btn-outline-secondary" {{ stimulus_action('maxfield-view', 'framePlus') }}>
                         <span class="bi-plus-lg"></span>
+                    </button>
+                    <button class="btn btn-outline-secondary" {{ stimulus_action('maxfield-view', 'frameEnd') }} title="Last frame">
+                        <span class="bi-skip-forward-fill"></span>
                     </button>
                     <span {{ stimulus_target('maxfield-view', 'frameNum') }}>#</span>
                     <div {{ stimulus_target('maxfield-view', 'frameLinkInfo') }}>...</div>

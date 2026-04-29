@@ -65,8 +65,8 @@
                 <img id="currentFrame" class="frame-image" src="" alt="Frame">
                 
                 <div class="step-info">
-                    <div class="row frame-row"><span class="label">Frame</span><span class="value frame-num" id="frameNum">1</span><span class="label">/</span><span id="totalFrames">{{ info.steps|length }}</span><span class="value type-link" id="actionType">LINK</span><span id="doneBadge" class="done-badge">✓ DONE</span></div>
-                    <div class="row"><span class="label">#:</span><span class="value" id="linkNum">1</span></div>
+                    <div class="row frame-row"><span class="label">Frame</span><span class="value frame-num" id="frameNum">1</span><span class="label">/</span><span id="totalFrames">{{ info.steps|length + 1 }}</span><span class="value type-link" id="actionType">LINK</span><span id="doneBadge" class="done-badge">✓ DONE</span></div>
+                    <div class="row"><span class="label">Link #:</span><span class="value" id="linkNum">1</span></div>
                     <div class="row"><span class="label">Agent:</span><span class="value agent-name" id="agentName">Samuel</span></div>
                     <div class="row block"><span class="label">From:</span><span class="value" id="fromPortal">Mural Skater (17)</span></div>
                     <div class="row block"><span class="label">To:</span><span class="value" id="toPortal">Mural Ganster (26)</span></div>
@@ -149,6 +149,7 @@
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const startBtn = document.getElementById('startBtn');
+        const endBtn = document.getElementById('endBtn');
         const progressFill = document.getElementById('progressFill');
         const doneBadge = document.getElementById('doneBadge');
         
@@ -197,6 +198,7 @@
         }
         
         function startOver() { currentFrame = 0; updateUI(); }
+        function endFrame() { currentFrame = totalFrames - 1; updateUI(); }
         function nextFrame() { if (currentFrame < totalFrames - 1) { currentFrame++; updateUI(); } }
         function prevFrame() { if (currentFrame > 0) { currentFrame--; updateUI(); } }
         
@@ -210,6 +212,7 @@
         }
         
         startBtn.addEventListener('click', startOver);
+        endBtn.addEventListener('click', endFrame);
         nextBtn.addEventListener('click', nextFrame);
         prevBtn.addEventListener('click', prevFrame);
         doneBtn.addEventListener('click', markDone);
