@@ -3,21 +3,6 @@
 {% block title %}{{ parent() }} - MaxFields Result{% endblock %}
 
 {% block body %}
-    <div class="float-end">
-        <a href="{{ path('maxfield_play', {'path': maxfield.path}) }}" class="btn btn-outline-success">Play</a>
-        <a href="{{ path('maxfield_export_mobile', {'path': maxfield.path}) }}" 
-           class="btn btn-outline-primary" 
-           target="_blank"
-           onclick="return exportMobile(this, '{{ maxfield.path }}')"
-           id="btnMobile"><i class="bi-phone"></i> Mobile</a>
-        <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#variantModal">
-            <i class="bi-shuffle"></i> Generar Variante
-        </button>
-        <a href="{{ path('max_fields_delete', {'id': maxfield.id}) }}" class="btn btn-outline-danger">Delete</a>
-    </div>
-
-    <h3>MaxFields for <span id="itemId">{{ maxfield.name }}</span></h3>
-
     <div
             {{ stimulus_controller('maxfield-view', {
                 maxFrames: info.steps|length,
@@ -25,8 +10,44 @@
                 steps: info.steps|json_encode,
             }) }}
     >
+        <div class="sticky-top bg-dark pt-3 pb-2 " style="top: 56px; z-index: 1025;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h3 class="mb-0">MaxFields for <span id="itemId">{{ maxfield.name }}</span></h3>
+                <div class="flex-shrink-0">
+                    {# Desktop buttons #}
+                    <div class="d-none d-md-inline-block">
+                        <a href="{{ path('maxfield_play', {'path': maxfield.path}) }}" class="btn btn-outline-success btn-sm">Play</a>
+                        <a href="{{ path('maxfield_export_mobile', {'path': maxfield.path}) }}" 
+                           class="btn btn-outline-primary btn-sm" 
+                           target="_blank"
+                           onclick="return exportMobile(this, '{{ maxfield.path }}')"
+                           id="btnMobile"><i class="bi-phone"></i> Mobile</a>
+                        <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#variantModal" title="Generar Variante">
+                            <i class="bi-shuffle"></i> Variante
+                        </button>
+                        <a href="{{ path('max_fields_delete', {'id': maxfield.id}) }}" class="btn btn-outline-danger btn-sm">Delete</a>
+                    </div>
+                    {# Mobile hamburger menu #}
+                    <div class="d-inline-block d-md-none">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{{ path('maxfield_play', {'path': maxfield.path}) }}"><i class="bi-play"></i> Play</a></li>
+                                <li><a class="dropdown-item" href="{{ path('maxfield_export_mobile', {'path': maxfield.path}) }}" 
+                                       target="_blank"
+                                       onclick="return exportMobile(this, '{{ maxfield.path }}')"><i class="bi-phone"></i> Mobile</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#variantModal"><i class="bi-shuffle"></i> Variante</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="{{ path('max_fields_delete', {'id': maxfield.id}) }}"><i class="bi-trash"></i> Delete</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <nav class="nav nav-pills fixed-top bg-dark" id="maxfield-tab-nav">
+            <nav class="nav nav-pills" id="maxfield-tab-nav">
             <a class="nav-link active" href="#" data-id="maps"
                     {{ stimulus_action('maxfield-view', 'showTab', 'click', {tab:'maps'}) }}
                     {{ stimulus_target('maxfield-view', 'tabBtn') }}
@@ -76,20 +97,20 @@
 
         <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" data-id="maps">
             <div class="row">
-                <div class="col">
-                    <img src="/maxfields/{{ maxfield.path }}/link_map.png" width="350px" alt="Link Map">
+                <div class="col-md-6">
+                    <img src="/maxfields/{{ maxfield.path }}/link_map.png" style="max-width: 100%; height: auto;" alt="Link Map">
                 </div>
-                <div class="col">
-                    <img src="/maxfields/{{ maxfield.path }}/portal_map.png" width="350px" alt="Portal Map">
+                <div class="col-md-6">
+                    <img src="/maxfields/{{ maxfield.path }}/portal_map.png" style="max-width: 100%; height: auto;" alt="Portal Map">
                 </div>
             </div>
         </div>
         <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none" data-id="movie">
-            <img src="/maxfields/{{ maxfield.path }}/plan_movie.gif" width="350px" alt="Link movie">
+            <img src="/maxfields/{{ maxfield.path }}/plan_movie.gif" style="max-width: 100%; height: auto;" alt="Link movie">
         </div>
         <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none" data-id="frames">
             <div class="row">
-                <div class="col">
+                <div class="col-md-6">
                     <button class="btn btn-outline-secondary" {{ stimulus_action('maxfield-view', 'frameStart') }} title="First frame">
                         <span class="bi-skip-backward-fill"></span>
                     </button>
@@ -105,9 +126,9 @@
                     <span {{ stimulus_target('maxfield-view', 'frameNum') }}>#</span>
                     <div {{ stimulus_target('maxfield-view', 'frameLinkInfo') }}>...</div>
                 </div>
-                <div class="col border">
+                <div class="col-md-6 border">
                     <img {{ stimulus_target('maxfield-view', 'framesImage') }}
-                            src="" alt="Frame" width="350px">
+                             src="" alt="Frame" style="max-width: 100%; height: auto;">
                 </div>
             </div>
         </div>
@@ -118,24 +139,24 @@
                     <button class="btn btn-outline-secondary btn-sm" onclick="fmPrev()">◀</button>
                     <button class="btn btn-outline-secondary btn-sm" onclick="fmNext()">▶</button>
                     <button class="btn btn-outline-secondary btn-sm" onclick="fmEnd()">⏭</button>
-                    <span id="fmFrameNum" style="color: #4ade80; font-weight: bold; line-height: 31px;">#</span>
-                    <span id="fmTotalFrames" style="color: #9ca3af; font-size: 12px; line-height: 31px;">/ {{ info.steps|length + 1 }}</span>
+                        <span id="fmFrameNum" style="color: #4ade80; font-weight: bold; line-height: 31px;">#</span>
+                        <span id="fmTotalFrames" style="color: #9ca3af; font-size: 12px; line-height: 31px;">/ {{ info.steps|length + 1 }}</span>
                 </div>
                 <div style="padding: 10px;">
                     <img id="fmFrameImg" src="" alt="Frame" style="max-width:100%; height: auto; border-radius: 8px; min-height: 200px; max-height: 50vh;">
-                    <div style="background: #262626; border-radius: 8px; padding: 8px; margin: 8px 0; font-size: 13px;">
+                        <div style="background: #262626; border-radius: 8px; padding: 8px; margin: 8px 0; font-size: 13px;">
                         <div style="display: block; margin-bottom: 6px;">
-                            <span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">Frame</span>
-                            <span id="fmFrameNum2" style="color: #4ade80; font-weight: bold;">#</span>
-                            <span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">/</span>
-                            <span id="fmTotalFrames2" style="color: #9ca3af; font-size: 12px;">{{ info.steps|length + 1 }}</span>
-                            <span id="fmActionType" style="background: #4ade80; color: #1a1a1a; padding: 1px 4px; border-radius: 3px; margin-left: 8px;">LINK</span>
-                            <span id="fmDoneBadge" style="display: none; background: #4ade80; color: #1a1a1a; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 8px;">✓ DONE</span>
+                                <span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">Frame</span>
+                                <span id="fmFrameNum2" style="color: #4ade80; font-weight: bold;">#</span>
+                                <span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">/</span>
+                                <span id="fmTotalFrames2" style="color: #9ca3af; font-size: 12px;">{{ info.steps|length + 1 }}</span>
+                                <span id="fmActionType" style="background: #4ade80; color: #1a1a1a; padding: 1px 4px; border-radius: 3px; margin-left: 8px;">LINK</span>
+                                <span id="fmDoneBadge" style="display: none; background: #4ade80; color: #1a1a1a; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 8px;">✓ DONE</span>
                         </div>
-                        <div style="display: inline-block; margin-right: 12px;"><span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">Link #:</span><span id="fmLinksNum" style="font-size: 13px;">1</span></div>
-                        <div style="display: inline-block; margin-right: 12px;"><span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">Agent:</span><span id="fmAgentName" style="color: #4ade80; font-weight: bold; font-size: 13px;">Agent 1</span></div>
-                        <div style="display: block; margin-top: 4px;"><span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">From:</span><span id="fmFromPortal" style="font-size: 13px;">Portal (1)</span></div>
-                        <div style="display: block;"><span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">To:</span><span id="fmToPortal" style="font-size: 13px;">Portal (2)</span></div>
+                                <div style="display: inline-block; margin-right: 12px;"><span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">Link #:</span><span id="fmLinksNum" style="font-size: 13px;">1</span></div>
+                                <div style="display: inline-block; margin-right: 12px;"><span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">Agent:</span><span id="fmAgentName" style="color: #4ade80; font-weight: bold; font-size: 13px;">Agent 1</span></div>
+                                <div style="display: block; margin-top: 4px;"><span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">From:</span><span id="fmFromPortal" style="font-size: 13px;">Portal (1)</span></div>
+                                <div style="display: block;"><span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">To:</span><span id="fmToPortal" style="font-size: 13px;">Portal (2)</span></div>
                     </div>
                 </div>
             </div>
@@ -204,8 +225,8 @@
         </div>
         <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none" data-id="keys">
             <div class="row">
-                <div class="col">
-                    <h4>Key Preparation Total</h4>
+                        <div class="col-md-6">
+                            <h4>Key Preparation Total</h4>
                     <div class="mb-2">
                         <label for="sortKeys">Ordenar por:</label>
                         <select id="sortKeys" {{ stimulus_action('maxfield-view', 'sortKeys', 'change') }}>
@@ -353,19 +374,8 @@
                                data-agent-num="{{ agentInfo.agentNumber }}"
                                {{ stimulus_action('maxfield-view', 'updateAgentName', 'input') }}>
                     </div>
-                    <div class="col">
-                        <label for="email-agent-{{ agentInfo.agentNumber }}">Send e-mail to </label>
-                        <input type="text" id="email-agent-{{ agentInfo.agentNumber }}">
-                        <button class="btn btn-outline-success sendMail" id="{{ agentInfo.agentNumber }}">
-                            Send
-                        </button>
-                        <span id="result-{{ agentInfo.agentNumber }}"></span>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-lg">
-                        <h4>Keys for agent {{ agentInfo.agentNumber }}</h4>
+                        <div class="col-md-6">
+                            <h4>Keys for agent {{ agentInfo.agentNumber }}</h4>
                         <div class="mb-2">
                             <select class="sort-keys-agent" data-agent="{{ agentInfo.agentNumber }}" {{ stimulus_action('maxfield-view', 'sortKeysAgent', 'change') }}>
                                 <option value="mapNo">Map No (default)</option>
@@ -410,8 +420,8 @@
                             {% endfor %}
                         </table>
                     </div>
-                    <div class="col-lg">
-                        <h4>Links for agent {{ agentInfo.agentNumber }}</h4>
+                        <div class="col-md-6">
+                            <h4>Links for agent {{ agentInfo.agentNumber }}</h4>
                         {% if info.agentsInfo|length > 1 %}
                             <button class="btn btn-outline-primary"
                                     {{ stimulus_target('maxfield-view', 'btnShowForeign') }}

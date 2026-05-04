@@ -21,7 +21,7 @@ html {
 -------------------------------------------------- */
 
 body > .container-fluid {
-    padding-top: 70px;
+    padding-top: 0;
 }
 
 /*.footer > .container {*/
@@ -65,6 +65,25 @@ span.msgMove {
 .code-console {
     background: black;
     color: lime;
+}
+
+#maxfield-tab-nav {
+    top: 56px !important;
+    z-index: 1025 !important;
+    position: sticky !important;
+}
+
+.float-end {
+    position: relative;
+    z-index: 1040;
+}
+
+.navbar.fixed-top {
+    z-index: 1040 !important;
+}
+
+.dropdown-menu {
+    z-index: 1050 !important;
 }
 
 .search-preview {
