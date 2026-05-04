@@ -45,6 +45,12 @@
             >
                 Frames
             </a>
+            <a class="nav-link" href="#" data-id="frames-mobile"
+                    {{ stimulus_action('maxfield-view', 'showTab', 'click', {tab:'frames-mobile'}) }}
+                    {{ stimulus_target('maxfield-view', 'tabBtn') }}
+            >
+                Frames M
+            </a>
             <a class="nav-link" href="#" data-id="keys"
                     {{ stimulus_action('maxfield-view', 'showTab', 'click', {tab:'keys'}) }}
                     {{ stimulus_target('maxfield-view', 'tabBtn') }}>
@@ -104,6 +110,97 @@
                             src="" alt="Frame" width="350px">
                 </div>
             </div>
+        </div>
+        <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none" data-id="frames-mobile">
+            <div style="background: #1a1a1a; color: #e0e0e0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+                <div style="display: flex; gap: 8px; justify-content: center; padding: 2px; border-bottom: 1px solid #404040; background: #2d2d2d;">
+                    <button class="btn btn-outline-secondary btn-sm" onclick="fmStart()">⏮</button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="fmPrev()">◀</button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="fmNext()">▶</button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="fmEnd()">⏭</button>
+                    <span id="fmFrameNum" style="color: #4ade80; font-weight: bold; line-height: 31px;">#</span>
+                    <span id="fmTotalFrames" style="color: #9ca3af; font-size: 12px; line-height: 31px;">/ {{ info.steps|length + 1 }}</span>
+                </div>
+                <div style="padding: 10px;">
+                    <img id="fmFrameImg" src="" alt="Frame" style="max-width:100%; height: auto; border-radius: 8px; min-height: 200px; max-height: 50vh;">
+                    <div style="background: #262626; border-radius: 8px; padding: 8px; margin: 8px 0; font-size: 13px;">
+                        <div style="display: block; margin-bottom: 6px;">
+                            <span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">Frame</span>
+                            <span id="fmFrameNum2" style="color: #4ade80; font-weight: bold;">#</span>
+                            <span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">/</span>
+                            <span id="fmTotalFrames2" style="color: #9ca3af; font-size: 12px;">{{ info.steps|length + 1 }}</span>
+                            <span id="fmActionType" style="background: #4ade80; color: #1a1a1a; padding: 1px 4px; border-radius: 3px; margin-left: 8px;">LINK</span>
+                            <span id="fmDoneBadge" style="display: none; background: #4ade80; color: #1a1a1a; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 8px;">✓ DONE</span>
+                        </div>
+                        <div style="display: inline-block; margin-right: 12px;"><span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">Link #:</span><span id="fmLinksNum" style="font-size: 13px;">1</span></div>
+                        <div style="display: inline-block; margin-right: 12px;"><span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">Agent:</span><span id="fmAgentName" style="color: #4ade80; font-weight: bold; font-size: 13px;">Agent 1</span></div>
+                        <div style="display: block; margin-top: 4px;"><span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">From:</span><span id="fmFromPortal" style="font-size: 13px;">Portal (1)</span></div>
+                        <div style="display: block;"><span style="margin-right: 4px; color: #9ca3af; font-size: 12px;">To:</span><span id="fmToPortal" style="font-size: 13px;">Portal (2)</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <script>
+            (function() {
+                const steps = {{ info.steps|json_encode|raw }};
+                const path = '{{ maxfield.path }}';
+                const agentNames = {{ info.agentsInfo|map(a => 'Agent ' ~ a.agentNumber)|json_encode|raw }};
+                
+                let currentFrame = 0;
+                const totalFrames = {{ info.steps|length + 1 }};
+                
+                function getAgentName(agentNum) {
+                    try {
+                        const stored = sessionStorage.getItem('maxfield-agents-' + path);
+                        if (stored) {
+                            const parsed = JSON.parse(stored);
+                            if (parsed[agentNum]) return parsed[agentNum];
+                        }
+                    } catch(e) {}
+                    return agentNames[agentNum] || ('Agent ' + agentNum);
+                }
+                
+                function updateUI() {
+                    const s = '000000000' + currentFrame;
+                    const num = s.substring(s.length - 5);
+                    document.getElementById('fmFrameImg').src = '/maxfields/' + path + '/frames/frame_' + num + '.gif';
+                    document.getElementById('fmFrameNum').textContent = (currentFrame + 1);
+                    document.getElementById('fmFrameNum2').textContent = (currentFrame + 1);
+                    document.getElementById('fmTotalFrames').textContent = ' / ' + totalFrames;
+                    document.getElementById('fmTotalFrames2').textContent = ' / ' + totalFrames;
+                    
+                    if (currentFrame > 0 && steps && steps[currentFrame - 1]) {
+                        const step = steps[currentFrame - 1];
+                        const actionType = step.action === 2 || (!step.linkNum) ? 'MOVE' : 'LINK';
+                        const actionEl = document.getElementById('fmActionType');
+                        actionEl.textContent = actionType;
+                        actionEl.style.background = actionType === 'LINK' ? '#4ade80' : '#a78bfa';
+                        document.getElementById('fmLinksNum').textContent = step.linkNum || '-';
+                        document.getElementById('fmAgentName').textContent = getAgentName(step.agentNum || 1);
+                        document.getElementById('fmFromPortal').textContent = step.originName ? (step.originName + ' (' + step.originNum + ')') : '-';
+                        document.getElementById('fmToPortal').textContent = step.destinationName ? (step.destinationName + ' (' + step.destinationNum + ')') : '-';
+                        document.getElementById('fmDoneBadge').style.display = 'none';
+                    } else {
+                        const actionEl = document.getElementById('fmActionType');
+                        actionEl.textContent = currentFrame === 0 ? 'INIT' : 'DONE';
+                        actionEl.style.background = '#4ade80';
+                        document.getElementById('fmLinksNum').textContent = '-';
+                        document.getElementById('fmAgentName').textContent = '-';
+                        document.getElementById('fmFromPortal').textContent = '-';
+                        document.getElementById('fmToPortal').textContent = '-';
+                        document.getElementById('fmDoneBadge').style.display = currentFrame > 0 ? 'inline' : 'none';
+                    }
+                }
+                
+                window.fmStart = function() { currentFrame = 0; updateUI(); }
+                window.fmEnd = function() { currentFrame = totalFrames - 1; updateUI(); }
+                window.fmNext = function() { if (currentFrame < totalFrames - 1) { currentFrame++; updateUI(); } }
+                window.fmPrev = function() { if (currentFrame > 0) { currentFrame--; updateUI(); } }
+                
+                updateUI();
+            })();
+            </script>
+            
         </div>
         <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none" data-id="keys">
             <div class="row">
