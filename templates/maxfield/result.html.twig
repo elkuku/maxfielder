@@ -365,8 +365,8 @@
             <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none"
                                                                data-id="agent-{{ agentInfo.agentNumber }}">
                 <div class="row mb-2">
-                    <div class="col-auto">
-                        <label for="agent-name-{{ agentInfo.agentNumber }}">Nombre Agent:</label>
+                    <div class="col-auto d-flex align-items-center">
+                        <h4 class="mb-0 me-2">Keys for agent {{ agentInfo.agentNumber }}</h4>
                         <input type="text" 
                                id="agent-name-{{ agentInfo.agentNumber }}" 
                                class="form-control"
@@ -374,8 +374,8 @@
                                data-agent-num="{{ agentInfo.agentNumber }}"
                                {{ stimulus_action('maxfield-view', 'updateAgentName', 'input') }}>
                     </div>
-                        <div class="col-md-6">
-                            <h4>Keys for agent {{ agentInfo.agentNumber }}</h4>
+                    <div class="col-md-6">
+                        <h4>Links for agent {{ agentInfo.agentNumber }}</h4>
                         <div class="mb-2">
                             <select class="sort-keys-agent" data-agent="{{ agentInfo.agentNumber }}" {{ stimulus_action('maxfield-view', 'sortKeysAgent', 'change') }}>
                                 <option value="mapNo">Map No (default)</option>
