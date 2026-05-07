@@ -163,40 +163,6 @@ export default class extends Controller {
         }
     }
 
-    sortKeys(event) {
-        const sortType = event.target.value
-        const table = event.target.closest('.col').querySelector('table')
-        const header = table.querySelector('tr')
-        const rows = Array.from(table.querySelectorAll('tr[data-map-no]'))
-
-        rows.sort((a, b) => {
-            const aMapNo = parseInt(a.dataset.mapNo)
-            const bMapNo = parseInt(b.dataset.mapNo)
-            const aKeys = parseInt(a.dataset.keys)
-            const bKeys = parseInt(b.dataset.keys)
-            const aName = a.dataset.name
-            const bName = b.dataset.name
-
-            switch (sortType) {
-                case 'keysAsc':
-                    return aKeys - bKeys
-                case 'keysDesc':
-                    return bKeys - aKeys
-                case 'nameAsc':
-                    return aName.localeCompare(bName)
-                case 'nameDesc':
-                    return bName.localeCompare(aName)
-                default: // mapNo
-                    return aMapNo - bMapNo
-            }
-        })
-
-        // Remove all data rows, keep header
-        rows.forEach(row => row.remove())
-        // Reappend in new order after header
-        rows.forEach(row => table.appendChild(row))
-    }
-
     sortKeysAgent(event) {
         const sortType = event.target.value
         const agent = event.target.dataset.agent

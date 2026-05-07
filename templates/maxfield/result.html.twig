@@ -227,17 +227,7 @@
             <div class="row">
                         <div class="col-md-6">
                             <h4>Key Preparation Total</h4>
-                    <div class="mb-2">
-                        <label for="sortKeys">Ordenar por:</label>
-                        <select id="sortKeys" {{ stimulus_action('maxfield-view', 'sortKeys', 'change') }}>
-                            <option value="mapNo">Map No (default)</option>
-                            <option value="keysAsc">Keys ↑ ascendente</option>
-                            <option value="keysDesc">Keys ↓ descendente</option>
-                            <option value="nameAsc">Nombre A-Z</option>
-                            <option value="nameDesc">Nombre Z-A</option>
-                        </select>
-                    </div>
-                    <table>
+                     <table>
                         <tr>
                             <th>Map No</th>
                             <th>Keys</th>
@@ -365,18 +355,18 @@
             <div {{ stimulus_target('maxfield-view', 'tab') }} class="maxfield-tab" style="display: none"
                                                                data-id="agent-{{ agentInfo.agentNumber }}">
                 <div class="row mb-2">
-                    <div class="col-auto d-flex align-items-center">
-                        <h4 class="mb-0 me-2">Keys for agent {{ agentInfo.agentNumber }}</h4>
-                        <input type="text" 
-                               id="agent-name-{{ agentInfo.agentNumber }}" 
-                               class="form-control"
-                               placeholder="Agent {{ agentInfo.agentNumber }}"
-                               data-agent-num="{{ agentInfo.agentNumber }}"
-                               {{ stimulus_action('maxfield-view', 'updateAgentName', 'input') }}>
-                    </div>
-                    <div class="col-md-6">
-                        <h4>Links for agent {{ agentInfo.agentNumber }}</h4>
-                        <div class="mb-2">
+                    
+                     <div class="col-md-6">
+                         <div class="d-flex align-items-center gap-2 mb-2">
+                             <h4 class="mb-0">Links for </h4>
+                             <input type="text" 
+                                    id="agent-name-{{ agentInfo.agentNumber }}" 
+                                    class="form-control form-control-sm w-auto"
+                                    placeholder="Agent {{ agentInfo.agentNumber }}"
+                                    data-agent-num="{{ agentInfo.agentNumber }}"
+                                    {{ stimulus_action('maxfield-view', 'updateAgentName', 'input') }}>
+                         </div>
+                         <div class="mb-2">
                             <select class="sort-keys-agent" data-agent="{{ agentInfo.agentNumber }}" {{ stimulus_action('maxfield-view', 'sortKeysAgent', 'change') }}>
                                 <option value="mapNo">Map No (default)</option>
                                 <option value="keysAsc">Keys ↑ ascendente</option>
