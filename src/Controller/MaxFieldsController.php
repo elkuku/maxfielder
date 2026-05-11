@@ -497,6 +497,57 @@ class MaxFieldsController extends BaseController
         return $this->json($maxfieldStatus);
     }
 
+    #[Route(path: 'maxfield/{id}/plan-results/parse', name: 'maxfield_parse_plan_results', methods: ['POST'])]
+    public function parsePlanResults(Maxfield $maxfield): RedirectResponse
+    {
+        $path = $maxfield->getPath() ?? '';
+
+        try {
+            $logContent = $this->maxFieldHelper->getLog($path);
+
+            if (is_string($logContent)) {
+                $planResults = $this->maxFieldHelper->parsePlanResults($logContent);
+
+                if ($planResults !== null) {
+                    $maxfield->setPlanResults($planResults);
+                    $this->entityManager->flush();
+
+                    $this->addFlash('success', 'Plan results loaded from log file.');
+
+                    return $this->redirectToRoute('max_fields_result', ['path' => $path]);
+                }
+            }
+        } catch (\Exception) {
+            // No log file or unreadable — fall through to manual form
+        }
+
+        return $this->redirectToRoute('max_fields_result', [
+            'path' => $path,
+            'manual' => 1,
+        ]);
+    }
+
+    #[Route(path: 'maxfield/{id}/plan-results/save', name: 'maxfield_save_plan_results', methods: ['POST'])]
+    public function savePlanResults(Maxfield $maxfield, Request $request): RedirectResponse
+    {
+        $path = $maxfield->getPath() ?? '';
+        $portals = $this->maxFieldHelper->getPortalCount($path);
+
+        $planResults = $this->maxFieldHelper->calculatePlanResults(
+            portals: $portals,
+            links: (int) $request->request->get('links', '0'),
+            fields: (int) $request->request->get('fields', '0'),
+            maxKeysNeeded: (int) $request->request->get('max_keys_needed', '0'),
+        );
+
+        $maxfield->setPlanResults($planResults);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Plan results saved successfully.');
+
+        return $this->redirectToRoute('max_fields_result', ['path' => $path]);
+    }
+
     #[Route(path: 'maxfield/view-status/{id}', name: 'maxfield_view_status', methods: ['GET'])]
     public function viewStatus(Maxfield $maxfield): Response
     {

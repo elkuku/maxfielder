@@ -17,6 +17,10 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 readonly class MaxFieldHelper
 {
+    public const AP_PER_PORTAL = 1750;
+    public const AP_PER_LINK = 313;
+    public const AP_PER_FIELD = 1250;
+
     private string $rootDir;
 
     public function __construct(
@@ -111,6 +115,43 @@ readonly class MaxFieldHelper
         }
 
         return 'n/a';
+    }
+
+    /**
+     * Calculate plan results array from raw values.
+     *
+     * @return array{portals: int, links: int, fields: int, max_keys_needed: int, ap_from_portals: int, ap_from_links: int, ap_from_fields: int, total_ap: int}
+     */
+    public function calculatePlanResults(int $portals, int $links, int $fields, int $maxKeysNeeded): array
+    {
+        $apPortals = $portals * self::AP_PER_PORTAL;
+        $apLinks = $links * self::AP_PER_LINK;
+        $apFields = $fields * self::AP_PER_FIELD;
+
+        return [
+            'portals' => $portals,
+            'links' => $links,
+            'fields' => $fields,
+            'max_keys_needed' => $maxKeysNeeded,
+            'ap_from_portals' => $apPortals,
+            'ap_from_links' => $apLinks,
+            'ap_from_fields' => $apFields,
+            'total_ap' => $apPortals + $apLinks + $apFields,
+        ];
+    }
+
+    /**
+     * Get portal count from the parsed maxfield data.
+     */
+    public function getPortalCount(string $path): int
+    {
+        try {
+            $maxField = $this->getMaxField($path);
+
+            return count($maxField->keyPrep->wayPoints ?? []);
+        } catch (\Exception) {
+            return 0;
+        }
     }
 
     public function getMaxfieldVersion(): int

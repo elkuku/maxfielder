@@ -9,9 +9,13 @@ export default class extends Controller {
         maxFrames: Number,
         frameNum: Number,
         steps: Array,
+        portals: Number,
     }
 
-    static targets = ['frameNum', 'framesImage', 'frameLinkInfo', 'btnShowForeign', 'tab', 'tabBtn']
+    static targets = [
+        'frameNum', 'framesImage', 'frameLinkInfo', 'btnShowForeign', 'tab', 'tabBtn',
+        'calcApPortals', 'calcApLinks', 'calcApFields', 'calcTotalAp',
+    ]
 
     displayForeign = true
     storageKeys = 'maxfield-keys'
@@ -196,6 +200,58 @@ export default class extends Controller {
 
         rows.forEach(row => row.remove())
         rows.forEach(row => table.appendChild(row))
+    }
+
+    sortKeys(event) {
+        const sortType = event.target.value
+        const table = document.querySelector('table[data-table="keys"]')
+        if (!table) return
+
+        const rows = Array.from(table.querySelectorAll('tr[data-map-no]'))
+
+        rows.sort((a, b) => {
+            const aMapNo = parseInt(a.dataset.mapNo)
+            const bMapNo = parseInt(b.dataset.mapNo)
+            const aKeys = parseInt(a.dataset.keys) || 0
+            const bKeys = parseInt(b.dataset.keys) || 0
+            const aName = a.dataset.name
+            const bName = b.dataset.name
+
+            switch (sortType) {
+                case 'keysAsc':
+                    return aKeys - bKeys
+                case 'keysDesc':
+                    return bKeys - aKeys
+                case 'nameAsc':
+                    return aName.localeCompare(bName)
+                case 'nameDesc':
+                    return bName.localeCompare(aName)
+                default: // mapNo
+                    return aMapNo - bMapNo
+            }
+        })
+
+        rows.forEach(row => row.remove())
+        rows.forEach(row => table.appendChild(row))
+    }
+
+    recalcAp() {
+        const portals = this.portalsValue || 0
+        const form = this.calcTotalApTarget.closest('form')
+        if (!form) return
+
+        const links = parseInt(form.querySelector('[name="links"]').value) || 0
+        const fields = parseInt(form.querySelector('[name="fields"]').value) || 0
+
+        const apPortals = portals * 1750
+        const apLinks = links * 313
+        const apFields = fields * 1250
+        const total = apPortals + apLinks + apFields
+
+        this.calcApPortalsTarget.textContent = apPortals.toLocaleString()
+        this.calcApLinksTarget.textContent = apLinks.toLocaleString()
+        this.calcApFieldsTarget.textContent = apFields.toLocaleString()
+        this.calcTotalApTarget.textContent = total.toLocaleString()
     }
 
     updateMyKeys(event) {
