@@ -706,4 +706,64 @@ class MaxFieldsController extends BaseController
 
         return new Response($html, Response::HTTP_OK, ['Content-Type' => 'text/html; charset=UTF-8']);
     }
+
+    #[Route(path: 'maxfield/{path:maxfield}/export-frames-json', name: 'maxfield_export_frames_json', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function exportFramesJson(
+        Maxfield $maxfield,
+        #[Autowire('%kernel.project_dir%')] string $projectDir,
+    ): Response
+    {
+        $path = $maxfield->getPath() ?? '';
+        $info = $this->maxFieldHelper->getMaxField($path);
+        $steps = $info->steps;
+
+        $framesDir = $projectDir.'/public/maxfields/'.$path.'/frames';
+        $data = [];
+
+        if (is_dir($framesDir)) {
+            $files = scandir($framesDir);
+            $frameFiles = [];
+
+            foreach ($files as $file) {
+                if (preg_match('/^frame_(\d+)\.gif$/', $file, $matches)) {
+                    $frameFiles[(int) $matches[1]] = $file;
+                }
+            }
+
+            ksort($frameFiles);
+
+            foreach ($frameFiles as $frameNum => $file) {
+                if (0 === $frameNum) {
+                    continue; // Skip initial frame (no action)
+                }
+
+                $stepIndex = $frameNum - 1;
+
+                if (!isset($steps[$stepIndex])) {
+                    continue;
+                }
+
+                $step = $steps[$stepIndex];
+                $fullPath = $framesDir.'/'.$file;
+                $imageData = file_get_contents($fullPath);
+                $base64 = is_string($imageData) ? base64_encode($imageData) : '';
+
+                $data[] = [
+                    'frame' => $frameNum,
+                    'accion' => 1 === $step->action ? 'link' : 'move',
+                    'imagen' => 'data:image/gif;base64,'.$base64,
+                    'from' => $step->originName.' ('.$step->originNum.')',
+                    'to' => $step->destinationName.' ('.$step->destinationNum.')',
+                ];
+            }
+        }
+
+        $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+        return new Response($json, Response::HTTP_OK, [
+            'Content-Type' => 'application/json',
+            'Content-Disposition' => 'attachment; filename="frames.json"',
+        ]);
+    }
 }

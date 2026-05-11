@@ -18,15 +18,21 @@
                     {# Desktop buttons #}
                     <div class="d-none d-md-inline-block">
                         <a href="{{ path('maxfield_play', {'path': maxfield.path}) }}" class="btn btn-outline-success btn-sm">Play</a>
-                        <a href="{{ path('maxfield_export_mobile', {'path': maxfield.path}) }}" 
+                        {# <a href="{{ path('maxfield_export_mobile', {'path': maxfield.path}) }}" 
                            class="btn btn-outline-primary btn-sm" 
                            target="_blank"
                            onclick="return exportMobile(this, '{{ maxfield.path }}')"
-                           id="btnMobile"><i class="bi-phone"></i> Mobile</a>
+                           id="btnMobile"><i class="bi-phone"></i> Mobile</a> #}
                         <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#variantModal" title="Generar Variante">
                             <i class="bi-shuffle"></i> Variante
                         </button>
                         <a href="{{ path('max_fields_delete', {'id': maxfield.id}) }}" class="btn btn-outline-danger btn-sm">Delete</a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('maxfield_export_frames_json', {'path': maxfield.path}) }}"
+                               class="btn btn-outline-info btn-sm" target="_blank">
+                                <i class="bi-filetype-json"></i> Frames JSON
+                            </a>
+                        {% endif %}
                     </div>
                     {# Mobile hamburger menu #}
                     <div class="d-inline-block d-md-none">
@@ -40,6 +46,9 @@
                                        target="_blank"
                                        onclick="return exportMobile(this, '{{ maxfield.path }}')"><i class="bi-phone"></i> Mobile</a></li>
                                 <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#variantModal"><i class="bi-shuffle"></i> Variante</a></li>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                <li><a class="dropdown-item" href="{{ path('maxfield_export_frames_json', {'path': maxfield.path}) }}" target="_blank"><i class="bi-filetype-json"></i> Frames JSON</a></li>
+                                {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger" href="{{ path('max_fields_delete', {'id': maxfield.id}) }}"><i class="bi-trash"></i> Delete</a></li>
                             </ul>

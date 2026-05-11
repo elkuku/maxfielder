@@ -79,6 +79,11 @@ final class ControllerAccessTest extends ControllerBaseTest
                     '{path}' => 'test',
                 ],
             ],
+            'maxfield_export_frames_json' => [
+                'params' => [
+                    '{path}' => 'test',
+                ],
+            ],
             'waypoint_thumbnail' => [
                 'params' => [
                     '{guid}' => 'test',
