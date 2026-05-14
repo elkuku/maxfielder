@@ -711,12 +711,21 @@ class MaxFieldsController extends BaseController
     #[IsGranted('ROLE_ADMIN')]
     public function exportFramesJson(
         Maxfield $maxfield,
+        Request $request,
         #[Autowire('%kernel.project_dir%')] string $projectDir,
     ): Response
     {
         $path = $maxfield->getPath() ?? '';
         $info = $this->maxFieldHelper->getMaxField($path);
         $steps = $info->steps;
+
+        // Build agent name map: start from agentsInfo defaults, then override with query params
+        $agentNamesParam = $request->query->all('agent');
+        $agentNames = [];
+        foreach ($info->agentsInfo as $agentInfo) {
+            $num = $agentInfo->agentNumber;
+            $agentNames[$num] = $agentNamesParam[$num] ?? 'Agent '.$num;
+        }
 
         $framesDir = $projectDir.'/public/maxfields/'.$path.'/frames';
         $data = [];
@@ -753,6 +762,8 @@ class MaxFieldsController extends BaseController
                     'frame' => $frameNum,
                     'accion' => 1 === $step->action ? 'link' : 'move',
                     'imagen' => 'data:image/gif;base64,'.$base64,
+                    'agentNum' => $step->agentNum,
+                    'agentName' => $agentNames[$step->agentNum] ?? ('Agent '.$step->agentNum),
                     'from' => $step->originName.' ('.$step->originNum.')',
                     'to' => $step->destinationName.' ('.$step->destinationNum.')',
                 ];
@@ -763,7 +774,7 @@ class MaxFieldsController extends BaseController
 
         return new Response($json, Response::HTTP_OK, [
             'Content-Type' => 'application/json',
-            'Content-Disposition' => 'attachment; filename="frames.json"',
+            'Content-Disposition' => 'attachment; filename="'.(($maxfield->getName() ?? $path) ?: 'frames').'.json"',
         ]);
     }
 }

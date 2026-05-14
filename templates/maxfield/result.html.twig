@@ -29,8 +29,9 @@
                         <a href="{{ path('max_fields_delete', {'id': maxfield.id}) }}" class="btn btn-outline-danger btn-sm">Delete</a>
                         {% if is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('maxfield_export_frames_json', {'path': maxfield.path}) }}"
-                               class="btn btn-outline-info btn-sm" target="_blank">
-                                <i class="bi-filetype-json"></i> Frames JSON
+                               class="btn btn-outline-info btn-sm" target="_blank"
+                               onclick="return exportFramesJson(this, '{{ maxfield.path }}')">
+                                <i class="bi-filetype-json"></i> JSON
                             </a>
                         {% endif %}
                     </div>
@@ -47,7 +48,7 @@
                                        onclick="return exportMobile(this, '{{ maxfield.path }}')"><i class="bi-phone"></i> Mobile</a></li>
                                 <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#variantModal"><i class="bi-shuffle"></i> Variante</a></li>
                                 {% if is_granted('ROLE_ADMIN') %}
-                                <li><a class="dropdown-item" href="{{ path('maxfield_export_frames_json', {'path': maxfield.path}) }}" target="_blank"><i class="bi-filetype-json"></i> Frames JSON</a></li>
+                                <li><a class="dropdown-item" href="{{ path('maxfield_export_frames_json', {'path': maxfield.path}) }}" target="_blank" onclick="return exportFramesJson(this, '{{ maxfield.path }}')"><i class="bi-filetype-json"></i> JSON</a></li>
                                 {% endif %}
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger" href="{{ path('max_fields_delete', {'id': maxfield.id}) }}"><i class="bi-trash"></i> Delete</a></li>
@@ -537,6 +538,28 @@
     </div>
 
     <script>
+    function exportFramesJson(btn, path) {
+        const storageKey = 'maxfield-agents-' + path;
+        let agentNames = {};
+        try {
+            const data = sessionStorage.getItem(storageKey);
+            if (data) agentNames = JSON.parse(data);
+        } catch(e) {}
+
+        const params = new URLSearchParams();
+        for (const [agentNum, name] of Object.entries(agentNames)) {
+            params.append('agent[' + agentNum + ']', name);
+        }
+
+        let url = btn.href;
+        if (params.toString()) {
+            url += '?' + params.toString();
+        }
+
+        window.open(url, '_blank');
+        return false;
+    }
+
     function exportMobile(btn, path) {
         // Get agent names from sessionStorage
         const storageKey = 'maxfield-agents-' + path;
