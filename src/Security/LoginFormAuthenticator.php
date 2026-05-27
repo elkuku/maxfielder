@@ -34,12 +34,12 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        if (false === in_array($this->appEnv, ['dev', 'test'], true)) {
+        if (false === in_array($this->appEnv, ['dev', 'test', 'panther'], true)) {
             throw new UnexpectedValueException('GTFO!');
         }
 
         $badges = [new RememberMeBadge()];
-        if ('test' !== $this->appEnv) {
+        if ($this->appEnv !== 'test') {
             $badges[] = new CsrfTokenBadge(
                 'login',
                 (string) $request->request->get('_csrf_token')

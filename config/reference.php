@@ -1652,6 +1652,23 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         kuku_sf_system_tools?: KukuSfSystemToolsConfig,
  *         zenstruck_foundry?: ZenstruckFoundryConfig,
  *     },
+ *     "when@panther"?: array{
+ *         imports?: ImportsConfig,
+ *         parameters?: ParametersConfig,
+ *         services?: ServicesConfig,
+ *         framework?: FrameworkConfig,
+ *         twig?: TwigConfig,
+ *         twig_extra?: TwigExtraConfig,
+ *         doctrine?: DoctrineConfig,
+ *         doctrine_migrations?: DoctrineMigrationsConfig,
+ *         security?: SecurityConfig,
+ *         monolog?: MonologConfig,
+ *         knpu_oauth2_client?: KnpuOauth2ClientConfig,
+ *         liip_imagine?: LiipImagineConfig,
+ *         stimulus?: StimulusConfig,
+ *         twig_component?: TwigComponentConfig,
+ *         kuku_sf_system_tools?: KukuSfSystemToolsConfig,
+ *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1772,6 +1789,7 @@ namespace Symfony\Component\Routing\Loader\Configurator;
  * }
  * @psalm-type RoutesConfig = array{
  *     "when@dev"?: array<string, RouteConfig|ImportConfig|AliasConfig>,
+ *     "when@panther"?: array<string, RouteConfig|ImportConfig|AliasConfig>,
  *     "when@prod"?: array<string, RouteConfig|ImportConfig|AliasConfig>,
  *     "when@test"?: array<string, RouteConfig|ImportConfig|AliasConfig>,
  *     ...<string, RouteConfig|ImportConfig|AliasConfig>

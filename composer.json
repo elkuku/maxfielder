@@ -57,6 +57,7 @@
         "twig/twig": "^3.0"
     },
     "require-dev": {
+        "dbrekelmans/bdi": "^1.4",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
@@ -68,6 +69,7 @@
         "symfony/css-selector": "*",
         "symfony/debug-bundle": "*",
         "symfony/maker-bundle": "^1.0",
+        "symfony/panther": "^2.4",
         "symfony/phpunit-bridge": "*",
         "symfony/stopwatch": "*",
         "symfony/var-dumper": "*",

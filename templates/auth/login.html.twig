@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class="col">
-            {% if 'dev' == app.environment %}
+            {% if app.environment in ['dev', 'test', 'panther'] %}
                 <h2>Dev</h2>
                 <form class="form-inline" role="form" method="post" action="{{ path('login') }}">
                     {% if error %}
