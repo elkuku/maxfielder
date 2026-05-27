@@ -91,6 +91,8 @@ class FindDupesCommand extends Command
 
             if ($test->getGuid() === $waypoint->getGuid()) {
                 $io->warning('@TODO Duplicated GUID found for: '.$waypoint->getName());
+                $io->warning('lat '.$waypoint->getLat().' - '.$test->getLat());
+                $io->warning('lon '.$waypoint->getLon().' - '.$test->getLon());
             }
 
             if ($test->getLat() === $waypoint->getLat() && $test->getLon() === $waypoint->getLon()) {
