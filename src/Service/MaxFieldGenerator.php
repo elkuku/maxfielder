@@ -103,6 +103,10 @@ class MaxFieldGenerator
                 $command[] = '--skip-plots';
             }
 
+            if ($options['skip_step_plots'] ?? false) {
+                $command[] = '--skip-step-plots';
+            }
+
             return ['sh', '-c', implode(' ', array_map(escapeshellarg(...), $command)).' > '.escapeshellarg($logFile).' 2>&1'];
         }
 
