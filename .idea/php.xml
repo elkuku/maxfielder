@@ -182,16 +182,12 @@
       <path value="$PROJECT_DIR$/vendor/elkuku/maxfield-bundle" />
       <path value="$PROJECT_DIR$/vendor/tomasvotruba/cognitive-complexity" />
       <path value="$PROJECT_DIR$/vendor/sebastian/git-state" />
-      <path value="$PROJECT_DIR$/vendor/php-webdriver/webdriver" />
-      <path value="$PROJECT_DIR$/vendor/dbrekelmans/bdi" />
-      <path value="$PROJECT_DIR$/vendor/symfony/panther" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.5" />
   <component name="PhpStan">
     <PhpStan_settings>
       <PhpStanConfiguration tool_path="$PROJECT_DIR$/vendor/bin/phpstan" />
-      <PhpStanConfiguration asDefaultInterpreter="true" tool_path="$PROJECT_DIR$/vendor/bin/phpstan" />
     </PhpStan_settings>
   </component>
   <component name="PhpStanOptionsConfiguration">
@@ -207,7 +203,6 @@
   <component name="Psalm">
     <Psalm_settings>
       <PsalmConfiguration tool_path="$PROJECT_DIR$/vendor/bin/psalm" />
-      <PsalmConfiguration asDefaultInterpreter="true" tool_path="$PROJECT_DIR$/vendor/bin/psalm" />
     </Psalm_settings>
   </component>
   <component name="PsalmOptionsConfiguration">
