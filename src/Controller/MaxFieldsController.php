@@ -167,7 +167,7 @@ class MaxFieldsController extends BaseController
         $status = 200;
 
         /** @var array{agentNum: int|string, keys?: string, current_point?: string, farm_done?: array<int>} $data */
-        $data = json_decode($request->getContent(), true);
+        $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $agentNum = (int) $data['agentNum'];
 
@@ -366,7 +366,7 @@ class MaxFieldsController extends BaseController
             // Extract the -vN suffix (e.g., "-v2", "-v3")
             preg_match('/-v\d+$/', $newProjectName, $matches);
             $vSuffix = $matches[0] ?? '-v1';
-            
+
             $newMaxfield = new Maxfield()
                 ->setName($maxfield->getName().' '.$vSuffix)
                 ->setPath($newProjectName)
@@ -573,7 +573,7 @@ class MaxFieldsController extends BaseController
         if ($profiler instanceof Profiler) {
             $profiler->disable();
         }
-        
+
         $path = $maxfield->getPath() ?? '';
         $info = $this->maxFieldHelper->getMaxField($path);
         $waypointIdMap = $this->maxFieldHelper->getWaypointsIdMap($path);
@@ -581,7 +581,7 @@ class MaxFieldsController extends BaseController
         // Get agent names from URL params
         $agentNamesParam = $request->query->all('agent');
         $numAgentsParam = (int)$request->query->get('count', '1');
-        
+
         // Get user's base agent name
         $user = $this->getUser();
         $baseAgentName = $user?->getUserParams()?->agentName ?? '';

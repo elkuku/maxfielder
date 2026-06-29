@@ -1423,12 +1423,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/elkuku/php-maxfield.git",
-                "reference": "32cbec2f625d33eec06866b096278880c15113be"
+                "reference": "bf3159ece970ed1642a33e50c50e15592030b857"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elkuku/php-maxfield/zipball/32cbec2f625d33eec06866b096278880c15113be",
-                "reference": "32cbec2f625d33eec06866b096278880c15113be",
+                "url": "https://api.github.com/repos/elkuku/php-maxfield/zipball/bf3159ece970ed1642a33e50c50e15592030b857",
+                "reference": "bf3159ece970ed1642a33e50c50e15592030b857",
                 "shasum": ""
             },
             "require": {
@@ -1465,7 +1465,7 @@
                 "issues": "https://github.com/elkuku/php-maxfield/issues",
                 "source": "https://github.com/elkuku/php-maxfield/tree/master"
             },
-            "time": "2026-03-15T20:59:22+00:00"
+            "time": "2026-06-29T13:03:24+00:00"
         },
         {
             "name": "elkuku/maxfield-parser",
