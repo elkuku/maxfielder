@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use Override;
-use App\Entity\Maxfield;
-use App\Entity\User;
-use App\Entity\Waypoint;
 use App\Enum\UserRole;
 use App\Repository\UserRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
@@ -43,9 +40,9 @@ class DashboardController extends AbstractDashboardController
     #[Override]
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToCrud('Users', 'fa fa-users', User::class);
-        yield MenuItem::linkToCrud('Waypoints', 'fa fa-users', Waypoint::class);
-        yield MenuItem::linkToCrud('Maxfields', 'fa fa-users', Maxfield::class);
+        yield MenuItem::linkTo(UserCrudController::class, 'Users', 'fa fa-users');
+        yield MenuItem::linkTo(WaypointCrudController::class, 'Waypoints', 'fa fa-users');
+        yield MenuItem::linkTo(MaxfieldsCrudController::class, 'Maxfields', 'fa fa-users');
 
         yield MenuItem::section();
         yield MenuItem::linkToUrl(
