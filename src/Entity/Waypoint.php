@@ -20,11 +20,14 @@ class Waypoint implements Stringable
     #[Column]
     private string $name = '';
 
+    /**
+     * DECIMAL columns hydrate as numeric strings; the accessors convert to and from float.
+     */
     #[Column(type: 'decimal', precision: 10, scale: 6)]
-    private float $lat = 0;
+    private string $lat = '0';
 
     #[Column(type: 'decimal', precision: 10, scale: 6)]
-    private float $lon = 0;
+    private string $lon = '0';
 
     #[Column(length: 100, nullable: true)]
     private ?string $guid = '';
@@ -56,24 +59,24 @@ class Waypoint implements Stringable
 
     public function getLat(): ?float
     {
-        return $this->lat;
+        return (float) $this->lat;
     }
 
     public function setLat(float $lat): self
     {
-        $this->lat = $lat;
+        $this->lat = (string) $lat;
 
         return $this;
     }
 
     public function getLon(): ?float
     {
-        return $this->lon;
+        return (float) $this->lon;
     }
 
     public function setLon(float $lon): self
     {
-        $this->lon = $lon;
+        $this->lon = (string) $lon;
 
         return $this;
     }

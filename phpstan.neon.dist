@@ -13,13 +13,6 @@ parameters:
 		objectManagerLoader: tests/object-manager.php
 		# New entities start empty; the database still requires these columns
 		allowNullablePropertyForRequiredField: true
-	ignoreErrors:
-		-
-			# DECIMAL columns hydrate as numeric strings, which PHP coerces into the float properties.
-			# Mapping them as float would change the column type and precision.
-			identifier: doctrine.columnType
-			path: src/Entity/Waypoint.php
-			message: '#\$(lat|lon) type mapping mismatch#'
 	cognitive_complexity:
 		class: 50
 		function: 8

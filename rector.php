@@ -8,7 +8,6 @@ use Rector\Exception\Configuration\InvalidConfigurationException;
 use Rector\PHPUnit\CodeQuality\Rector\Class_\AddSeeTestAnnotationRector;
 use Rector\Symfony\Bridge\Symfony\Routing\SymfonyRoutesProvider;
 use Rector\Symfony\Contract\Bridge\Symfony\Routing\SymfonyRoutesProviderInterface;
-use Rector\Symfony\Symfony30\Rector\MethodCall\StringFormTypeToClassRector;
 
 try {
     return RectorConfig::configure()
@@ -50,10 +49,7 @@ try {
             phpunit: true,
             symfony: true
         )
-        ->withImportNames(removeUnusedImports: true)
-        ->withRules([
-            StringFormTypeToClassRector::class,
-        ]);
+        ->withImportNames(removeUnusedImports: true);
 } catch (InvalidConfigurationException $e) {
     echo $e->getMessage();
 }
