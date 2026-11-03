@@ -56,7 +56,7 @@ class UserCrudController extends AbstractCrudController
                 }),
             ChoiceField::new('role')
                 ->setChoices(array_combine(
-                    array_map(static fn (UserRole $r) => $r->label(), UserRole::cases()),
+                    array_map(static fn (UserRole $r): string => $r->label(), UserRole::cases()),
                     UserRole::cases(),
                 )),
         ];

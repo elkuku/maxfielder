@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\Cast\RecastingRemovalRector;
 use Rector\Exception\Configuration\InvalidConfigurationException;
+use Rector\PHPUnit\CodeQuality\Rector\Class_\AddSeeTestAnnotationRector;
 use Rector\Symfony\Bridge\Symfony\Routing\SymfonyRoutesProvider;
 use Rector\Symfony\Contract\Bridge\Symfony\Routing\SymfonyRoutesProviderInterface;
 use Rector\Symfony\Symfony30\Rector\MethodCall\StringFormTypeToClassRector;
@@ -16,8 +17,9 @@ try {
             __DIR__.'/tests',
         ])
         ->withSkip([
-            __DIR__.'/src/Service/PhpXlsxGenerator.php',
             __DIR__.'/tests/bootstrap.php',
+            // Only adds @see docblocks pointing at test classes
+            AddSeeTestAnnotationRector::class,
             RecastingRemovalRector::class => [
                 __DIR__.'/src/Entity/User.php',
             ],

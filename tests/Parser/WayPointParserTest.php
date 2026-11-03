@@ -37,7 +37,7 @@ final class WayPointParserTest extends TestCase
         $parser = new WayPointParser($this->createStub(WayPointHelper::class));
 
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('No suitable parser found');
+        $this->expectExceptionMessageIsOrContains('No suitable parser found');
 
         $parser->parse(['unsupported_format' => 'data']);
     }

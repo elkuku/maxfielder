@@ -260,15 +260,6 @@ final class UserTest extends TestCase
         $this->assertSame(['foo' => 'bar', 'baz' => 'qux'], $user->getParams());
     }
 
-    public function testEraseCredentialsDoesNotThrow(): void
-    {
-        $user = new User();
-
-        $user->eraseCredentials();
-
-        $this->addToAssertionCount(1);
-    }
-
     public function testRemoveFavourite(): void
     {
         $user = new User();

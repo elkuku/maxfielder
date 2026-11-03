@@ -2,23 +2,17 @@
 
 namespace App\EventSubscriber;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class DisableToolbarSubscriber implements EventSubscriberInterface
+class DisableToolbarSubscriber
 {
     private array $routesWithoutToolbar = [
         'maxfield_export_mobile',
     ];
 
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            KernelEvents::RESPONSE => ['onKernelResponse', 0],
-        ];
-    }
-
+    #[AsEventListener(event: KernelEvents::RESPONSE, priority: 0)]
     public function onKernelResponse(ResponseEvent $event): void
     {
         $request = $event->getRequest();
@@ -37,8 +31,8 @@ class DisableToolbarSubscriber implements EventSubscriberInterface
             $content = preg_replace('/<link[^>]*href="[^"]*_wdt[^"]*"[^>]*\/?>/', '', $content);
 
             // Ensure proper closing tags
-            if (false === strpos($content, '</body></html>')) {
-                if (false === strpos($content, '</body>')) {
+            if (!str_contains($content, '</body></html>')) {
+                if (!str_contains($content, '</body>')) {
                     $content .= '</body></html>';
                 } else {
                     $content = str_replace('</body>', '</body></html>', $content);

@@ -14,9 +14,9 @@ class WayPointHelper
     private readonly string $rootDir;
 
     public function __construct(
-        #[Autowire('%kernel.project_dir%')]
+        #[Autowire(param: 'kernel.project_dir')]
         string $projectDir,
-        #[Autowire('%env(INTEL_URL)%')]
+        #[Autowire(env: 'INTEL_URL')]
         private readonly string $intelUrl
     ) {
         $this->rootDir = $projectDir.'/public/wp_images';

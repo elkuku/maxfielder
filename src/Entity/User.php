@@ -107,10 +107,6 @@ class User implements UserInterface, Stringable
         $this->favourites = new ArrayCollection();
     }
 
-    public function eraseCredentials(): void
-    {
-    }
-
     public function getRoles(): array
     {
         $roles = [$this->role->value];

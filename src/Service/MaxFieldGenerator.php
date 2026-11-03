@@ -20,19 +20,19 @@ class MaxFieldGenerator
     protected string $rootDir = '';
 
     public function __construct(
-        #[Autowire('%kernel.project_dir%')]
+        #[Autowire(param: 'kernel.project_dir')]
         private readonly string $projectDir,
-        #[Autowire('%env(MAXFIELDS_EXEC)%')]
+        #[Autowire(env: 'MAXFIELDS_EXEC')]
         private readonly string $maxfieldExec,
-        #[Autowire('%env(MAXFIELD_VERSION)%')]
+        #[Autowire(env: 'MAXFIELD_VERSION')]
         private readonly int $maxfieldVersion,
-        #[Autowire('%env(GOOGLE_API_KEY)%')]
+        #[Autowire(env: 'GOOGLE_API_KEY')]
         private readonly string $googleApiKey,
-        #[Autowire('%env(GOOGLE_API_SECRET)%')]
+        #[Autowire(env: 'GOOGLE_API_SECRET')]
         private readonly string $googleApiSecret,
-        #[Autowire('%env(INTEL_URL)%')]
+        #[Autowire(env: 'INTEL_URL')]
         private readonly string $intelUrl,
-        #[Autowire('%env(PHP_BINARY)%')]
+        #[Autowire(env: 'PHP_BINARY')]
         private readonly string $phpBinary = PHP_BINARY,
     ) {
         $this->rootDir = $projectDir.'/public/maxfields';
@@ -358,14 +358,12 @@ class MaxFieldGenerator
         if (false === $fp) {
             throw new RuntimeException('Cannot create portals_id_map.csv in '.$newRoot);
         }
+
         foreach ($shuffledMap as $fields) {
             fputcsv($fp, $fields, escape: '\\');
         }
-        fclose($fp);
 
-        // Build the wayPointList and wayPointMap from shuffled data
-        $wayPointList = implode("\n", $shuffledPortals);
-        $wayPointMap = $shuffledMap;
+        fclose($fp);
 
         // Generate the variant
         $command = $this->buildCommand($newRoot, $newRoot.'/portals.txt', $playersNum, $options, $engine, $dockerContainer);

@@ -65,7 +65,7 @@ final class IngressHelperTest extends TestCase
     public function testParseKeysStringThrowsOnInvalidData(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid keys string!');
+        $this->expectExceptionMessageIsOrContains('Invalid keys string!');
 
         $input = "Header\n"
             ."only\ttwo\tcolumns";

@@ -20,9 +20,9 @@ readonly class MaxFieldHelper
     private string $rootDir;
 
     public function __construct(
-        #[Autowire('%kernel.project_dir%')]
+        #[Autowire(param: 'kernel.project_dir')]
         string $projectDir,
-        #[Autowire('%env(MAXFIELD_VERSION)%')]
+        #[Autowire(env: 'MAXFIELD_VERSION')]
         private int $maxfieldVersion
     ) {
         $this->rootDir = $projectDir.'/public/maxfields';
@@ -166,7 +166,7 @@ readonly class MaxFieldHelper
             }
         }
 
-        return !empty($results) ? $results : null;
+        return [] !== $results ? $results : null;
     }
 
     public function getPreviewImage(string $item): string

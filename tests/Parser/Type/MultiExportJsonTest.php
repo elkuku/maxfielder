@@ -46,7 +46,7 @@ final class MultiExportJsonTest extends TestCase
         $parser = new MultiExportJson($this->createStub(WayPointHelper::class));
 
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Invalid multiexport JSON data');
+        $this->expectExceptionMessageIsOrContains('Invalid multiexport JSON data');
         $parser->parse(['multiexportjson' => 'not-json']);
     }
 

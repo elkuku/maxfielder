@@ -172,8 +172,6 @@ class Maxfield
             $this->userData = [];
         }
 
-        if (!isset($this->userData[$user])) {
-            $this->userData[$user] = [];
-        }
+        $this->userData[$user] ??= [];
     }
 }

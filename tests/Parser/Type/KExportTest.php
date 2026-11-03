@@ -49,7 +49,7 @@ final class KExportTest extends TestCase
         $parser = new KExport($this->createStub(WayPointHelper::class));
 
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Invalid KExport JSON data');
+        $this->expectExceptionMessageIsOrContains('Invalid KExport JSON data');
         $parser->parse(['kexport' => '{invalid json']);
     }
 
