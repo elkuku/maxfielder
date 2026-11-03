@@ -40,7 +40,7 @@ final class AppExtensionTest extends TestCase
         $this->assertCount(3, $functions);
 
         $names = array_map(
-            static fn(TwigFunction $f): string => $f->getName(),
+            static fn (TwigFunction $f): string => $f->getName(),
             $functions
         );
 

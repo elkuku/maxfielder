@@ -14,7 +14,7 @@ final class WaypointTest extends TestCase
         $waypoint = new Waypoint();
         $waypoint->setName('Test Portal');
 
-        $this->assertSame('Test Portal', (string)$waypoint);
+        $this->assertSame('Test Portal', (string) $waypoint);
     }
 
     public function testGetSetName(): void

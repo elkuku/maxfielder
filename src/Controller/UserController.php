@@ -22,8 +22,7 @@ class UserController extends BaseController
     #[IsGranted(UserRole::USER->value)]
     public function profile(
         Request $request,
-    ): Response
-    {
+    ): Response {
         $user = $this->getUser();
         $form = $this->createForm(ProfileFormType::class, $user?->getUserParams())
             ->handleRequest($request);

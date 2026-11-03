@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Parser\Type;
 
-use UnexpectedValueException;
 use App\Parser\Type\MultiExportJson;
 use App\Service\WayPointHelper;
 use PHPUnit\Framework\TestCase;
+use UnexpectedValueException;
 
 final class MultiExportJsonTest extends TestCase
 {

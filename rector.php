@@ -22,7 +22,7 @@ try {
                 __DIR__.'/src/Entity/User.php',
             ],
         ])
-        //
+
         ->withSymfonyContainerXml(__DIR__.'/var/cache/dev/App_KernelDevDebugContainer.xml')
         ->withSymfonyContainerPhp(__DIR__.'/tests/symfony-container.php')
         ->registerService(SymfonyRoutesProvider::class, SymfonyRoutesProviderInterface::class)
@@ -53,5 +53,5 @@ try {
             StringFormTypeToClassRector::class,
         ]);
 } catch (InvalidConfigurationException $e) {
-    echo($e->getMessage());
+    echo $e->getMessage();
 }

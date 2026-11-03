@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Command;
 
-use ReflectionMethod;
 use App\Command\UserAdminCommand;
 use App\Entity\User;
 use App\Enum\UserRole;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 final class UserAdminCommandTest extends TestCase
 {

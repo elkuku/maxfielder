@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Parser;
 
-use UnexpectedValueException;
 use App\Entity\Waypoint;
 use App\Parser\AbstractParser;
 use App\Service\WayPointHelper;
 use PHPUnit\Framework\TestCase;
+use UnexpectedValueException;
 
 final class AbstractParserTest extends TestCase
 {
@@ -37,7 +37,7 @@ final class AbstractParserTest extends TestCase
     {
         $parser = $this->createConcreteParser('mytype');
 
-        /** @phpstan-ignore argument.type */
+        /* @phpstan-ignore argument.type */
         $this->assertFalse($parser->supports(['mytype' => 0]));
     }
 

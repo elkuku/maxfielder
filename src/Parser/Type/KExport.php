@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Parser\Type;
 
-use JsonException;
-use UnexpectedValueException;
 use App\Entity\Waypoint;
 use App\Parser\AbstractParser;
+use JsonException;
+use UnexpectedValueException;
 
 class KExport extends AbstractParser
 {
@@ -32,9 +32,7 @@ class KExport extends AbstractParser
                 JSON_THROW_ON_ERROR
             );
         } catch (JsonException) {
-            throw new UnexpectedValueException(
-                'Invalid KExport JSON data'
-            );
+            throw new UnexpectedValueException('Invalid KExport JSON data');
         }
 
         /** @var array<array{guid?: string, title?: string, lat: float, lng: float, image?: string}> $items */

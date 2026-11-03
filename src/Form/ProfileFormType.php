@@ -22,8 +22,7 @@ class ProfileFormType extends AbstractType
     public function buildForm(
         FormBuilderInterface $builder,
         array $options
-    ): void
-    {
+    ): void {
         $builder
             ->add('agentName', null, [
                 'required' => false,
@@ -63,7 +62,7 @@ class ProfileFormType extends AbstractType
                 EnumType::class,
                 [
                     'class' => MapBoxStylesEnum::class,
-                    'choice_label' => fn(MapBoxStylesEnum $category): string => str_replace('_', ' ', $category->name),
+                    'choice_label' => fn (MapBoxStylesEnum $category): string => str_replace('_', ' ', $category->name),
                 ]
             )
             ->add(
@@ -78,7 +77,7 @@ class ProfileFormType extends AbstractType
                 EnumType::class,
                 [
                     'class' => MapProvidersEnum::class,
-                    'choice_label' => fn(MapProvidersEnum $element): string => ucfirst($element->name),
+                    'choice_label' => fn (MapProvidersEnum $element): string => ucfirst($element->name),
                 ]
             )
             ->add(
@@ -86,7 +85,7 @@ class ProfileFormType extends AbstractType
                 EnumType::class,
                 [
                     'class' => MaxfieldEngineEnum::class,
-                    'choice_label' => fn(MaxfieldEngineEnum $element): string => ucfirst($element->name),
+                    'choice_label' => fn (MaxfieldEngineEnum $element): string => ucfirst($element->name),
                 ]
             )
             ->add(

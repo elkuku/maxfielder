@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Security;
 
-use stdClass;
 use App\Entity\Maxfield;
 use App\Entity\User;
 use App\Enum\UserRole;
 use App\Security\MaxfieldVoter;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;

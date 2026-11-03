@@ -154,7 +154,7 @@ final class AgentRouterTest extends TestCase
 
         $assignments = $this->router->routeAgents($graph, $this->uniformDists(4, 10), numAgents: 2);
 
-        $agentIds = array_unique(array_map(fn(Assignment $a): int => $a->agent, $assignments));
+        $agentIds = array_unique(array_map(fn (Assignment $a): int => $a->agent, $assignments));
         // With 2 agents and 3 independent links, both agents should be used
         $this->assertGreaterThanOrEqual(1, \count($agentIds));
     }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use stdClass;
 use App\Repository\MaxfieldRepository;
 use App\Type\AgentKeyInfo;
 use Doctrine\DBAL\Types\Types;
@@ -15,6 +14,7 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Elkuku\MaxfieldParser\Type\Waypoint;
+use stdClass;
 
 #[Entity(repositoryClass: MaxfieldRepository::class)]
 class Maxfield
@@ -36,7 +36,7 @@ class Maxfield
      * @var array<string, array<Waypoint|stdClass>>|null
      */
     #[Column(type: Types::JSON, nullable: true)]
-    private array|null $jsonData = null;
+    private ?array $jsonData = null;
 
     /**
      * @var array<int, array{keys?: array<AgentKeyInfo>, current_point?: string, farm_done?: array<int>}>|null

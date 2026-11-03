@@ -17,7 +17,7 @@ final class WayPointHelperThumbnailTest extends TestCase
     protected function setUp(): void
     {
         $this->tempDir = sys_get_temp_dir().'/maxfielder_thumb_test_'.uniqid();
-        mkdir($this->tempDir.'/public/wp_images/thumbs', 0777, true);
+        mkdir($this->tempDir.'/public/wp_images/thumbs', 0o777, true);
         $this->helper = new WayPointHelper($this->tempDir, 'https://intel.ingress.com/intel');
     }
 
@@ -112,7 +112,7 @@ final class WayPointHelperThumbnailTest extends TestCase
     {
         $tempDir = sys_get_temp_dir().'/maxfielder_thumbsdir_'.uniqid();
         // Create rootDir but NOT thumbs dir
-        mkdir($tempDir.'/public/wp_images', 0777, true);
+        mkdir($tempDir.'/public/wp_images', 0o777, true);
 
         $wpId = 'test-nodelay-guid';
 

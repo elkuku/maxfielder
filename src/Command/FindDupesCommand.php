@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use Symfony\Component\Console\Helper\QuestionHelper;
 use App\Entity\Waypoint;
 use App\Repository\WaypointRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -25,16 +25,14 @@ class FindDupesCommand extends Command
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly WaypointRepository $waypointRepository
-    )
-    {
+    ) {
         parent::__construct();
     }
 
     protected function execute(
         InputInterface $input,
         OutputInterface $output
-    ): int
-    {
+    ): int {
         $io = new SymfonyStyle($input, $output);
         $waypoints = $this->waypointRepository->findAll();
         $progressBar = new ProgressBar($output, count($waypoints));
@@ -61,7 +59,7 @@ class FindDupesCommand extends Command
 
         $progressBar->finish();
 
-        if ($removals !== 0) {
+        if (0 !== $removals) {
             $io->warning(sprintf('%d duplicates have been removed.', $removals));
         } else {
             $io->success('Database is clean :)');
@@ -72,7 +70,7 @@ class FindDupesCommand extends Command
 
     /**
      * @param Waypoint[] $waypoints
-     * @param string[] $choices
+     * @param string[]   $choices
      */
     private function findDuplicatesForWaypoint(
         Waypoint $waypoint,
@@ -134,6 +132,7 @@ class FindDupesCommand extends Command
         if ($waypoint->getName() === $test->getName()) {
             $this->entityManager->remove($test);
             $this->entityManager->flush();
+
             return 1;
         }
 
@@ -156,21 +155,23 @@ class FindDupesCommand extends Command
         if ($choice === $choices[0]) {
             $this->entityManager->remove($waypoint);
             $this->entityManager->flush();
+
             return 1;
         }
 
         if ($choice === $choices[1]) {
             $this->entityManager->remove($test);
             $this->entityManager->flush();
+
             return 1;
         }
 
         if ($choice === $choices[2]) {
-            $waypoint->setName((string)$test->getName());
+            $waypoint->setName((string) $test->getName());
             $this->entityManager->persist($waypoint);
             $this->entityManager->flush();
         } elseif ($choice === $choices[3]) {
-            $test->setName((string)$waypoint->getName());
+            $test->setName((string) $waypoint->getName());
             $this->entityManager->persist($test);
             $this->entityManager->flush();
         }

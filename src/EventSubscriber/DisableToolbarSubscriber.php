@@ -27,24 +27,24 @@ class DisableToolbarSubscriber implements EventSubscriberInterface
         if (in_array($routeName, $this->routesWithoutToolbar, true)) {
             $response = $event->getResponse();
             $content = $response->getContent();
-            
+
             // More aggressive removal - find and remove everything from toolbar comment to end
             $pattern = '/<!--\s*START of Symfony Web Debug Toolbar\s*-->.*?<!--\s*END of Symfony Web Debug Toolbar\s*-->/s';
             $content = preg_replace($pattern, '', $content);
-            
+
             // Also remove any remaining sf-toolbar elements
             $content = preg_replace('/<div[^>]*class="sf-toolbar[^"]*"[^>]*>.*?<\/div>\s*<\/div>/s', '', $content);
             $content = preg_replace('/<link[^>]*href="[^"]*_wdt[^"]*"[^>]*\/?>/', '', $content);
-            
+
             // Ensure proper closing tags
-            if (strpos($content, '</body></html>') === false) {
-                if (strpos($content, '</body>') === false) {
+            if (false === strpos($content, '</body></html>')) {
+                if (false === strpos($content, '</body>')) {
                     $content .= '</body></html>';
                 } else {
                     $content = str_replace('</body>', '</body></html>', $content);
                 }
             }
-            
+
             $response->setContent($content);
         }
     }

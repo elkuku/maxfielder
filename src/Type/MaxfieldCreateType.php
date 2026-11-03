@@ -14,6 +14,7 @@ final class MaxfieldCreateType
 
     /**
      * @todo can not type hint this :(
+     *
      * @see https://github.com/symfony/symfony/issues/50759
      */
     public mixed $playersNum = null;

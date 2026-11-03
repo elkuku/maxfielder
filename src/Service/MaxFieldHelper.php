@@ -4,26 +4,27 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use RuntimeException;
-use UnexpectedValueException;
-use InvalidArgumentException;
 use App\Type\WaypointMap;
 use DirectoryIterator;
 use Elkuku\MaxfieldParser\MaxfieldParser;
 use Elkuku\MaxfieldParser\Type\MaxField;
 use FilesystemIterator;
+use InvalidArgumentException;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use UnexpectedValueException;
 
 readonly class MaxFieldHelper
 {
     private string $rootDir;
 
     public function __construct(
-        #[Autowire('%kernel.project_dir%')] string $projectDir,
-        #[Autowire('%env(MAXFIELD_VERSION)%')] private int $maxfieldVersion
-    )
-    {
+        #[Autowire('%kernel.project_dir%')]
+        string $projectDir,
+        #[Autowire('%env(MAXFIELD_VERSION)%')]
+        private int $maxfieldVersion
+    ) {
         $this->rootDir = $projectDir.'/public/maxfields';
     }
 
@@ -53,7 +54,7 @@ readonly class MaxFieldHelper
 
     public function getParser(string $item = ''): MaxfieldParser
     {
-        $dir = $item !== '' && $item !== '0' ? $this->rootDir.'/'.$item : $this->rootDir;
+        $dir = '' !== $item && '0' !== $item ? $this->rootDir.'/'.$item : $this->rootDir;
 
         return new MaxfieldParser($dir);
     }
@@ -90,7 +91,7 @@ readonly class MaxFieldHelper
         $path = $this->rootDir.sprintf('/%s/frames', $item);
 
         return (is_dir($path))
-            ? (string)iterator_count(new FilesystemIterator($path))
+            ? (string) iterator_count(new FilesystemIterator($path))
             : 'n/a';
     }
 
@@ -106,7 +107,8 @@ readonly class MaxFieldHelper
             }
 
             $sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
-            $factor = (int)floor(log($bytes, 1024));
+            $factor = (int) floor(log($bytes, 1024));
+
             return round($bytes / 1024 ** $factor, 2).' '.$sizes[$factor];
         }
 
@@ -149,7 +151,7 @@ readonly class MaxFieldHelper
                 continue;
             }
 
-            if ($inResults && $trimmed === '===============================') {
+            if ($inResults && '===============================' === $trimmed) {
                 break; // End of results section
             }
 
@@ -214,10 +216,10 @@ readonly class MaxFieldHelper
         while (false !== ($data = fgetcsv($handle, 1000, ',', '"', escape: '\\'))) {
             $waypoint = new WaypointMap();
 
-            $waypoint->mapNo = (int)$data[0];
-            $waypoint->dbId = (int)$data[1];
-            $waypoint->guid = (string)$data[2];
-            $waypoint->name = (string)$data[3];
+            $waypoint->mapNo = (int) $data[0];
+            $waypoint->dbId = (int) $data[1];
+            $waypoint->guid = (string) $data[2];
+            $waypoint->name = (string) $data[3];
 
             $map[] = $waypoint;
         }

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use UnexpectedValueException;
 use App\Enum\UserRole;
 use App\Factory\UserFactory;
 use App\Factory\WaypointFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use UnexpectedValueException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 

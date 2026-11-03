@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
-use Symfony\Component\Filesystem\Filesystem;
 use App\Service\WayPointHelper;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 
 final class WayPointHelperTest extends TestCase
 {
@@ -17,7 +17,7 @@ final class WayPointHelperTest extends TestCase
     protected function setUp(): void
     {
         $this->tempDir = sys_get_temp_dir().'/maxfielder_wp_test_'.uniqid();
-        mkdir($this->tempDir.'/public/wp_images', 0777, true);
+        mkdir($this->tempDir.'/public/wp_images', 0o777, true);
         $this->helper = new WayPointHelper($this->tempDir, 'https://intel.ingress.com/intel');
     }
 

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Parser\Type;
 
-use UnexpectedValueException;
 use App\Parser\AbstractParser;
 use JsonException;
+use UnexpectedValueException;
 
 class MultiExportJson extends AbstractParser
 {
@@ -15,9 +15,6 @@ class MultiExportJson extends AbstractParser
         return 'multiexportjson';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function parse(array $data): array
     {
         $waypoints = [];
@@ -29,9 +26,7 @@ class MultiExportJson extends AbstractParser
                 JSON_THROW_ON_ERROR
             );
         } catch (JsonException) {
-            throw new UnexpectedValueException(
-                'Invalid multiexport JSON data'
-            );
+            throw new UnexpectedValueException('Invalid multiexport JSON data');
         }
 
         /** @var array<array{guid?: string, title?: string, coordinates: array{lat: float, lng: float}, image?: string}> $items */

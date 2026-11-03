@@ -25,16 +25,14 @@ class CleandbCommand extends Command
         private readonly EntityManagerInterface $entityManager,
         private readonly WaypointRepository $waypointRepository,
         private readonly WayPointHelper $wayPointHelper
-    )
-    {
+    ) {
         parent::__construct();
     }
 
     protected function execute(
         InputInterface $input,
         OutputInterface $output
-    ): int
-    {
+    ): int {
         $errorCount = 0;
         $warningCount = 0;
         $io = new SymfonyStyle($input, $output);
@@ -54,11 +52,11 @@ class CleandbCommand extends Command
 
         $progressBar->finish();
 
-        if ($errorCount !== 0) {
+        if (0 !== $errorCount) {
             $io->error(sprintf('There have been %d errors', $errorCount));
         }
 
-        if ($warningCount !== 0) {
+        if (0 !== $warningCount) {
             $io->warning(sprintf('There have been %d warnings', $warningCount));
         }
 

@@ -12,7 +12,9 @@ abstract class AbstractParser
 {
     public bool $processImages = false;
 
-    public function __construct(protected WayPointHelper $wayPointHelper) {}
+    public function __construct(protected WayPointHelper $wayPointHelper)
+    {
+    }
 
     abstract protected function getType(): string;
 
@@ -30,10 +32,8 @@ abstract class AbstractParser
     {
         $type = $this->gettype();
 
-        if ($type === '' || $type === '0') {
-            throw new UnexpectedValueException(
-                'Type is not set in class '.self::class
-            );
+        if ('' === $type || '0' === $type) {
+            throw new UnexpectedValueException('Type is not set in class '.self::class);
         }
 
         return $this->check($type, $data);
@@ -53,8 +53,7 @@ abstract class AbstractParser
         float $lon,
         string $name,
         string $image,
-    ): Waypoint
-    {
+    ): Waypoint {
         return new Waypoint()
             ->setGuid($guid)
             ->setName($name)

@@ -13,7 +13,9 @@ class WayPointParser
 {
     public bool $processImages = false;
 
-    public function __construct(private readonly WayPointHelper $wayPointHelper) {}
+    public function __construct(private readonly WayPointHelper $wayPointHelper)
+    {
+    }
 
     /**
      * @param array<string> $data

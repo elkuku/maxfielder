@@ -11,7 +11,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class GoogleController extends AbstractController
 {
-    public function __construct(private readonly ClientRegistry $clientRegistry) {}
+    public function __construct(private readonly ClientRegistry $clientRegistry)
+    {
+    }
 
     /**
      * Link to this controller to start the "connect" process.

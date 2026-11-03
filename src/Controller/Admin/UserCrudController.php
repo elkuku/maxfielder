@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use Override;
 use App\Entity\User;
 use App\Enum\UserRole;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Override;
 
 /**
  * @extends AbstractCrudController<User>
@@ -56,7 +56,7 @@ class UserCrudController extends AbstractCrudController
                 }),
             ChoiceField::new('role')
                 ->setChoices(array_combine(
-                    array_map(static fn(UserRole $r) => $r->label(), UserRole::cases()),
+                    array_map(static fn (UserRole $r) => $r->label(), UserRole::cases()),
                     UserRole::cases(),
                 )),
         ];

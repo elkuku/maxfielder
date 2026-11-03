@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use Stringable;
 use App\Repository\WaypointRepository;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Stringable;
 
 #[Entity(repositoryClass: WaypointRepository::class)]
 class Waypoint implements Stringable
@@ -34,7 +34,7 @@ class Waypoint implements Stringable
 
     public function __toString(): string
     {
-        return (string)$this->getName();
+        return (string) $this->getName();
     }
 
     public function getId(): ?int

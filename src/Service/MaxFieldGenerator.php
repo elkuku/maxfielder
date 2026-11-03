@@ -20,20 +20,26 @@ class MaxFieldGenerator
     protected string $rootDir = '';
 
     public function __construct(
-        #[Autowire('%kernel.project_dir%')] private readonly string $projectDir,
-        #[Autowire('%env(MAXFIELDS_EXEC)%')] private readonly string $maxfieldExec,
-        #[Autowire('%env(MAXFIELD_VERSION)%')] private readonly int $maxfieldVersion,
-        #[Autowire('%env(GOOGLE_API_KEY)%')] private readonly string $googleApiKey,
-        #[Autowire('%env(GOOGLE_API_SECRET)%')] private readonly string $googleApiSecret,
-        #[Autowire('%env(INTEL_URL)%')] private readonly string $intelUrl,
-        #[Autowire('%env(PHP_BINARY)%')] private readonly string $phpBinary = PHP_BINARY,
-    )
-    {
+        #[Autowire('%kernel.project_dir%')]
+        private readonly string $projectDir,
+        #[Autowire('%env(MAXFIELDS_EXEC)%')]
+        private readonly string $maxfieldExec,
+        #[Autowire('%env(MAXFIELD_VERSION)%')]
+        private readonly int $maxfieldVersion,
+        #[Autowire('%env(GOOGLE_API_KEY)%')]
+        private readonly string $googleApiKey,
+        #[Autowire('%env(GOOGLE_API_SECRET)%')]
+        private readonly string $googleApiSecret,
+        #[Autowire('%env(INTEL_URL)%')]
+        private readonly string $intelUrl,
+        #[Autowire('%env(PHP_BINARY)%')]
+        private readonly string $phpBinary = PHP_BINARY,
+    ) {
         $this->rootDir = $projectDir.'/public/maxfields';
     }
 
     /**
-     * @param array<string, bool> $options
+     * @param array<string, bool>                             $options
      * @param list<array{int, int|null, string|null, string}> $wayPointMap
      */
     public function generate(
@@ -44,8 +50,7 @@ class MaxFieldGenerator
         array $options,
         MaxfieldEngineEnum $engine = MaxfieldEngineEnum::php,
         string $dockerContainer = '',
-    ): void
-    {
+    ): void {
         $fileSystem = new Filesystem();
 
         $projectRoot = $this->rootDir.'/'.$projectName;
@@ -85,11 +90,10 @@ class MaxFieldGenerator
         array $options,
         MaxfieldEngineEnum $engine = MaxfieldEngineEnum::php,
         string $dockerContainer = '',
-    ): array
-    {
+    ): array {
         $logFile = $projectRoot.'/log.txt';
 
-        if ($engine === MaxfieldEngineEnum::php) {
+        if (MaxfieldEngineEnum::php === $engine) {
             $command = [
                 $this->phpBinary, $this->projectDir.'/bin/console',
                 'maxfield:plan', $fileName,
@@ -128,9 +132,8 @@ class MaxFieldGenerator
         array $options,
         MaxfieldEngineEnum $engine = MaxfieldEngineEnum::python,
         string $dockerContainer = '',
-    ): array
-    {
-        if ($engine === MaxfieldEngineEnum::docker) {
+    ): array {
+        if (MaxfieldEngineEnum::docker === $engine) {
             $command = [
                 'docker', 'run',
                 '-v', $projectRoot.':/app/share',
@@ -162,7 +165,7 @@ class MaxFieldGenerator
             ];
         }
 
-        if ($this->googleApiKey !== '' && $this->googleApiKey !== '0') {
+        if ('' !== $this->googleApiKey && '0' !== $this->googleApiKey) {
             $command[] = '--google_api_key';
             $command[] = $this->googleApiKey;
             $command[] = '--google_api_secret';
@@ -173,7 +176,7 @@ class MaxFieldGenerator
     }
 
     /**
-     * @param list<string> $command
+     * @param list<string>        $command
      * @param array<string, bool> $options
      *
      * @return list<string>
@@ -220,7 +223,7 @@ class MaxFieldGenerator
 
         foreach ($wayPoints as $wayPoint) {
             $points = $wayPoint->getLat().','.$wayPoint->getLon();
-            $name = str_replace([';', '#'], '', (string)$wayPoint->getName());
+            $name = str_replace([';', '#'], '', (string) $wayPoint->getName());
             $maxFields[] = $name.'; '.$this->intelUrl
                 .'?ll='.$points.'&z=1&pll='.$points;
         }
@@ -230,6 +233,7 @@ class MaxFieldGenerator
 
     /**
      * @param Waypoint[] $wayPoints
+     *
      * @return list<array{int, int|null, string|null, string}>
      */
     public function getWaypointsMap(array $wayPoints): array
@@ -237,7 +241,7 @@ class MaxFieldGenerator
         $map = [];
 
         foreach ($wayPoints as $i => $wayPoint) {
-            $name = str_replace([';', '#', ','], '', (string)$wayPoint->getName());
+            $name = str_replace([';', '#', ','], '', (string) $wayPoint->getName());
             $map[] = [$i, $wayPoint->getId(), $wayPoint->getGuid(), $name];
         }
 
@@ -253,7 +257,7 @@ class MaxFieldGenerator
     {
         $fileSystem = new Filesystem();
 
-        $fileSystem->remove($this->rootDir.('/' . $item));
+        $fileSystem->remove($this->rootDir.('/'.$item));
     }
 
     public function findFrames(string $item): int
@@ -272,7 +276,7 @@ class MaxFieldGenerator
                 $matches
             )
             ) {
-                $x = (int)$matches[1];
+                $x = (int) $matches[1];
                 $frames = max($x, $frames);
             }
         }
@@ -301,7 +305,7 @@ class MaxFieldGenerator
         }
 
         $portalsContent = file_get_contents($portalsFile);
-        if ($portalsContent === false) {
+        if (false === $portalsContent) {
             throw new RuntimeException('Cannot read original portals.txt');
         }
 
@@ -312,7 +316,7 @@ class MaxFieldGenerator
         }
 
         $mapContent = file_get_contents($mapFile);
-        if ($mapContent === false) {
+        if (false === $mapContent) {
             throw new RuntimeException('Cannot read original portals_id_map.csv');
         }
 
@@ -351,7 +355,7 @@ class MaxFieldGenerator
 
         // Write shuffled portals_id_map.csv
         $fp = fopen($newRoot.'/portals_id_map.csv', 'w');
-        if ($fp === false) {
+        if (false === $fp) {
             throw new RuntimeException('Cannot create portals_id_map.csv in '.$newRoot);
         }
         foreach ($shuffledMap as $fields) {
@@ -381,7 +385,7 @@ class MaxFieldGenerator
         // Check if original already ends with -v{N}
         if (preg_match('/^(.+)-v(\d+)$/', $originalName, $matches)) {
             $baseName = $matches[1];
-            $nextNum = (int)$matches[2] + 1;
+            $nextNum = (int) $matches[2] + 1;
         } else {
             $baseName = $originalName;
             $nextNum = 1;
@@ -392,13 +396,13 @@ class MaxFieldGenerator
         $existingNums = [];
         foreach ($dirs as $dir) {
             if (preg_match('/-v(\d+)$/', $dir, $m)) {
-                $existingNums[] = (int)$m[1];
+                $existingNums[] = (int) $m[1];
             }
         }
 
         // Include the nextNum from above in check
         while (in_array($nextNum, $existingNums, true)) {
-            $nextNum++;
+            ++$nextNum;
         }
 
         return $baseName.'-v'.$nextNum;
