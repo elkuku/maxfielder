@@ -58,7 +58,10 @@ final class UserCrudControllerTest extends WebTestCase
         // Use getPhpValues() to preserve the CSRF token, then override roles
         $form = $crawler->selectButton('Save changes')->form();
         $values = $form->getPhpValues();
-        $values['User']['roles'] = [UserRole::ADMIN->value];
+        $userValues = $values['User'] ?? null;
+        $this->assertIsArray($userValues);
+        $userValues['roles'] = [UserRole::ADMIN->value];
+        $values['User'] = $userValues;
 
         $client->request(Request::METHOD_POST, '/admin/user/'.$agentId.'/edit', $values);
 

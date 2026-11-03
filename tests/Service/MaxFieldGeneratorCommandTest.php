@@ -41,8 +41,12 @@ final class MaxFieldGeneratorCommandTest extends TestCase
     ): array {
         $method = new ReflectionMethod(MaxFieldGenerator::class, 'buildCommand');
 
-        /* @var list<string> */
-        return $method->invoke($generator, $projectRoot, $fileName, $players, $options, $engine, $dockerContainer);
+        $command = $method->invoke($generator, $projectRoot, $fileName, $players, $options, $engine, $dockerContainer);
+
+        $this->assertIsList($command);
+        $this->assertContainsOnlyString($command);
+
+        return $command;
     }
 
     /** @return array<string, bool> */

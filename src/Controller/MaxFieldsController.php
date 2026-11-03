@@ -14,6 +14,7 @@ use App\Repository\WaypointRepository;
 use App\Service\IngressHelper;
 use App\Service\MaxFieldGenerator;
 use App\Service\MaxFieldHelper;
+use App\Service\MobileExportBuilder;
 use App\Settings\UserSettings;
 use App\Type\MaxfieldCreateType;
 use App\Type\MaxfieldStatus;
@@ -478,7 +479,7 @@ class MaxFieldsController extends BaseController
         $status = $maxfieldStatus->getStatus();
 
         if ('finished' === $status && null === $maxfield->getPlanResults()) {
-            $logContent = $this->maxFieldHelper->getLog($maxfield->getPath());
+            $logContent = $this->maxFieldHelper->getLog($maxfield->getPath() ?? '');
             $planResults = $this->maxFieldHelper->parsePlanResults($logContent);
             if (null !== $planResults) {
                 $maxfield->setPlanResults($planResults);
@@ -564,89 +565,31 @@ class MaxFieldsController extends BaseController
         #[Autowire('%kernel.project_dir%')]
         string $projectDir,
         ?Profiler $profiler,
+        MobileExportBuilder $exportBuilder,
     ): Response {
-        if ($profiler instanceof Profiler) {
-            $profiler->disable();
-        }
+        $profiler?->disable();
 
         $path = $maxfield->getPath() ?? '';
         $info = $this->maxFieldHelper->getMaxField($path);
-        $waypointIdMap = $this->maxFieldHelper->getWaypointsIdMap($path);
 
-        // Get agent names from URL params
-        $agentNamesParam = $request->query->all('agent');
-        $numAgentsParam = (int) $request->query->get('count', '1');
-
-        // Get user's base agent name
-        $user = $this->getUser();
-        $baseAgentName = $user?->getUserParams()?->agentName ?? '';
-
-        // Build agent names array - use actual number of agents
-        $numAgents = max($numAgentsParam, count($info->agentsInfo));
-        $agentNames = [];
-        for ($i = 1; $i <= $numAgents; ++$i) {
-            $name = $agentNamesParam[$i] ?? null;
-            if ($name) {
-                $agentNames[$i] = $name;
-            } elseif (1 === $numAgents && $baseAgentName) {
-                // Single agent: use logged-in user's name
-                $agentNames[$i] = $baseAgentName;
-            } elseif ($numAgents > 1) {
-                // Multiple agents: use "Agent N" format
-                $agentNames[$i] = 'Agent '.$i;
-            } else {
-                $agentNames[$i] = 'Agent';
-            }
-        }
-
-        // Get frames as base64
-        $framesDir = $projectDir.'/public/maxfields/'.$path.'/frames';
-        $frames = [];
-
-        if (is_dir($framesDir)) {
-            $files = scandir($framesDir);
-            foreach ($files as $file) {
-                if (preg_match('/^frame_\d+\.gif$/', $file)) {
-                    $fullPath = $framesDir.'/'.$file;
-                    $frames[$file] = 'data:image/gif;base64,'.base64_encode(file_get_contents($fullPath));
-                }
-            }
-        }
-
-        ksort($frames);
+        // Use the actual number of agents if the plan has more than requested
+        $numAgents = max((int) $request->query->get('count', '1'), count($info->agentsInfo));
 
         $html = $this->renderView('maxfield/export.html.twig', [
             'maxfield' => $maxfield,
             'info' => $info,
-            'waypointIdMap' => $waypointIdMap,
-            'frames' => $frames,
-            'agentNames' => $agentNames,
+            'waypointIdMap' => $this->maxFieldHelper->getWaypointsIdMap($path),
+            'frames' => $exportBuilder->loadFrames($projectDir.'/public/maxfields/'.$path.'/frames'),
+            'agentNames' => $exportBuilder->buildAgentNames(
+                $request->query->all('agent'),
+                $numAgents,
+                $this->getUser()?->getUserParams()->agentName ?? '',
+            ),
             'numAgents' => $numAgents,
         ]);
 
-        // Remove Symfony toolbar - the toolbar is injected by WebDebugToolbarListener after render
-        // The toolbar is inserted right before </body> so we need to cut it there
-        // First, close </body></html> if missing (our template should have them)
-        if (str_contains($html, '</body>')) {
-            $html = substr($html, 0, strpos($html, '</body>')).'</body></html>';
-        } elseif (str_contains($html, '</html>')) {
-            $html = substr($html, 0, strpos($html, '</html>')).'</html>';
-        }
-
-        // Force remove toolbar by finding its position in HTML and cutting
-        $toolbarStart = strpos($html, '<!-- START of Symfony Web Debug Toolbar -->');
-        if (false !== $toolbarStart) {
-            $toolbarEnd = strpos($html, '<!-- END of Symfony Web Debug Toolbar -->', $toolbarStart);
-            if (false !== $toolbarEnd) {
-                $toolbarEnd += strlen('<!-- END of Symfony Web Debug Toolbar -->');
-                $html = substr($html, 0, $toolbarStart).substr($html, $toolbarEnd);
-            }
-        }
-
-        // Add closing tags if needed
-        if (false === str_contains($html, '</body>') && false === str_contains($html, '</html>')) {
-            $html .= '</body></html>';
-        }
+        // The toolbar is injected by WebDebugToolbarListener right before </body>, so cut it off there
+        $html = $exportBuilder->stripDebugToolbar($html);
 
         return new Response($html, Response::HTTP_OK, ['Content-Type' => 'text/html; charset=UTF-8']);
     }

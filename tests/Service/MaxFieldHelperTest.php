@@ -10,6 +10,7 @@ use Elkuku\MaxfieldParser\Type\MaxField;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use Symfony\Component\Filesystem\Filesystem;
 
 final class MaxFieldHelperTest extends TestCase
 {
@@ -111,8 +112,8 @@ final class MaxFieldHelperTest extends TestCase
         $helper = new MaxFieldHelper($this->tempDir, 6);
         $log = $helper->getLog($item);
 
-        $this->assertStringNotContainsString($this->tempDir, (string) $log);
-        $this->assertStringContainsString('...', (string) $log);
+        $this->assertStringNotContainsString($this->tempDir, $log);
+        $this->assertStringContainsString('...', $log);
     }
 
     public function testFilesFinishedReturnsTrueWhenFileExists(): void
@@ -330,28 +331,6 @@ final class MaxFieldHelperTest extends TestCase
 
     private function removeDirectory(string $dir): void
     {
-        if (!is_dir($dir)) {
-            return;
-        }
-
-        $items = scandir($dir);
-        if (false === $items) {
-            return;
-        }
-
-        foreach ($items as $item) {
-            if ('.' === $item) {
-                continue;
-            }
-
-            if ('..' === $item) {
-                continue;
-            }
-
-            $path = $dir.'/'.$item;
-            is_dir($path) ? $this->removeDirectory($path) : unlink($path);
-        }
-
-        rmdir($dir);
+        new Filesystem()->remove($dir);
     }
 }

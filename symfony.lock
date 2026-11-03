@@ -679,9 +679,6 @@
     "twig/twig": {
         "version": "v3.3.8"
     },
-    "webmozart/assert": {
-        "version": "1.10.0"
-    },
     "zenstruck/foundry": {
         "version": "2.15",
         "recipe": {

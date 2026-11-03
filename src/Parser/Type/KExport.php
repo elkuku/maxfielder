@@ -6,8 +6,6 @@ namespace App\Parser\Type;
 
 use App\Entity\Waypoint;
 use App\Parser\AbstractParser;
-use JsonException;
-use UnexpectedValueException;
 
 class KExport extends AbstractParser
 {
@@ -23,37 +21,27 @@ class KExport extends AbstractParser
      */
     public function parse(array $data): array
     {
-        $waypoints = [];
-        try {
-            $items = json_decode(
-                $data[$this->getType()],
-                true,
-                512,
-                JSON_THROW_ON_ERROR
-            );
-        } catch (JsonException) {
-            throw new UnexpectedValueException('Invalid KExport JSON data');
-        }
-
         /** @var array<array{guid?: string, title?: string, lat: float, lng: float, image?: string}> $items */
+        $items = $this->decodeJson($data, 'Invalid KExport JSON data');
+
+        $waypoints = [];
+
         foreach ($items as $item) {
-            if (!$guid = $item['guid'] ?? '') {
+            $guid = $item['guid'] ?? '';
+            $title = $item['title'] ?? '';
+
+            if (!$guid || !$title) {
                 continue;
             }
 
-            if (!$title = $item['title'] ?? '') {
-                continue;
-            }
-
-            $lat = $item['lat'];
-            $lon = $item['lng'];
-            $image = $item['image'] ?? '';
-
-            if (isset($data['importImages']) && $data['importImages']) {
-                $this->wayPointHelper->checkImage($guid, $image);
-            }
-
-            $waypoints[] = $this->createWayPoint($guid, $lat, $lon, $title, $image);
+            $waypoints[] = $this->createImportedWayPoint(
+                $data,
+                $guid,
+                $item['lat'],
+                $item['lng'],
+                $title,
+                $item['image'] ?? ''
+            );
         }
 
         return $waypoints;

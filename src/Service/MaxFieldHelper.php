@@ -64,7 +64,7 @@ readonly class MaxFieldHelper
         return $this->getParser()->parse($item);
     }
 
-    public function getLog(string $item): bool|string
+    public function getLog(string $item): string
     {
         $path = $this->rootDir.'/'.$item.'/log.txt';
 
@@ -125,13 +125,11 @@ readonly class MaxFieldHelper
      * Returns associative array with keys: portals, links, fields, max_keys_needed,
      * ap_from_portals, ap_from_links, ap_from_fields, total_ap
      * or null if section not found.
+     *
+     * @return array<string, int>|null
      */
     public function parsePlanResults(string $logContent): ?array
     {
-        $lines = explode("\n", $logContent);
-        $inResults = false;
-        $results = [];
-
         $keyMap = [
             'portals' => 'portals',
             'links' => 'links',
@@ -143,30 +141,47 @@ readonly class MaxFieldHelper
             'TOTAL AP' => 'total_ap',
         ];
 
-        foreach ($lines as $line) {
-            $trimmed = trim($line);
+        $results = [];
 
-            if (str_contains($trimmed, 'Maxfield Plan Results:')) {
-                $inResults = true;
+        foreach ($this->getPlanResultsLines($logContent) as $line) {
+            if (!str_contains($line, '=')) {
                 continue;
             }
 
-            if ($inResults && '===============================' === $trimmed) {
-                break; // End of results section
-            }
+            [$key, $value] = explode('=', $line, 2);
+            $key = trim($key);
 
-            if ($inResults && str_contains($trimmed, '=')) {
-                [$key, $value] = explode('=', $trimmed, 2);
-                $key = trim($key);
-                $value = trim($value);
-
-                if (array_key_exists($key, $keyMap)) {
-                    $results[$keyMap[$key]] = (int) $value;
-                }
+            if (array_key_exists($key, $keyMap)) {
+                $results[$keyMap[$key]] = (int) trim($value);
             }
         }
 
         return [] !== $results ? $results : null;
+    }
+
+    /**
+     * Returns the trimmed lines between "Maxfield Plan Results:" and the closing separator.
+     *
+     * @return list<string>
+     */
+    private function getPlanResultsLines(string $logContent): array
+    {
+        $lines = [];
+        $inResults = false;
+
+        foreach (explode("\n", $logContent) as $line) {
+            $trimmed = trim($line);
+
+            if (str_contains($trimmed, 'Maxfield Plan Results:')) {
+                $inResults = true;
+            } elseif ($inResults && '===============================' === $trimmed) {
+                break;
+            } elseif ($inResults) {
+                $lines[] = $trimmed;
+            }
+        }
+
+        return $lines;
     }
 
     public function getPreviewImage(string $item): string

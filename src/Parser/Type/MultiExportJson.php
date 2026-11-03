@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Parser\Type;
 
 use App\Parser\AbstractParser;
-use JsonException;
-use UnexpectedValueException;
 
 class MultiExportJson extends AbstractParser
 {
@@ -17,37 +15,27 @@ class MultiExportJson extends AbstractParser
 
     public function parse(array $data): array
     {
-        $waypoints = [];
-        try {
-            $items = json_decode(
-                $data[$this->getType()],
-                true,
-                512,
-                JSON_THROW_ON_ERROR
-            );
-        } catch (JsonException) {
-            throw new UnexpectedValueException('Invalid multiexport JSON data');
-        }
-
         /** @var array<array{guid?: string, title?: string, coordinates: array{lat: float, lng: float}, image?: string}> $items */
+        $items = $this->decodeJson($data, 'Invalid multiexport JSON data');
+
+        $waypoints = [];
+
         foreach ($items as $item) {
-            if (!$guid = $item['guid'] ?? '') {
+            $guid = $item['guid'] ?? '';
+            $title = $item['title'] ?? '';
+
+            if (!$guid || !$title) {
                 continue;
             }
 
-            if (!$title = $item['title'] ?? '') {
-                continue;
-            }
-
-            $lat = $item['coordinates']['lat'];
-            $lon = $item['coordinates']['lng'];
-            $image = $item['image'] ?? '';
-
-            if (isset($data['importImages']) && $data['importImages']) {
-                $this->wayPointHelper->checkImage($guid, $image);
-            }
-
-            $waypoints[] = $this->createWayPoint($guid, $lat, $lon, $title, $image);
+            $waypoints[] = $this->createImportedWayPoint(
+                $data,
+                $guid,
+                $item['coordinates']['lat'],
+                $item['coordinates']['lng'],
+                $title,
+                $item['image'] ?? ''
+            );
         }
 
         return $waypoints;

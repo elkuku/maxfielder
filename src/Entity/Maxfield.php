@@ -44,6 +44,9 @@ class Maxfield
     #[Column(type: Types::JSON, nullable: true)]
     private ?array $userData = null;
 
+    /**
+     * @var array<string, int>|null
+     */
     #[Column(type: Types::JSON, nullable: true)]
     private ?array $planResults = null;
 
@@ -112,11 +115,17 @@ class Maxfield
         return $this;
     }
 
+    /**
+     * @return array<string, int>|null
+     */
     public function getPlanResults(): ?array
     {
         return $this->planResults;
     }
 
+    /**
+     * @param array<string, int>|null $planResults
+     */
     public function setPlanResults(?array $planResults): static
     {
         $this->planResults = $planResults;

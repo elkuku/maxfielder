@@ -1,13 +1,2 @@
 parameters:
-	ignoreErrors:
-		-
-			message: '#^Property App\\Entity\\Maxfield\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
-			identifier: property.unusedType
-			count: 1
-			path: src/Entity/Maxfield.php
-
-		-
-			message: '#^Property App\\Entity\\Waypoint\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
-			identifier: property.unusedType
-			count: 1
-			path: src/Entity/Waypoint.php
+	ignoreErrors: []
