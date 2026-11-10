@@ -24,8 +24,10 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public function __construct(
         private readonly RouterInterface $router,
-        #[Autowire('%env(APP_ENV)%')] private readonly string $appEnv
-    ) {}
+        #[Autowire(env: 'APP_ENV')]
+        private readonly string $appEnv
+    ) {
+    }
 
     protected function getLoginUrl(Request $request): string
     {
@@ -56,8 +58,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         Request $request,
         TokenInterface $token,
         string $firewallName
-    ): RedirectResponse
-    {
+    ): RedirectResponse {
         if ($targetPath = $this->getTargetPath(
             $request->getSession(),
             $firewallName

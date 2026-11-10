@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Parser;
 
-use UnexpectedValueException;
 use App\Parser\WayPointParser;
 use App\Service\WayPointHelper;
 use PHPUnit\Framework\TestCase;
+use UnexpectedValueException;
 
 final class WayPointParserTest extends TestCase
 {
@@ -37,7 +37,7 @@ final class WayPointParserTest extends TestCase
         $parser = new WayPointParser($this->createStub(WayPointHelper::class));
 
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('No suitable parser found');
+        $this->expectExceptionMessageIsOrContains('No suitable parser found');
 
         $parser->parse(['unsupported_format' => 'data']);
     }

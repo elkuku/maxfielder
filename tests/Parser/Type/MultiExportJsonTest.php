@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Parser\Type;
 
-use UnexpectedValueException;
 use App\Parser\Type\MultiExportJson;
 use App\Service\WayPointHelper;
 use PHPUnit\Framework\TestCase;
+use UnexpectedValueException;
 
 final class MultiExportJsonTest extends TestCase
 {
@@ -46,7 +46,7 @@ final class MultiExportJsonTest extends TestCase
         $parser = new MultiExportJson($this->createStub(WayPointHelper::class));
 
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Invalid multiexport JSON data');
+        $this->expectExceptionMessageIsOrContains('Invalid multiexport JSON data');
         $parser->parse(['multiexportjson' => 'not-json']);
     }
 

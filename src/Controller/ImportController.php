@@ -25,13 +25,13 @@ class ImportController extends AbstractController
         private readonly WayPointParser $wayPointParser,
         private readonly WayPointHelper $wayPointHelper,
         private readonly EntityManagerInterface $entityManager,
-    ) {}
+    ) {
+    }
 
     #[Route(path: '/import', name: 'import', methods: ['GET', 'POST'])]
     public function index(
         Request $request,
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(ImportFormType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -46,7 +46,7 @@ class ImportController extends AbstractController
                     $this->entityManager,
                     isset($data['forceUpdate']) && (bool) $data['forceUpdate'],
                 );
-                if ($count !== 0) {
+                if (0 !== $count) {
                     $this->addFlash('success', $count.' Waypoint(s) imported!');
                 } else {
                     $this->addFlash('warning', 'No Waypoints imported!');
@@ -75,8 +75,7 @@ class ImportController extends AbstractController
         WayPointHelper $wayPointHelper,
         EntityManagerInterface $entityManager,
         bool $forceUpdate = false,
-    ): int
-    {
+    ): int {
         $currentWayPoints = $repository->findAll();
         $cnt = 0;
 
@@ -91,7 +90,7 @@ class ImportController extends AbstractController
                 continue;
             }
 
-            $wayPoint->setName($wayPointHelper->cleanName((string)$wayPoint->getName()));
+            $wayPoint->setName($wayPointHelper->cleanName((string) $wayPoint->getName()));
             $entityManager->persist($wayPoint);
             ++$cnt;
         }
@@ -127,12 +126,13 @@ class ImportController extends AbstractController
         if ($existing->getGuid() === $newWayPoint->getGuid()) {
             if ($forceUpdate) {
                 $existing
-                    ->setName($wayPointHelper->cleanName((string)$newWayPoint->getName()))
+                    ->setName($wayPointHelper->cleanName((string) $newWayPoint->getName()))
                     ->setLat($newWayPoint->getLat() ?? 0.0)
                     ->setLon($newWayPoint->getLon() ?? 0.0)
                     ->setImage($newWayPoint->getImage());
 
                 $entityManager->persist($existing);
+
                 return true;
             }
 

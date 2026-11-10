@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use BackedEnum;
 use App\Entity\User;
 use App\Enum\UserRole;
 use App\Repository\UserRepository;
+use BackedEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use Elkuku\SymfonyUtils\Command\UserAdminBaseCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -23,8 +23,7 @@ class UserAdminCommand extends UserAdminBaseCommand
     public function __construct(
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
-    )
-    {
+    ) {
         parent::__construct($entityManager, $userRepository);
     }
 

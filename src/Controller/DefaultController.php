@@ -12,7 +12,9 @@ use UnexpectedValueException;
 
 class DefaultController extends BaseController
 {
-    public function __construct(private readonly MaxfieldRepository $maxfieldRepository) {}
+    public function __construct(private readonly MaxfieldRepository $maxfieldRepository)
+    {
+    }
 
     #[Route('/', name: 'default', methods: ['GET'])]
     public function index(Request $request): Response
@@ -33,7 +35,7 @@ class DefaultController extends BaseController
                 true
             )
             ) {
-                $template = '_' . $partial;
+                $template = '_'.$partial;
             } else {
                 throw new UnexpectedValueException('Invalid partial');
             }

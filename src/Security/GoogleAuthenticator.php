@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Security;
 
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\OAuth2ClientInterface;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\GoogleUser;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -30,11 +30,12 @@ class GoogleAuthenticator extends AbstractAuthenticator
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository $userRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
-    ) {}
+    ) {
+    }
 
     public function supports(Request $request): bool
     {
-        return $request->getPathInfo() === '/connect/google/check';
+        return '/connect/google/check' === $request->getPathInfo();
     }
 
     /**

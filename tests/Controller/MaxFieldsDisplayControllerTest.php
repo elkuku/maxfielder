@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
-
 /**
  * Tests for MaxFieldsController routes that require maxfield files on disk.
  * Creates minimal fixture files in public/maxfields/ and cleans up after each test.

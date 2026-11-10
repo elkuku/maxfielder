@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
-use InvalidArgumentException;
 use App\Service\IngressHelper;
 use App\Service\WayPointHelper;
 use App\Type\WaypointMap;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class IngressHelperTest extends TestCase
@@ -23,8 +23,8 @@ final class IngressHelperTest extends TestCase
     public function testParseKeysStringWithNewlines(): void
     {
         $input = "Header\tCol2\tCol3\tCol4\tCol5\n"
-            . "Portal A\tlink1\tguid1\t3\tcapsule1\n"
-            . "Portal B\tlink2\tguid2\t5\tcapsule2";
+            ."Portal A\tlink1\tguid1\t3\tcapsule1\n"
+            ."Portal B\tlink2\tguid2\t5\tcapsule2";
 
         $keys = $this->helper->parseKeysString($input);
 
@@ -41,8 +41,8 @@ final class IngressHelperTest extends TestCase
     public function testParseKeysStringWithCarriageReturnNewlines(): void
     {
         $input = "Header\tCol2\tCol3\tCol4\tCol5\r\n"
-            . "Portal C\tlink3\tguid3\t7\tcapsule3\r\n"
-            . "Portal D\tlink4\tguid4\t2\tcapsule4";
+            ."Portal C\tlink3\tguid3\t7\tcapsule3\r\n"
+            ."Portal D\tlink4\tguid4\t2\tcapsule4";
 
         $keys = $this->helper->parseKeysString($input);
 
@@ -55,7 +55,7 @@ final class IngressHelperTest extends TestCase
     public function testParseKeysStringCleansNames(): void
     {
         $input = "Header\tCol2\tCol3\tCol4\tCol5\n"
-            . "Café, Niño.\tlink\tguid\t1\tcap";
+            ."Café, Niño.\tlink\tguid\t1\tcap";
 
         $keys = $this->helper->parseKeysString($input);
 
@@ -65,10 +65,10 @@ final class IngressHelperTest extends TestCase
     public function testParseKeysStringThrowsOnInvalidData(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid keys string!');
+        $this->expectExceptionMessageIsOrContains('Invalid keys string!');
 
         $input = "Header\n"
-            . "only\ttwo\tcolumns";
+            ."only\ttwo\tcolumns";
 
         $this->helper->parseKeysString($input);
     }
@@ -97,9 +97,9 @@ final class IngressHelperTest extends TestCase
         $wp2->name = 'Portal C';
 
         $keysString = "Header\tCol2\tCol3\tCol4\tCol5\n"
-            . "Portal A\tlink1\tguid1\t3\tcap1\n"
-            . "Portal B\tlink2\tguid2\t5\tcap2\n"
-            . "Portal C\tlink3\tguid3\t7\tcap3";
+            ."Portal A\tlink1\tguid1\t3\tcap1\n"
+            ."Portal B\tlink2\tguid2\t5\tcap2\n"
+            ."Portal C\tlink3\tguid3\t7\tcap3";
 
         $result = $this->helper->getExistingKeysForMaxfield([$wp1, $wp2], $keysString);
 
@@ -117,7 +117,7 @@ final class IngressHelperTest extends TestCase
         $wp->name = 'No Match';
 
         $keysString = "Header\tCol2\tCol3\tCol4\tCol5\n"
-            . "Portal A\tlink1\tguid1\t3\tcap1";
+            ."Portal A\tlink1\tguid1\t3\tcap1";
 
         $result = $this->helper->getExistingKeysForMaxfield([$wp], $keysString);
 

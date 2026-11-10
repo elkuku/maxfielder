@@ -11,7 +11,9 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class LoginFormController extends AbstractController
 {
-    public function __construct(private readonly AuthenticationUtils $authenticationUtils) {}
+    public function __construct(private readonly AuthenticationUtils $authenticationUtils)
+    {
+    }
 
     #[Route('/login', name: 'login', methods: ['GET', 'POST'])]
     public function login(string $oauthGoogleId): Response
@@ -27,5 +29,7 @@ class LoginFormController extends AbstractController
     }
 
     #[Route('/logout', name: 'logout', methods: ['GET'])]
-    public function logout(): void {}
+    public function logout(): void
+    {
+    }
 }

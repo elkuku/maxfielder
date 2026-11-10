@@ -4,42 +4,34 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
-use Override;
 use App\Entity\Maxfield;
 use App\Entity\Waypoint;
 use App\Service\MaxFieldHelper;
 use App\Service\WayPointHelper;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
-class AppExtension extends AbstractExtension
+class AppExtension
 {
     public function __construct(
         private readonly WayPointHelper $wayPointHelper,
         private readonly MaxFieldHelper $maxFieldHelper,
-    ) {}
-
-    #[Override]
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction('hasImage', $this->hasImage(...)),
-            new TwigFunction('previewImage', $this->previewImage(...)),
-            new TwigFunction('waypointCount', $this->waypointCount(...)),
-        ];
+    ) {
     }
 
+    #[AsTwigFunction(name: 'hasImage')]
     public function hasImage(Waypoint $waypoint): bool
     {
-        return (bool)$this->wayPointHelper->findImage($waypoint->getGuid());
+        return (bool) $this->wayPointHelper->findImage($waypoint->getGuid());
     }
 
+    #[AsTwigFunction(name: 'previewImage')]
     public function previewImage(Maxfield $maxfield): string
     {
         return $this->maxFieldHelper->getPreviewImage($maxfield->getPath() ?? '')
             ?: 'images/no-preview.jpg';
     }
 
+    #[AsTwigFunction(name: 'waypointCount')]
     public function waypointCount(Maxfield $maxfield): int
     {
         return $this->maxFieldHelper->getWaypointCount($maxfield->getPath() ?? '');

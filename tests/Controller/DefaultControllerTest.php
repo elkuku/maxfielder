@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use UnexpectedValueException;
 use App\Factory\MaxfieldFactory;
 use App\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use UnexpectedValueException;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 

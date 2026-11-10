@@ -26,7 +26,8 @@ class WaypointsController extends AbstractController
         private readonly WaypointRepository $repository,
         private readonly WayPointHelper $wayPointHelper,
         private readonly EntityManagerInterface $entityManager
-    ) {}
+    ) {
+    }
 
     #[Route(path: '/waypoint/{id}', name: 'waypoints_edit', methods: [
         'GET',
@@ -36,8 +37,7 @@ class WaypointsController extends AbstractController
     public function edit(
         Request $request,
         Waypoint $waypoint
-    ): RedirectResponse|Response
-    {
+    ): RedirectResponse|Response {
         $form = $this->createForm(WaypointFormType::class, $waypoint);
         $form->handleRequest($request);
 
@@ -63,8 +63,7 @@ class WaypointsController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function remove(
         Waypoint $waypoint
-    ): RedirectResponse
-    {
+    ): RedirectResponse {
         $this->entityManager->remove($waypoint);
 
         $this->entityManager->flush();
@@ -86,10 +85,10 @@ class WaypointsController extends AbstractController
             }
 
             $waypoints = $this->repository->findInBounds(
-                (float)$bounds[0],
-                (float)$bounds[1],
-                (float)$bounds[2],
-                (float)$bounds[3]
+                (float) $bounds[0],
+                (float) $bounds[1],
+                (float) $bounds[2],
+                (float) $bounds[3]
             );
         } else {
             $waypoints = $this->repository->findAll();

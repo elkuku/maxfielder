@@ -4,26 +4,27 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use RuntimeException;
-use UnexpectedValueException;
-use InvalidArgumentException;
 use App\Type\WaypointMap;
 use DirectoryIterator;
 use Elkuku\MaxfieldParser\MaxfieldParser;
 use Elkuku\MaxfieldParser\Type\MaxField;
 use FilesystemIterator;
+use InvalidArgumentException;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use UnexpectedValueException;
 
 readonly class MaxFieldHelper
 {
     private string $rootDir;
 
     public function __construct(
-        #[Autowire('%kernel.project_dir%')] string $projectDir,
-        #[Autowire('%env(MAXFIELD_VERSION)%')] private int $maxfieldVersion
-    )
-    {
+        #[Autowire(param: 'kernel.project_dir')]
+        string $projectDir,
+        #[Autowire(env: 'MAXFIELD_VERSION')]
+        private int $maxfieldVersion
+    ) {
         $this->rootDir = $projectDir.'/public/maxfields';
     }
 
@@ -53,7 +54,7 @@ readonly class MaxFieldHelper
 
     public function getParser(string $item = ''): MaxfieldParser
     {
-        $dir = $item !== '' && $item !== '0' ? $this->rootDir.'/'.$item : $this->rootDir;
+        $dir = '' !== $item && '0' !== $item ? $this->rootDir.'/'.$item : $this->rootDir;
 
         return new MaxfieldParser($dir);
     }
@@ -63,7 +64,7 @@ readonly class MaxFieldHelper
         return $this->getParser()->parse($item);
     }
 
-    public function getLog(string $item): bool|string
+    public function getLog(string $item): string
     {
         $path = $this->rootDir.'/'.$item.'/log.txt';
 
@@ -90,7 +91,7 @@ readonly class MaxFieldHelper
         $path = $this->rootDir.sprintf('/%s/frames', $item);
 
         return (is_dir($path))
-            ? (string)iterator_count(new FilesystemIterator($path))
+            ? (string) iterator_count(new FilesystemIterator($path))
             : 'n/a';
     }
 
@@ -106,7 +107,8 @@ readonly class MaxFieldHelper
             }
 
             $sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
-            $factor = (int)floor(log($bytes, 1024));
+            $factor = (int) floor(log($bytes, 1024));
+
             return round($bytes / 1024 ** $factor, 2).' '.$sizes[$factor];
         }
 
@@ -123,13 +125,11 @@ readonly class MaxFieldHelper
      * Returns associative array with keys: portals, links, fields, max_keys_needed,
      * ap_from_portals, ap_from_links, ap_from_fields, total_ap
      * or null if section not found.
+     *
+     * @return array<string, int>|null
      */
     public function parsePlanResults(string $logContent): ?array
     {
-        $lines = explode("\n", $logContent);
-        $inResults = false;
-        $results = [];
-
         $keyMap = [
             'portals' => 'portals',
             'links' => 'links',
@@ -141,30 +141,47 @@ readonly class MaxFieldHelper
             'TOTAL AP' => 'total_ap',
         ];
 
-        foreach ($lines as $line) {
+        $results = [];
+
+        foreach ($this->getPlanResultsLines($logContent) as $line) {
+            if (!str_contains($line, '=')) {
+                continue;
+            }
+
+            [$key, $value] = explode('=', $line, 2);
+            $key = trim($key);
+
+            if (array_key_exists($key, $keyMap)) {
+                $results[$keyMap[$key]] = (int) trim($value);
+            }
+        }
+
+        return [] !== $results ? $results : null;
+    }
+
+    /**
+     * Returns the trimmed lines between "Maxfield Plan Results:" and the closing separator.
+     *
+     * @return list<string>
+     */
+    private function getPlanResultsLines(string $logContent): array
+    {
+        $lines = [];
+        $inResults = false;
+
+        foreach (explode("\n", $logContent) as $line) {
             $trimmed = trim($line);
 
             if (str_contains($trimmed, 'Maxfield Plan Results:')) {
                 $inResults = true;
-                continue;
-            }
-
-            if ($inResults && $trimmed === '===============================') {
-                break; // End of results section
-            }
-
-            if ($inResults && str_contains($trimmed, '=')) {
-                [$key, $value] = explode('=', $trimmed, 2);
-                $key = trim($key);
-                $value = trim($value);
-
-                if (array_key_exists($key, $keyMap)) {
-                    $results[$keyMap[$key]] = (int) $value;
-                }
+            } elseif ($inResults && '===============================' === $trimmed) {
+                break;
+            } elseif ($inResults) {
+                $lines[] = $trimmed;
             }
         }
 
-        return !empty($results) ? $results : null;
+        return $lines;
     }
 
     public function getPreviewImage(string $item): string
@@ -214,10 +231,10 @@ readonly class MaxFieldHelper
         while (false !== ($data = fgetcsv($handle, 1000, ',', '"', escape: '\\'))) {
             $waypoint = new WaypointMap();
 
-            $waypoint->mapNo = (int)$data[0];
-            $waypoint->dbId = (int)$data[1];
-            $waypoint->guid = (string)$data[2];
-            $waypoint->name = (string)$data[3];
+            $waypoint->mapNo = (int) $data[0];
+            $waypoint->dbId = (int) $data[1];
+            $waypoint->guid = (string) $data[2];
+            $waypoint->name = (string) $data[3];
 
             $map[] = $waypoint;
         }

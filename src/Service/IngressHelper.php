@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use InvalidArgumentException;
 use App\Type\AgentKeyInfo;
 use App\Type\WaypointMap;
+use InvalidArgumentException;
 
 readonly class IngressHelper
 {
     public function __construct(
         private WayPointHelper $wayPointHelper,
-    ) {}
+    ) {
+    }
 
     /**
      * @return array<int, AgentKeyInfo>
@@ -24,16 +25,16 @@ readonly class IngressHelper
         $lines = strpos($string, "\r\n") ? explode("\r\n", $string) : explode("\n", $string);
 
         for ($i = 1, $iMax = count($lines); $i < $iMax; ++$i) {
-            $k = new AgentKeyInfo;
+            $k = new AgentKeyInfo();
             $data = explode("\t", $lines[$i]);
-            if (count($data) !== 5) {
+            if (5 !== count($data)) {
                 throw new InvalidArgumentException('Invalid keys string!');
             }
 
             $k->name = $this->wayPointHelper->cleanName($data[0]);
             $k->link = $data[1];
             $k->guid = $data[2];
-            $k->count = (int)$data[3];
+            $k->count = (int) $data[3];
             $k->capsules = $data[4];
 
             $keys[] = $k;
@@ -44,6 +45,7 @@ readonly class IngressHelper
 
     /**
      * @param WaypointMap[] $waypoints
+     *
      * @return AgentKeyInfo[]
      */
     public function getExistingKeysForMaxfield(array $waypoints, string $keys): array

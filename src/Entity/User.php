@@ -80,7 +80,7 @@ class User implements UserInterface, Stringable
 
     /**
      * @return array{
-     *     id: integer|null,
+     *     id: int|null,
      *     identifier: string|null
      * }
      */
@@ -101,13 +101,11 @@ class User implements UserInterface, Stringable
     public function __unserialize(array $data): void
     {
         $this->id = $data['id'] ?? null;
-        $this->identifier = (string)($data['identifier'] ?? null);
+        $this->identifier = (string) ($data['identifier'] ?? null);
         $this->params = [];
         $this->maxfields = new ArrayCollection();
         $this->favourites = new ArrayCollection();
     }
-
-    public function eraseCredentials(): void {}
 
     public function getRoles(): array
     {
@@ -125,7 +123,6 @@ class User implements UserInterface, Stringable
     }
 
     public function setRole(UserRole $role): User
-
     {
         $this->role = $role;
 
@@ -152,20 +149,20 @@ class User implements UserInterface, Stringable
         $settings = new UserSettings();
 
         $settings->agentName = $this->getParam('agentName');
-        $settings->lat = (float)$this->getParam('lat');
-        $settings->lon = (float)$this->getParam('lon');
-        $settings->zoom = (int)$this->getParam('zoom');
+        $settings->lat = (float) $this->getParam('lat');
+        $settings->lon = (float) $this->getParam('lon');
+        $settings->zoom = (int) $this->getParam('zoom');
         $settings->mapboxApiKey = $this->getParam('mapboxApiKey');
-        $settings->defaultStyle = $this->getParam('defaultStyle') !== '' && $this->getParam('defaultStyle') !== '0'
+        $settings->defaultStyle = '' !== $this->getParam('defaultStyle') && '0' !== $this->getParam('defaultStyle')
             ? (MapBoxStylesEnum::tryFrom($this->getParam('defaultStyle')) ?? MapBoxStylesEnum::Standard)
             : MapBoxStylesEnum::Standard;
-        $settings->defaultProfile = $this->getParam('defaultProfile') !== '' && $this->getParam('defaultProfile') !== '0'
+        $settings->defaultProfile = '' !== $this->getParam('defaultProfile') && '0' !== $this->getParam('defaultProfile')
             ? (MapBoxProfilesEnum::tryFrom($this->getParam('defaultProfile')) ?? MapBoxProfilesEnum::Driving)
             : MapBoxProfilesEnum::Driving;
-        $settings->mapProvider = $this->getParam('mapProvider') !== '' && $this->getParam('mapProvider') !== '0'
+        $settings->mapProvider = '' !== $this->getParam('mapProvider') && '0' !== $this->getParam('mapProvider')
             ? (MapProvidersEnum::tryFrom($this->getParam('mapProvider')) ?? MapProvidersEnum::leaflet)
             : MapProvidersEnum::leaflet;
-        $settings->maxfieldEngine = $this->getParam('maxfieldEngine') !== ''
+        $settings->maxfieldEngine = '' !== $this->getParam('maxfieldEngine')
             ? (MaxfieldEngineEnum::tryFrom($this->getParam('maxfieldEngine')) ?? MaxfieldEngineEnum::php)
             : MaxfieldEngineEnum::php;
         $settings->dockerContainer = $this->getParam('dockerContainer');

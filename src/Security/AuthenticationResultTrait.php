@@ -16,8 +16,7 @@ trait AuthenticationResultTrait
         Request $request,
         TokenInterface $token,
         string $firewallName
-    ): RedirectResponse
-    {
+    ): RedirectResponse {
         if ($targetPath = $this->getTargetPath(
             $request->getSession(),
             $firewallName
@@ -32,8 +31,7 @@ trait AuthenticationResultTrait
     public function onAuthenticationFailure(
         Request $request,
         AuthenticationException $exception,
-    ): RedirectResponse
-    {
+    ): RedirectResponse {
         $message = strtr(
             $exception->getMessageKey(),
             $exception->getMessageData()

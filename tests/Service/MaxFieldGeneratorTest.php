@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
-use App\Service\WayPointHelper;
 use App\Entity\Waypoint;
 use App\Service\MaxFieldGenerator;
+use App\Service\WayPointHelper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -19,7 +19,7 @@ final class MaxFieldGeneratorTest extends TestCase
     protected function setUp(): void
     {
         $this->tempDir = sys_get_temp_dir().'/maxfielder_gen_test_'.uniqid();
-        mkdir($this->tempDir.'/public/maxfields', 0777, true);
+        mkdir($this->tempDir.'/public/maxfields', 0o777, true);
 
         $this->generator = new MaxFieldGenerator(
             $this->tempDir,
@@ -112,7 +112,7 @@ final class MaxFieldGeneratorTest extends TestCase
     {
         $item = 'my-field';
         $dir = $this->tempDir.'/public/maxfields/'.$item;
-        mkdir($dir, 0777, true);
+        mkdir($dir, 0o777, true);
         file_put_contents($dir.'/portals.txt', '');
         file_put_contents($dir.'/log.txt', '');
 
@@ -127,7 +127,7 @@ final class MaxFieldGeneratorTest extends TestCase
     {
         $item = 'my-field';
         $dir = $this->tempDir.'/public/maxfields/'.$item;
-        mkdir($dir, 0777, true);
+        mkdir($dir, 0o777, true);
         file_put_contents($dir.'/z_file.txt', '');
         file_put_contents($dir.'/a_file.txt', '');
 
@@ -142,7 +142,7 @@ final class MaxFieldGeneratorTest extends TestCase
     {
         $item = 'to-remove';
         $dir = $this->tempDir.'/public/maxfields/'.$item;
-        mkdir($dir, 0777, true);
+        mkdir($dir, 0o777, true);
         file_put_contents($dir.'/portals.txt', '');
 
         $this->generator->remove($item);
@@ -159,7 +159,7 @@ final class MaxFieldGeneratorTest extends TestCase
     {
         $item = 'my-field';
         $framesDir = $this->tempDir.'/public/maxfields/'.$item.'/frames';
-        mkdir($framesDir, 0777, true);
+        mkdir($framesDir, 0o777, true);
         file_put_contents($framesDir.'/frame_00001.png', '');
         file_put_contents($framesDir.'/frame_00005.png', '');
         file_put_contents($framesDir.'/frame_00003.png', '');
@@ -171,7 +171,7 @@ final class MaxFieldGeneratorTest extends TestCase
     {
         $item = 'my-field';
         $framesDir = $this->tempDir.'/public/maxfields/'.$item.'/frames';
-        mkdir($framesDir, 0777, true);
+        mkdir($framesDir, 0o777, true);
         file_put_contents($framesDir.'/something_else.png', '');
 
         $this->assertSame(0, $this->generator->findFrames($item));

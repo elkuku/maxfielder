@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Exception;
 use App\Entity\Maxfield;
 use App\Enum\MapBoxProfilesEnum;
 use App\Enum\MapBoxStylesEnum;
@@ -15,15 +14,16 @@ use App\Repository\WaypointRepository;
 use App\Service\IngressHelper;
 use App\Service\MaxFieldGenerator;
 use App\Service\MaxFieldHelper;
+use App\Service\MobileExportBuilder;
 use App\Settings\UserSettings;
 use App\Type\MaxfieldCreateType;
 use App\Type\MaxfieldStatus;
 use App\Type\UserDataType;
 use Doctrine\ORM\EntityManagerInterface;
 use Elkuku\MaxfieldParser\JsonHelper;
+use Exception;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
-use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -47,7 +48,8 @@ class MaxFieldsController extends BaseController
         private readonly MaxFieldGenerator $maxFieldGenerator,
         private readonly RouterInterface $router,
         private readonly EntityManagerInterface $entityManager
-    ) {}
+    ) {
+    }
 
     #[Route(path: 'maxfield/list', name: 'maxfields', methods: ['GET'])]
     public function index(Request $request): Response
@@ -70,7 +72,7 @@ class MaxFieldsController extends BaseController
                 true
             )
             ) {
-                $template = '_' . $partial;
+                $template = '_'.$partial;
             } else {
                 throw new UnexpectedValueException('Invalid partial');
             }
@@ -134,8 +136,7 @@ class MaxFieldsController extends BaseController
     public function clearUserData(
         Maxfield $maxfield,
         Request $request,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $response = [];
         try {
             /** @var array{agentNum: int|string} $data */
@@ -147,7 +148,7 @@ class MaxFieldsController extends BaseController
             $maxfield->setFarmDoneWithUser([], $agentNum);
             $maxfield->setUserKeysWithUser([], $agentNum);
             $this->entityManager->flush();
-            $response ['result'] = 'cleared';
+            $response['result'] = 'cleared';
             $code = 200;
         } catch (Exception $exception) {
             $response['error'] = $exception->getMessage();
@@ -161,8 +162,7 @@ class MaxFieldsController extends BaseController
     public function submitUserData(
         Maxfield $maxfield,
         Request $request,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $response = [];
         $status = 200;
 
@@ -175,12 +175,12 @@ class MaxFieldsController extends BaseController
         $currentPoint = $data['current_point'] ?? null;
         $farmDone = $data['farm_done'] ?? null;
 
-        if ($currentPoint !== null) {
+        if (null !== $currentPoint) {
             $maxfield->setCurrentPointWithUser((string) $currentPoint, $agentNum);
             $this->entityManager->flush();
         }
 
-        if ($farmDone !== null) {
+        if (null !== $farmDone) {
             $maxfield->setFarmDoneWithUser($farmDone, $agentNum);
             $this->entityManager->flush();
         }
@@ -189,7 +189,7 @@ class MaxFieldsController extends BaseController
             $waypointIdMap = $this->maxFieldHelper->getWaypointsIdMap($maxfield->getPath() ?? '');
             try {
                 $existingKeys = $this->ingressHelper->getExistingKeysForMaxfield($waypointIdMap, $keys);
-                if ($existingKeys !== []) {
+                if ([] !== $existingKeys) {
                     $maxfield->setUserKeysWithUser($existingKeys, $agentNum);
                     $response['result'] = sprintf('Added keyinfo for %d portals.', count($existingKeys));
 
@@ -250,16 +250,14 @@ class MaxFieldsController extends BaseController
             'jsonData' => $json,
             'waypointIdMap' => $this->maxFieldHelper->getWaypointsIdMap($path),
         ]);
-
-
     }
 
     #[Route('maxfield/get-user-data/{path:maxfield}', name: 'maxfield_get_user_data', methods: ['POST'])]
     public function getUserData(
         Maxfield $maxfield,
-        #[MapRequestPayload] UserDataType $data,
-    ): JsonResponse
-    {
+        #[MapRequestPayload]
+        UserDataType $data,
+    ): JsonResponse {
         $userData = $maxfield->getUserData();
 
         if ($userData && array_key_exists($data->userId, $userData)) {
@@ -273,15 +271,13 @@ class MaxFieldsController extends BaseController
     public function generateMaxFields(
         Request $request,
         //   #[MapRequestPayload] MaxfieldCreateType $maxfieldType,
-
-    ): Response
-    {
+    ): Response {
         $maxfieldType = new MaxfieldCreateType();
-        $maxfieldType->points = (string)$request->request->get('points');
-        $maxfieldType->buildName = (string)$request->request->get('buildName');
-        $maxfieldType->skipPlots = (bool)$request->request->get('skipPlots');
-        $maxfieldType->skipStepPlots = (bool)$request->request->get('skipStepPlots');
-        $maxfieldType->playersNum = (int)$request->request->get('playersNum');
+        $maxfieldType->points = (string) $request->request->get('points');
+        $maxfieldType->buildName = (string) $request->request->get('buildName');
+        $maxfieldType->skipPlots = (bool) $request->request->get('skipPlots');
+        $maxfieldType->skipStepPlots = (bool) $request->request->get('skipStepPlots');
+        $maxfieldType->playersNum = (int) $request->request->get('playersNum');
 
         $wayPoints = $this->repository->findBy(['id' => $maxfieldType->getPoints()]);
         $maxField = $this->maxFieldGenerator->convertWayPointsToMaxFields($wayPoints);
@@ -326,12 +322,12 @@ class MaxFieldsController extends BaseController
     public function generateVariant(
         Maxfield $maxfield,
         Request $request,
-    ): Response
-    {
-        $playersNum = (int)$request->request->get('playersNum', 1);
+    ): Response {
+        $playersNum = (int) $request->request->get('playersNum', 1);
 
         if ($playersNum < 1 || $playersNum > 10) {
             $this->addFlash('danger', 'Número de agents inválido');
+
             return $this->redirectToRoute('max_fields_result', ['path' => $maxfield->getPath()]);
         }
 
@@ -346,7 +342,7 @@ class MaxFieldsController extends BaseController
         $commandFile = $this->maxFieldGenerator->getImagePath($originalPath, 'command.txt');
         if (file_exists($commandFile)) {
             $commandContent = file_get_contents($commandFile);
-            if ($commandContent !== false) {
+            if (false !== $commandContent) {
                 $options['skip_plots'] = str_contains($commandContent, '--skip_plots');
                 $options['skip_step_plots'] = str_contains($commandContent, '--skip_step_plots');
             }
@@ -384,6 +380,7 @@ class MaxFieldsController extends BaseController
             );
         } catch (Exception $exception) {
             $this->addFlash('danger', 'Error generando variante: '.$exception->getMessage());
+
             return $this->redirectToRoute('max_fields_result', ['path' => $originalPath]);
         }
     }
@@ -395,8 +392,7 @@ class MaxFieldsController extends BaseController
     public function edit(
         Maxfield $maxfield,
         Request $request,
-    ): RedirectResponse|Response
-    {
+    ): RedirectResponse|Response {
         $this->denyAccessUnlessGranted(
             'modify',
             $maxfield,
@@ -429,8 +425,7 @@ class MaxFieldsController extends BaseController
     public function delete(
         Maxfield $maxfield,
         Request $request,
-    ): RedirectResponse
-    {
+    ): RedirectResponse {
         $this->denyAccessUnlessGranted(
             'modify',
             $maxfield,
@@ -439,7 +434,7 @@ class MaxFieldsController extends BaseController
 
         $item = $maxfield->getPath();
         try {
-            $this->maxFieldGenerator->remove((string)$item);
+            $this->maxFieldGenerator->remove((string) $item);
 
             $this->entityManager->remove($maxfield);
             $this->entityManager->flush();
@@ -461,9 +456,7 @@ class MaxFieldsController extends BaseController
     public function deleteFiles(string $item): RedirectResponse
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException(
-                'You are not allowed to delete this item :('
-            );
+            throw $this->createAccessDeniedException('You are not allowed to delete this item :(');
         }
 
         try {
@@ -485,10 +478,10 @@ class MaxFieldsController extends BaseController
 
         $status = $maxfieldStatus->getStatus();
 
-        if ($status === 'finished' && $maxfield->getPlanResults() === null) {
-            $logContent = $this->maxFieldHelper->getLog($maxfield->getPath());
+        if ('finished' === $status && null === $maxfield->getPlanResults()) {
+            $logContent = $this->maxFieldHelper->getLog($maxfield->getPath() ?? '');
             $planResults = $this->maxFieldHelper->parsePlanResults($logContent);
-            if ($planResults !== null) {
+            if (null !== $planResults) {
                 $maxfield->setPlanResults($planResults);
                 $this->entityManager->flush();
             }
@@ -511,8 +504,7 @@ class MaxFieldsController extends BaseController
     #[Route(path: 'maxfield/toggle-favourite/{id}', name: 'maxfield_toggle_favourite', methods: ['GET'])]
     public function toggleFavourite(
         Maxfield $maxfield
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $newState = $this->getUser()?->toggleFavourite($maxfield);
 
         $this->entityManager->flush();
@@ -524,11 +516,13 @@ class MaxFieldsController extends BaseController
 
     #[Route(path: 'maxfield/plan', name: 'app_maxfields_plan', methods: ['GET'])]
     public function plan(
-        #[Autowire('%env(APP_DEFAULT_LAT)%')] float $defaultLat,
-        #[Autowire('%env(APP_DEFAULT_LON)%')] float $defaultLon,
-        #[Autowire('%env(APP_DEFAULT_ZOOM)%')] float $defaultZoom,
-    ): Response
-    {
+        #[Autowire('%env(APP_DEFAULT_LAT)%')]
+        float $defaultLat,
+        #[Autowire('%env(APP_DEFAULT_LON)%')]
+        float $defaultLon,
+        #[Autowire('%env(APP_DEFAULT_ZOOM)%')]
+        float $defaultZoom,
+    ): Response {
         $lat = $this->getUser()?->getParam('lat') ?: $defaultLat;
         $lon = $this->getUser()?->getParam('lon') ?: $defaultLon;
         $zoom = $this->getUser()?->getParam('zoom') ?: $defaultZoom;
@@ -542,11 +536,13 @@ class MaxFieldsController extends BaseController
 
     #[Route(path: 'maxfield/plan2', name: 'app_maxfields_plan2', methods: ['GET'])]
     public function plan2(
-        #[Autowire('%env(APP_DEFAULT_LAT)%')] float $defaultLat,
-        #[Autowire('%env(APP_DEFAULT_LON)%')] float $defaultLon,
-        #[Autowire('%env(APP_DEFAULT_ZOOM)%')] float $defaultZoom,
-    ): Response
-    {
+        #[Autowire('%env(APP_DEFAULT_LAT)%')]
+        float $defaultLat,
+        #[Autowire('%env(APP_DEFAULT_LON)%')]
+        float $defaultLon,
+        #[Autowire('%env(APP_DEFAULT_ZOOM)%')]
+        float $defaultZoom,
+    ): Response {
         $user = $this->getUser();
         $userSettings = $user?->getUserParams();
 
@@ -566,92 +562,34 @@ class MaxFieldsController extends BaseController
     public function exportMobile(
         Maxfield $maxfield,
         Request $request,
-        #[Autowire('%kernel.project_dir%')] string $projectDir,
+        #[Autowire('%kernel.project_dir%')]
+        string $projectDir,
         ?Profiler $profiler,
-    ): Response
-    {
-        if ($profiler instanceof Profiler) {
-            $profiler->disable();
-        }
+        MobileExportBuilder $exportBuilder,
+    ): Response {
+        $profiler?->disable();
 
         $path = $maxfield->getPath() ?? '';
         $info = $this->maxFieldHelper->getMaxField($path);
-        $waypointIdMap = $this->maxFieldHelper->getWaypointsIdMap($path);
 
-        // Get agent names from URL params
-        $agentNamesParam = $request->query->all('agent');
-        $numAgentsParam = (int)$request->query->get('count', '1');
-
-        // Get user's base agent name
-        $user = $this->getUser();
-        $baseAgentName = $user?->getUserParams()?->agentName ?? '';
-
-        // Build agent names array - use actual number of agents
-        $numAgents = max($numAgentsParam, count($info->agentsInfo));
-        $agentNames = [];
-        for ($i = 1; $i <= $numAgents; ++$i) {
-            $name = $agentNamesParam[$i] ?? null;
-            if ($name) {
-                $agentNames[$i] = $name;
-            } elseif ($numAgents === 1 && $baseAgentName) {
-                // Single agent: use logged-in user's name
-                $agentNames[$i] = $baseAgentName;
-            } elseif ($numAgents > 1) {
-                // Multiple agents: use "Agent N" format
-                $agentNames[$i] = 'Agent ' . $i;
-            } else {
-                $agentNames[$i] = 'Agent';
-            }
-        }
-
-        // Get frames as base64
-        $framesDir = $projectDir . '/public/maxfields/' . $path . '/frames';
-        $frames = [];
-
-        if (is_dir($framesDir)) {
-            $files = scandir($framesDir);
-            foreach ($files as $file) {
-                if (preg_match('/^frame_\d+\.gif$/', $file)) {
-                    $fullPath = $framesDir . '/' . $file;
-                    $frames[$file] = 'data:image/gif;base64,' . base64_encode(file_get_contents($fullPath));
-                }
-            }
-        }
-
-        ksort($frames);
+        // Use the actual number of agents if the plan has more than requested
+        $numAgents = max((int) $request->query->get('count', '1'), count($info->agentsInfo));
 
         $html = $this->renderView('maxfield/export.html.twig', [
             'maxfield' => $maxfield,
             'info' => $info,
-            'waypointIdMap' => $waypointIdMap,
-            'frames' => $frames,
-            'agentNames' => $agentNames,
+            'waypointIdMap' => $this->maxFieldHelper->getWaypointsIdMap($path),
+            'frames' => $exportBuilder->loadFrames($projectDir.'/public/maxfields/'.$path.'/frames'),
+            'agentNames' => $exportBuilder->buildAgentNames(
+                $request->query->all('agent'),
+                $numAgents,
+                $this->getUser()?->getUserParams()->agentName ?? '',
+            ),
             'numAgents' => $numAgents,
         ]);
 
-        // Remove Symfony toolbar - the toolbar is injected by WebDebugToolbarListener after render
-        // The toolbar is inserted right before </body> so we need to cut it there
-        // First, close </body></html> if missing (our template should have them)
-        if (str_contains($html, '</body>')) {
-            $html = substr($html, 0, strpos($html, '</body>')) . '</body></html>';
-        } elseif (str_contains($html, '</html>')) {
-            $html = substr($html, 0, strpos($html, '</html>')) . '</html>';
-        }
-
-        // Force remove toolbar by finding its position in HTML and cutting
-        $toolbarStart = strpos($html, '<!-- START of Symfony Web Debug Toolbar -->');
-        if ($toolbarStart !== false) {
-            $toolbarEnd = strpos($html, '<!-- END of Symfony Web Debug Toolbar -->', $toolbarStart);
-            if ($toolbarEnd !== false) {
-                $toolbarEnd += strlen('<!-- END of Symfony Web Debug Toolbar -->');
-                $html = substr($html, 0, $toolbarStart) . substr($html, $toolbarEnd);
-            }
-        }
-
-        // Add closing tags if needed
-        if (str_contains($html, '</body>') === false && str_contains($html, '</html>') === false) {
-            $html .= '</body></html>';
-        }
+        // The toolbar is injected by WebDebugToolbarListener right before </body>, so cut it off there
+        $html = $exportBuilder->stripDebugToolbar($html);
 
         return new Response($html, Response::HTTP_OK, ['Content-Type' => 'text/html; charset=UTF-8']);
     }

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Parser\Type;
 
-use UnexpectedValueException;
 use App\Parser\Type\KExport;
 use App\Service\WayPointHelper;
 use PHPUnit\Framework\TestCase;
+use UnexpectedValueException;
 
 final class KExportTest extends TestCase
 {
@@ -49,7 +49,7 @@ final class KExportTest extends TestCase
         $parser = new KExport($this->createStub(WayPointHelper::class));
 
         $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Invalid KExport JSON data');
+        $this->expectExceptionMessageIsOrContains('Invalid KExport JSON data');
         $parser->parse(['kexport' => '{invalid json']);
     }
 

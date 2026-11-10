@@ -17,7 +17,8 @@ bin/stop             # Stop all services
 
 ### Testing & Quality
 ```bash
-make tests                     # Full test suite (DB reset, PHPUnit, Rector dry-run, PHPStan)
+make tests                     # Full test suite (PHPUnit, Rector dry-run, PHPStan, PHP CS Fixer)
+make cs                        # Fix code style with PHP CS Fixer
 composer test-phpunit          # PHPUnit only
 composer test-phpstan          # PHPStan only
 composer ci                    # Run all tests (PHPUnit + PHPStan)
@@ -63,8 +64,10 @@ bin/deploy           # Production deployment
 
 ## Code Quality Configuration
 
-- **PHPStan**: Level 6, 100% type coverage required (`phpstan.neon.dist`)
-- **Rector**: PHP 8.2 + Symfony 6.4 rules (`rector.php`)
+- **PHPStan**: Level 10, 100% type coverage required, Doctrine-aware via `tests/object-manager.php` (`phpstan.neon.dist`)
+- **Rector**: PHP 8.5 sets plus Symfony, Doctrine and PHPUnit rules (`rector.php`)
+- **PHP CS Fixer**: `@Symfony` ruleset (`.php-cs-fixer.dist.php`)
+- **CI**: `.github/workflows/ci.yml` runs tests, lints, PHPStan, Rector and PHP CS Fixer on every PR; all must pass
 - Baseline files exist for managing existing issues
 
 ## Environment Variables

@@ -1,22 +1,24 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Service;
 
 use RuntimeException;
-use UnexpectedValueException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
+use UnexpectedValueException;
 
 class WayPointHelper
 {
     private readonly string $rootDir;
 
     public function __construct(
-        #[Autowire('%kernel.project_dir%')] string $projectDir,
-        #[Autowire('%env(INTEL_URL)%')] private readonly string $intelUrl
-    )
-    {
+        #[Autowire(param: 'kernel.project_dir')]
+        string $projectDir,
+        #[Autowire(env: 'INTEL_URL')]
+        private readonly string $intelUrl
+    ) {
         $this->rootDir = $projectDir.'/public/wp_images';
     }
 
@@ -87,8 +89,7 @@ class WayPointHelper
         string $wpId,
         string $imageUrl,
         bool $forceUpdate = false
-    ): void
-    {
+    ): void {
         $imagePath = $this->findImage($wpId);
 
         if ($imagePath && false === $forceUpdate) {
@@ -99,16 +100,12 @@ class WayPointHelper
 
         $ch = curl_init($imageUrl);
         if (false === $ch) {
-            throw new UnexpectedValueException(
-                'Can not init curl for: '.$imageUrl
-            );
+            throw new UnexpectedValueException('Can not init curl for: '.$imageUrl);
         }
 
         $fp = fopen($imagePath, 'wb');
         if (false === $fp) {
-            throw new UnexpectedValueException(
-                'Can not open image file under: '.$imageUrl
-            );
+            throw new UnexpectedValueException('Can not open image file under: '.$imageUrl);
         }
 
         curl_setopt($ch, CURLOPT_FILE, $fp);
@@ -166,8 +163,8 @@ class WayPointHelper
         $width = imagesx($sourceImage);
         $height = imagesy($sourceImage);
 
-        /* find the "desired height" of this thumbnail, relative to the desired width  */
-        $desiredHeight = max(1, (int)floor($height * ($desiredWidth / $width)));
+        /* find the "desired height" of this thumbnail, relative to the desired width */
+        $desiredHeight = max(1, (int) floor($height * ($desiredWidth / $width)));
 
         /* create a new, "virtual" image */
         $virtualImage = imagecreatetruecolor($desiredWidth, $desiredHeight);

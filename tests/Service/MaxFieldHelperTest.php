@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
-use InvalidArgumentException;
 use App\Service\MaxFieldHelper;
 use Elkuku\MaxfieldParser\MaxfieldParser;
 use Elkuku\MaxfieldParser\Type\MaxField;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
+use Symfony\Component\Filesystem\Filesystem;
 
 final class MaxFieldHelperTest extends TestCase
 {
@@ -18,7 +19,7 @@ final class MaxFieldHelperTest extends TestCase
     protected function setUp(): void
     {
         $this->tempDir = sys_get_temp_dir().'/maxfielder_test_'.uniqid();
-        mkdir($this->tempDir.'/public/maxfields', 0777, true);
+        mkdir($this->tempDir.'/public/maxfields', 0o777, true);
     }
 
     protected function tearDown(): void
@@ -93,7 +94,7 @@ final class MaxFieldHelperTest extends TestCase
     {
         $item = 'my-field';
         $root = $this->tempDir.'/public/maxfields/'.$item;
-        mkdir($root, 0777, true);
+        mkdir($root, 0o777, true);
         file_put_contents($root.'/log.txt', 'hello log');
 
         $helper = new MaxFieldHelper($this->tempDir, 6);
@@ -105,21 +106,21 @@ final class MaxFieldHelperTest extends TestCase
     {
         $item = 'my-field';
         $root = $this->tempDir.'/public/maxfields/'.$item;
-        mkdir($root, 0777, true);
+        mkdir($root, 0o777, true);
         file_put_contents($root.'/log.txt', $this->tempDir.'/public/maxfields/secret-path');
 
         $helper = new MaxFieldHelper($this->tempDir, 6);
         $log = $helper->getLog($item);
 
-        $this->assertStringNotContainsString($this->tempDir, (string) $log);
-        $this->assertStringContainsString('...', (string) $log);
+        $this->assertStringNotContainsString($this->tempDir, $log);
+        $this->assertStringContainsString('...', $log);
     }
 
     public function testFilesFinishedReturnsTrueWhenFileExists(): void
     {
         $item = 'my-field';
         $root = $this->tempDir.'/public/maxfields/'.$item;
-        mkdir($root, 0777, true);
+        mkdir($root, 0o777, true);
         file_put_contents($root.'/key_preparation.txt', '');
 
         $helper = new MaxFieldHelper($this->tempDir, 6);
@@ -131,7 +132,7 @@ final class MaxFieldHelperTest extends TestCase
     {
         $item = 'my-field';
         $framesDir = $this->tempDir.'/public/maxfields/'.$item.'/frames';
-        mkdir($framesDir, 0777, true);
+        mkdir($framesDir, 0o777, true);
         file_put_contents($framesDir.'/a.png', '');
         file_put_contents($framesDir.'/b.png', '');
 
@@ -144,7 +145,7 @@ final class MaxFieldHelperTest extends TestCase
     {
         $item = 'my-field';
         $root = $this->tempDir.'/public/maxfields/'.$item;
-        mkdir($root, 0777, true);
+        mkdir($root, 0o777, true);
         file_put_contents($root.'/plan_movie.gif', str_repeat('x', 1024));
 
         $helper = new MaxFieldHelper($this->tempDir, 6);
@@ -156,7 +157,7 @@ final class MaxFieldHelperTest extends TestCase
     {
         $item = 'my-field';
         $root = $this->tempDir.'/public/maxfields/'.$item;
-        mkdir($root, 0777, true);
+        mkdir($root, 0o777, true);
         file_put_contents($root.'/plan_movie.gif', '');
 
         $helper = new MaxFieldHelper($this->tempDir, 6);
@@ -168,7 +169,7 @@ final class MaxFieldHelperTest extends TestCase
     {
         $item = 'my-field';
         $root = $this->tempDir.'/public/maxfields/'.$item;
-        mkdir($root, 0777, true);
+        mkdir($root, 0o777, true);
         file_put_contents($root.'/link_map.png', '');
 
         $helper = new MaxFieldHelper($this->tempDir, 6);
@@ -180,7 +181,7 @@ final class MaxFieldHelperTest extends TestCase
     {
         $item = 'my-field';
         $root = $this->tempDir.'/public/maxfields/'.$item;
-        mkdir($root, 0777, true);
+        mkdir($root, 0o777, true);
         file_put_contents($root.'/portals.txt', "portal 1\nportal 2\nportal 3");
 
         $helper = new MaxFieldHelper($this->tempDir, 6);
@@ -192,7 +193,7 @@ final class MaxFieldHelperTest extends TestCase
     {
         $item = 'my-field';
         $root = $this->tempDir.'/public/maxfields/'.$item;
-        mkdir($root, 0777, true);
+        mkdir($root, 0o777, true);
         file_put_contents($root.'/portals_id_map.csv', "0,42,guid-abc,Portal Alpha\n1,43,guid-def,Portal Beta\n");
 
         $helper = new MaxFieldHelper($this->tempDir, 6);
@@ -221,20 +222,20 @@ final class MaxFieldHelperTest extends TestCase
         $helper = new MaxFieldHelper($this->tempDir, 6);
 
         $logContent = <<<LOG
-Some output here...
-===============================
-Maxfield Plan Results:
-portals = 36
-links = 94
-fields = 84
-max keys needed = 10
-AP from portals = 63000
-AP from links = 29422
-AP from fields = 105000
-TOTAL AP = 197422
-===============================
-Optimizing agent link assignments...
-LOG;
+            Some output here...
+            ===============================
+            Maxfield Plan Results:
+            portals = 36
+            links = 94
+            fields = 84
+            max keys needed = 10
+            AP from portals = 63000
+            AP from links = 29422
+            AP from fields = 105000
+            TOTAL AP = 197422
+            ===============================
+            Optimizing agent link assignments...
+            LOG;
 
         $results = $helper->parsePlanResults($logContent);
 
@@ -265,11 +266,11 @@ LOG;
         $helper = new MaxFieldHelper($this->tempDir, 6);
 
         $logContent = <<<LOG
-===============================
-Maxfield Plan Results:
-portals = 36
-===============================
-LOG;
+            ===============================
+            Maxfield Plan Results:
+            portals = 36
+            ===============================
+            LOG;
 
         $results = $helper->parsePlanResults($logContent);
 
@@ -284,10 +285,10 @@ LOG;
         $helper = new MaxFieldHelper($this->tempDir, 6);
 
         $logContent = <<<LOG
-===============================
-Maxfield Plan Results:
-===============================
-LOG;
+            ===============================
+            Maxfield Plan Results:
+            ===============================
+            LOG;
 
         $results = $helper->parsePlanResults($logContent);
 
@@ -316,7 +317,7 @@ LOG;
     {
         $item = 'test-field';
         $root = $this->tempDir.'/public/maxfields/'.$item;
-        mkdir($root, 0777, true);
+        mkdir($root, 0o777, true);
         file_put_contents($root.'/portals.txt', "Portal Alpha; https://intel.ingress.com/intel?pll=48.0,11.0\n");
         file_put_contents($root.'/key_preparation.csv', "KeysNeeded, KeysHave, KeysRemaining, PortalNum, PortalName\n0, 0, 0, 0, Portal Alpha\n");
         file_put_contents($root.'/agent_assignments.csv', "LinkNum, Agent, OriginNum, OriginName, DestinationNum, DestinationName\n");
@@ -330,28 +331,6 @@ LOG;
 
     private function removeDirectory(string $dir): void
     {
-        if (!is_dir($dir)) {
-            return;
-        }
-
-        $items = scandir($dir);
-        if (false === $items) {
-            return;
-        }
-
-        foreach ($items as $item) {
-            if ($item === '.') {
-                continue;
-            }
-
-            if ($item === '..') {
-                continue;
-            }
-
-            $path = $dir.'/'.$item;
-            is_dir($path) ? $this->removeDirectory($path) : unlink($path);
-        }
-
-        rmdir($dir);
+        new Filesystem()->remove($dir);
     }
 }

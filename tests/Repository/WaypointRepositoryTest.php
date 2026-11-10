@@ -34,7 +34,7 @@ final class WaypointRepositoryTest extends KernelTestCase
         $result = $this->repo->findByIds([(int) $wp1->getId(), (int) $wp2->getId()]);
 
         $this->assertCount(2, $result);
-        $names = array_map(fn(Waypoint $w): ?string => $w->getName(), $result);
+        $names = array_map(fn (Waypoint $w): ?string => $w->getName(), $result);
         $this->assertContains('Alpha', $names);
         $this->assertContains('Beta', $names);
     }
@@ -78,8 +78,8 @@ final class WaypointRepositoryTest extends KernelTestCase
 
         $this->assertCount(2, $result);
         // lat/lon are decimal(10,6) so PostgreSQL returns e.g. "48.000000,11.000000"
-        $has48 = array_filter($result, fn(string $s): bool => str_starts_with($s, '48.'));
-        $has49 = array_filter($result, fn(string $s): bool => str_starts_with($s, '49.'));
+        $has48 = array_filter($result, fn (string $s): bool => str_starts_with($s, '48.'));
+        $has49 = array_filter($result, fn (string $s): bool => str_starts_with($s, '49.'));
         $this->assertNotEmpty($has48, 'Expected a lat_lon string starting with 48.');
         $this->assertNotEmpty($has49, 'Expected a lat_lon string starting with 49.');
     }

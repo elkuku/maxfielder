@@ -11,7 +11,6 @@ use App\Service\WayPointHelper;
 use App\Twig\AppExtension;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
-use Twig\TwigFunction;
 
 final class AppExtensionTest extends TestCase
 {
@@ -26,27 +25,6 @@ final class AppExtensionTest extends TestCase
         $this->wayPointHelper = $this->createStub(WayPointHelper::class);
         $this->maxFieldHelper = $this->createStub(MaxFieldHelper::class);
         $this->extension = new AppExtension($this->wayPointHelper, $this->maxFieldHelper);
-    }
-
-    public function testGetFiltersReturnsEmptyArray(): void
-    {
-        $this->assertSame([], $this->extension->getFilters());
-    }
-
-    public function testGetFunctionsReturnsThreeFunctions(): void
-    {
-        $functions = $this->extension->getFunctions();
-
-        $this->assertCount(3, $functions);
-
-        $names = array_map(
-            static fn(TwigFunction $f): string => $f->getName(),
-            $functions
-        );
-
-        $this->assertContains('hasImage', $names);
-        $this->assertContains('previewImage', $names);
-        $this->assertContains('waypointCount', $names);
     }
 
     public function testPreviewImageReturnsImagePath(): void

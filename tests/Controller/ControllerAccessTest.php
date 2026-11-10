@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Controller;
 
-use Override;
 use App\Story\DefaultFixturesStory;
 use Elkuku\SymfonyUtils\Test\ControllerBaseTest;
+use Override;
 use Zenstruck\Foundry\Test\Factories;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -38,10 +38,10 @@ final class ControllerAccessTest extends ControllerBaseTest
             'default' => [
                 'statusCodes' => ['GET' => 200],
             ],
-            'login'   => [
+            'login' => [
                 'statusCodes' => ['GET' => 200],
             ],
-            'app_portalcalc'   => [
+            'app_portalcalc' => [
                 'statusCodes' => ['GET' => 200],
             ],
             'max_fields_result' => [

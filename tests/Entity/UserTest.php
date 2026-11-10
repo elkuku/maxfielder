@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Entity;
 
-use ReflectionClass;
 use App\Entity\Maxfield;
 use App\Entity\User;
 use App\Enum\MapBoxProfilesEnum;
@@ -13,6 +12,7 @@ use App\Enum\MapProvidersEnum;
 use App\Enum\UserRole;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 final class UserTest extends TestCase
 {
@@ -21,7 +21,7 @@ final class UserTest extends TestCase
         $user = new User();
         $user->setIdentifier('agent007');
 
-        $this->assertSame('agent007', (string)$user);
+        $this->assertSame('agent007', (string) $user);
     }
 
     public function testGetRolesDefaultIncludesRoleUser(): void
@@ -258,15 +258,6 @@ final class UserTest extends TestCase
         $user->setParams(['foo' => 'bar', 'baz' => 'qux']);
 
         $this->assertSame(['foo' => 'bar', 'baz' => 'qux'], $user->getParams());
-    }
-
-    public function testEraseCredentialsDoesNotThrow(): void
-    {
-        $user = new User();
-
-        $user->eraseCredentials();
-
-        $this->addToAssertionCount(1);
     }
 
     public function testRemoveFavourite(): void

@@ -96,7 +96,7 @@ final class LinkReordererTest extends TestCase
         // Find positions of the two links from origin 0
         $positions = [];
         foreach ($ordered as $pos => $link) {
-            if ($link->origin === 0) {
+            if (0 === $link->origin) {
                 $positions[] = $pos;
             }
         }

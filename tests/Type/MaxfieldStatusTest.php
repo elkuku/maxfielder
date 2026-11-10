@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Type;
 
-use ReflectionProperty;
 use App\Entity\Maxfield;
 use App\Service\MaxFieldHelper;
 use App\Type\MaxfieldStatus;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 final class MaxfieldStatusTest extends TestCase

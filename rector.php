@@ -5,9 +5,9 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\Cast\RecastingRemovalRector;
 use Rector\Exception\Configuration\InvalidConfigurationException;
+use Rector\PHPUnit\CodeQuality\Rector\Class_\AddSeeTestAnnotationRector;
 use Rector\Symfony\Bridge\Symfony\Routing\SymfonyRoutesProvider;
 use Rector\Symfony\Contract\Bridge\Symfony\Routing\SymfonyRoutesProviderInterface;
-use Rector\Symfony\Symfony30\Rector\MethodCall\StringFormTypeToClassRector;
 
 try {
     return RectorConfig::configure()
@@ -16,13 +16,14 @@ try {
             __DIR__.'/tests',
         ])
         ->withSkip([
-            __DIR__.'/src/Service/PhpXlsxGenerator.php',
             __DIR__.'/tests/bootstrap.php',
+            // Only adds @see docblocks pointing at test classes
+            AddSeeTestAnnotationRector::class,
             RecastingRemovalRector::class => [
                 __DIR__.'/src/Entity/User.php',
             ],
         ])
-        //
+
         ->withSymfonyContainerXml(__DIR__.'/var/cache/dev/App_KernelDevDebugContainer.xml')
         ->withSymfonyContainerPhp(__DIR__.'/tests/symfony-container.php')
         ->registerService(SymfonyRoutesProvider::class, SymfonyRoutesProviderInterface::class)
@@ -48,10 +49,7 @@ try {
             phpunit: true,
             symfony: true
         )
-        ->withImportNames(removeUnusedImports: true)
-        ->withRules([
-            StringFormTypeToClassRector::class,
-        ]);
+        ->withImportNames(removeUnusedImports: true);
 } catch (InvalidConfigurationException $e) {
-    echo($e->getMessage());
+    echo $e->getMessage();
 }

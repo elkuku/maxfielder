@@ -17,7 +17,7 @@ final class MaxFieldGeneratorCommandTest extends TestCase
     protected function setUp(): void
     {
         $this->tempDir = sys_get_temp_dir().'/maxfielder_cmd_test_'.uniqid();
-        mkdir($this->tempDir.'/public/maxfields', 0777, true);
+        mkdir($this->tempDir.'/public/maxfields', 0o777, true);
     }
 
     protected function tearDown(): void
@@ -27,6 +27,7 @@ final class MaxFieldGeneratorCommandTest extends TestCase
 
     /**
      * @param array<string, bool> $options
+     *
      * @return list<string>
      */
     private function buildCommand(
@@ -40,8 +41,12 @@ final class MaxFieldGeneratorCommandTest extends TestCase
     ): array {
         $method = new ReflectionMethod(MaxFieldGenerator::class, 'buildCommand');
 
-        /** @var list<string> */
-        return $method->invoke($generator, $projectRoot, $fileName, $players, $options, $engine, $dockerContainer);
+        $command = $method->invoke($generator, $projectRoot, $fileName, $players, $options, $engine, $dockerContainer);
+
+        $this->assertIsList($command);
+        $this->assertContainsOnlyString($command);
+
+        return $command;
     }
 
     /** @return array<string, bool> */

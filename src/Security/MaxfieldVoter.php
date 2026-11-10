@@ -18,11 +18,13 @@ class MaxfieldVoter extends Voter
 {
     final public const string MODIFY = 'modify';
 
-    public function __construct(private readonly Security $security) {}
+    public function __construct(private readonly Security $security)
+    {
+    }
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if ($attribute !== self::MODIFY) {
+        if (self::MODIFY !== $attribute) {
             return false;
         }
 
@@ -34,8 +36,7 @@ class MaxfieldVoter extends Voter
         mixed $subject,
         TokenInterface $token,
         ?Vote $vote = null
-    ): bool
-    {
+    ): bool {
         $user = $token->getUser();
 
         if (!$user instanceof User) {
@@ -52,9 +53,7 @@ class MaxfieldVoter extends Voter
 
         return match ($attribute) {
             self::MODIFY => $this->canModify($maxfield, $user),
-            default => throw new LogicException(
-                'This code should not be reached!'
-            )
+            default => throw new LogicException('This code should not be reached!')
         };
     }
 
