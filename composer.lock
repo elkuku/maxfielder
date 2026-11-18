@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f355ab1e0756e5c44e826b0829655574",
+    "content-hash": "93041b3cc81cfb1f8964cca532a47014",
     "packages": [
         {
             "name": "composer/semver",
@@ -1541,30 +1541,48 @@
         },
         {
             "name": "elkuku/symfony-utils",
-            "version": "0.5.2",
+            "version": "0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elkuku/symfony-utils.git",
-                "reference": "0a0157cac29b7799845958986f40214766d7ab81"
+                "reference": "f6a9439176419a36a7257a343ac92c991a5ffd41"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elkuku/symfony-utils/zipball/0a0157cac29b7799845958986f40214766d7ab81",
-                "reference": "0a0157cac29b7799845958986f40214766d7ab81",
+                "url": "https://api.github.com/repos/elkuku/symfony-utils/zipball/f6a9439176419a36a7257a343ac92c991a5ffd41",
+                "reference": "f6a9439176419a36a7257a343ac92c991a5ffd41",
                 "shasum": ""
             },
             "require": {
-                "doctrine/doctrine-bundle": "^2.5|^3.0",
-                "doctrine/orm": "^2.11|^3.1",
-                "php": ">=8.1",
-                "symfony/browser-kit": "^6.0|^7.0|^8.0",
-                "symfony/console": "^6.0|^7.0|^8.0",
-                "symfony/framework-bundle": "^6.0|^7.0|^8.0",
-                "symfony/security-core": "^6.0|^7.0|^8.0"
+                "php": ">=8.1"
+            },
+            "conflict": {
+                "doctrine/doctrine-bundle": "<2.5 || >=4.0",
+                "doctrine/orm": "<2.11 || >=3.0 <3.1 || >=4.0",
+                "symfony/browser-kit": "<6.0 || >=9.0",
+                "symfony/console": "<6.0 || >=9.0",
+                "symfony/framework-bundle": "<6.0 || >=9.0",
+                "symfony/security-core": "<6.0 || >=9.0"
             },
             "require-dev": {
-                "phpstan/phpstan": "^1.4",
-                "phpunit/phpunit": "^9.5"
+                "doctrine/doctrine-bundle": "^3.0",
+                "doctrine/orm": "^3.1",
+                "php-cs-fixer/shim": "^3.88",
+                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpunit/phpunit": "^13.0",
+                "symfony/browser-kit": "^8.0",
+                "symfony/console": "^8.0",
+                "symfony/framework-bundle": "^8.0",
+                "symfony/security-core": "^8.0"
+            },
+            "suggest": {
+                "doctrine/doctrine-bundle": "For UserAdminBaseCommand",
+                "doctrine/orm": "For UserAdminBaseCommand",
+                "symfony/browser-kit": "For ControllerBaseTest",
+                "symfony/console": "For UserAdminBaseCommand",
+                "symfony/framework-bundle": "For ControllerBaseTest",
+                "symfony/security-core": "For UserAdminBaseCommand"
             },
             "type": "library",
             "autoload": {
@@ -1585,10 +1603,10 @@
             "description": "Various Symfony Utilities",
             "support": {
                 "issues": "https://github.com/elkuku/symfony-utils/issues",
-                "source": "https://github.com/elkuku/symfony-utils/tree/0.5.2"
+                "source": "https://github.com/elkuku/symfony-utils/tree/0.6.0"
             },
-            "time": "2026-11-18T14:53:37+00:00",
-            "published-time": "2026-11-18T14:53:44+00:00"
+            "time": "2026-11-18T15:33:43+00:00",
+            "published-time": "2026-11-18T15:37:13+00:00"
         },
         {
             "name": "firebase/php-jwt",
@@ -3541,80 +3559,6 @@
             "published-time": "2026-11-04T11:31:21+00:00"
         },
         {
-            "name": "symfony/browser-kit",
-            "version": "v8.1.11",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/browser-kit.git",
-                "reference": "cc23f4014de03abce0425f9c6ff01c2d1e93ca5c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/browser-kit/zipball/cc23f4014de03abce0425f9c6ff01c2d1e93ca5c",
-                "reference": "cc23f4014de03abce0425f9c6ff01c2d1e93ca5c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.4.1",
-                "symfony/dom-crawler": "^7.4|^8.0"
-            },
-            "require-dev": {
-                "symfony/css-selector": "^7.4|^8.0",
-                "symfony/http-client": "^7.4|^8.0",
-                "symfony/http-foundation": "^7.4|^8.0",
-                "symfony/mime": "^7.4|^8.0",
-                "symfony/process": "^7.4|^8.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\BrowserKit\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Simulates the behavior of a web browser, allowing you to make requests, click on links and submit forms programmatically",
-            "homepage": "https://symfony.com",
-            "support": {
-                "source": "https://github.com/symfony/browser-kit/tree/v8.1.11"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://github.com/nicolas-grekas",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2026-11-01T07:18:47+00:00",
-            "published-time": "2026-11-04T11:32:22+00:00"
-        },
-        {
             "name": "symfony/cache",
             "version": "v8.1.11",
             "source": {
@@ -4312,77 +4256,6 @@
             ],
             "time": "2026-10-18T14:56:39+00:00",
             "published-time": "2026-10-28T18:25:28+00:00"
-        },
-        {
-            "name": "symfony/dom-crawler",
-            "version": "v8.1.10",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/dom-crawler.git",
-                "reference": "aa0674b52e1bd00502756fbaba8c982b446472e6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/aa0674b52e1bd00502756fbaba8c982b446472e6",
-                "reference": "aa0674b52e1bd00502756fbaba8c982b446472e6",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.4.1",
-                "symfony/polyfill-ctype": "^1.8",
-                "symfony/polyfill-mbstring": "^1.0"
-            },
-            "require-dev": {
-                "symfony/css-selector": "^7.4|^8.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\DomCrawler\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Eases DOM navigation for HTML and XML documents",
-            "homepage": "https://symfony.com",
-            "support": {
-                "source": "https://github.com/symfony/dom-crawler/tree/v8.1.10"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://github.com/nicolas-grekas",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2026-10-25T14:40:25+00:00",
-            "published-time": "2026-10-28T18:24:41+00:00"
         },
         {
             "name": "symfony/dotenv",
@@ -13935,6 +13808,80 @@
             "published-time": "2024-10-20T05:09:39+00:00"
         },
         {
+            "name": "symfony/browser-kit",
+            "version": "v8.1.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/browser-kit.git",
+                "reference": "cc23f4014de03abce0425f9c6ff01c2d1e93ca5c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/browser-kit/zipball/cc23f4014de03abce0425f9c6ff01c2d1e93ca5c",
+                "reference": "cc23f4014de03abce0425f9c6ff01c2d1e93ca5c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.4.1",
+                "symfony/dom-crawler": "^7.4|^8.0"
+            },
+            "require-dev": {
+                "symfony/css-selector": "^7.4|^8.0",
+                "symfony/http-client": "^7.4|^8.0",
+                "symfony/http-foundation": "^7.4|^8.0",
+                "symfony/mime": "^7.4|^8.0",
+                "symfony/process": "^7.4|^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\BrowserKit\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Simulates the behavior of a web browser, allowing you to make requests, click on links and submit forms programmatically",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/browser-kit/tree/v8.1.11"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-11-01T07:18:47+00:00",
+            "published-time": "2026-11-04T11:32:22+00:00"
+        },
+        {
             "name": "symfony/css-selector",
             "version": "v8.1.10",
             "source": {
@@ -14079,6 +14026,77 @@
             ],
             "time": "2026-05-29T05:06:50+00:00",
             "published-time": "2026-05-29T08:51:19+00:00"
+        },
+        {
+            "name": "symfony/dom-crawler",
+            "version": "v8.1.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/dom-crawler.git",
+                "reference": "aa0674b52e1bd00502756fbaba8c982b446472e6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/aa0674b52e1bd00502756fbaba8c982b446472e6",
+                "reference": "aa0674b52e1bd00502756fbaba8c982b446472e6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.4.1",
+                "symfony/polyfill-ctype": "^1.8",
+                "symfony/polyfill-mbstring": "^1.0"
+            },
+            "require-dev": {
+                "symfony/css-selector": "^7.4|^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\DomCrawler\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Eases DOM navigation for HTML and XML documents",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/dom-crawler/tree/v8.1.10"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-10-25T14:40:25+00:00",
+            "published-time": "2026-10-28T18:24:41+00:00"
         },
         {
             "name": "symfony/maker-bundle",
