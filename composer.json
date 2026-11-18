@@ -17,7 +17,7 @@
         "elkuku/kuku-sf-system-tools-bundle": "^1.0",
         "elkuku/maxfield-bundle": "dev-master",
         "elkuku/maxfield-parser": "dev-master",
-        "elkuku/symfony-utils": "dev-master",
+        "elkuku/symfony-utils": "^0.6",
         "google/apiclient": "^2.13",
         "knpuniversity/oauth2-client-bundle": "^2.3",
         "league/oauth2-github": "^3.0",
@@ -153,7 +153,11 @@
     "extra": {
         "symfony": {
             "allow-contrib": true,
-            "require": "8.*"
+            "require": "8.*",
+            "endpoint": [
+                "https://api.github.com/repos/elkuku/recipes/contents/index.json?ref=flex/main",
+                "flex://defaults"
+            ]
         }
     }
 }
