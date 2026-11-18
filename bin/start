@@ -1,31 +1,27 @@
 #!/bin/bash
 #
-# Startup script
+# Start script: Docker services and the Symfony server.
+#
+# Installed by the elkuku/symfony-utils Flex recipe.
 #
 # License: WTFPL
 # Author: Nikolai Plath
 #
 
-check() {
-if ! command -v "$1" &> /dev/null
-then
-    echo "❌ ERROR: Command '$1' could not be found on your system :("
-    exit 1
-fi
-}
-
-check "docker-compose"
-check "symfony"
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && cd .. && pwd )"
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && cd .. && pwd)"
 cd "$DIR" || exit 1
+
+. ./bin/functions.sh
+
+checkIsInstalled symfony
 
 echo "🚀 Starting dev env in $DIR ..."
 
-docker-compose up -d
+startServices
 
+echo "Starting the server ... "
 symfony server:start -d
 
 symfony open:local
 
-echo "✨ hF =;) 🤪"
+echo "✨  hF =;) 🤪"

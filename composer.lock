@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "02cec3662ab566ddfbd1900b7f85dd79",
+    "content-hash": "f355ab1e0756e5c44e826b0829655574",
     "packages": [
         {
             "name": "composer/semver",
@@ -1541,16 +1541,16 @@
         },
         {
             "name": "elkuku/symfony-utils",
-            "version": "dev-master",
+            "version": "0.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elkuku/symfony-utils.git",
-                "reference": "d18c1fee024564d5d02cbda713579936c2296b52"
+                "reference": "0a0157cac29b7799845958986f40214766d7ab81"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elkuku/symfony-utils/zipball/d18c1fee024564d5d02cbda713579936c2296b52",
-                "reference": "d18c1fee024564d5d02cbda713579936c2296b52",
+                "url": "https://api.github.com/repos/elkuku/symfony-utils/zipball/0a0157cac29b7799845958986f40214766d7ab81",
+                "reference": "0a0157cac29b7799845958986f40214766d7ab81",
                 "shasum": ""
             },
             "require": {
@@ -1566,7 +1566,6 @@
                 "phpstan/phpstan": "^1.4",
                 "phpunit/phpunit": "^9.5"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1586,10 +1585,10 @@
             "description": "Various Symfony Utilities",
             "support": {
                 "issues": "https://github.com/elkuku/symfony-utils/issues",
-                "source": "https://github.com/elkuku/symfony-utils/tree/0.4.1"
+                "source": "https://github.com/elkuku/symfony-utils/tree/0.5.2"
             },
-            "time": "2026-10-20T13:22:10+00:00",
-            "published-time": "2026-10-20T13:22:21+00:00"
+            "time": "2026-11-18T14:53:37+00:00",
+            "published-time": "2026-11-18T14:53:44+00:00"
         },
         {
             "name": "firebase/php-jwt",
@@ -14692,7 +14691,6 @@
     "stability-flags": {
         "elkuku/maxfield-bundle": 20,
         "elkuku/maxfield-parser": 20,
-        "elkuku/symfony-utils": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,

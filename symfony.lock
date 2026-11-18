@@ -84,7 +84,13 @@
         "version": "dev-master"
     },
     "elkuku/symfony-utils": {
-        "version": "dev-master"
+        "version": "0.5",
+        "recipe": {
+            "repo": "github.com/elkuku/recipes",
+            "branch": "main",
+            "version": "0.5",
+            "ref": "9550f40d81d1680ce214e530a0f2cada9c0c2a7f"
+        }
     },
     "friendsofphp/php-cs-fixer": {
         "version": "3.95",
