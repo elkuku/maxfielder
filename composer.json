@@ -14,7 +14,7 @@
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3",
         "easycorp/easyadmin-bundle": "^5.0",
-        "elkuku/kuku-sf-system-tools-bundle": "^1.0",
+        "elkuku/kuku-sf-system-tools-bundle": "^1.4",
         "elkuku/maxfield-bundle": "dev-master",
         "elkuku/maxfield-parser": "dev-master",
         "elkuku/symfony-utils": "^0.6",

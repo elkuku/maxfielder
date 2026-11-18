@@ -1607,6 +1607,12 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  * @psalm-type KukuSfSystemToolsConfig = array{
  *     expose_sf_version?: bool|Param, // Default: false
  *     expose_php_version?: bool|Param, // Default: false
+ *     admin?: bool|array{ // The About and deploy log pages. They need symfony/twig-bundle and symfony/security-bundle.
+ *         enabled?: bool|Param, // Default: false
+ *         role?: scalar|Param|null, // The role a user needs to see the pages. // Default: "ROLE_ADMIN"
+ *         base_template?: scalar|Param|null, // The template the pages extend. It needs a "title" and a "body" block. // Default: "base.html.twig"
+ *         deploy_log?: scalar|Param|null, // The log file bin/deploy writes to. // Default: "%kernel.project_dir%/var/log/deploy.log"
+ *     },
  * }
  * @psalm-type ZenstruckFoundryConfig = array{
  *     auto_refresh_proxies?: bool|Param|null, // Deprecated: Since 2.0 auto_refresh_proxies defaults to true and this configuration has no effect. // Whether to auto-refresh proxies by default (https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#auto-refresh) // Default: null
