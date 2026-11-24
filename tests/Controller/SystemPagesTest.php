@@ -29,7 +29,7 @@ final class SystemPagesTest extends WebTestCase
 
         $client->request(Request::METHOD_GET, '/system/logview');
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('p', 'var/log/deploy/deploy_log_.log');
+        self::assertSelectorTextContains('p', 'var/log/deploy.log');
     }
 
     public function testThePagesNeedTheAdminRole(): void

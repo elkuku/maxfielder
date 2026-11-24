@@ -4,6 +4,4 @@ kuku_sf_system_tools:
   expose_db_version: true
   expose_last_deploy: true
   # The About and deploy log pages, see config/routes/kuku_sfsysteminfo.yaml.
-  admin:
-    # Where the Plesk deploy action writes the output of bin/deploy.
-    deploy_log: '%kernel.project_dir%/var/log/deploy/deploy_log_.log'
+  admin: ~
