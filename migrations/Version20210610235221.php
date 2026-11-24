@@ -20,13 +20,13 @@ final class Version20210610235221 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE system_user ADD git_hub_id VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE "system_user" ADD git_hub_id VARCHAR(255) DEFAULT NULL');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SCHEMA public');
-        $this->addSql('ALTER TABLE system_user DROP git_hub_id');
+        $this->addSql('ALTER TABLE "system_user" DROP git_hub_id');
     }
 }

@@ -23,7 +23,7 @@ final class Version20230109141116 extends AbstractMigration
         $this->addSql('CREATE TABLE user_maxfield (user_id INT NOT NULL, maxfield_id INT NOT NULL, PRIMARY KEY(user_id, maxfield_id))');
         $this->addSql('CREATE INDEX IDX_9926F4BBA76ED395 ON user_maxfield (user_id)');
         $this->addSql('CREATE INDEX IDX_9926F4BBA48CBC89 ON user_maxfield (maxfield_id)');
-        $this->addSql('ALTER TABLE user_maxfield ADD CONSTRAINT FK_9926F4BBA76ED395 FOREIGN KEY (user_id) REFERENCES system_user (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE user_maxfield ADD CONSTRAINT FK_9926F4BBA76ED395 FOREIGN KEY (user_id) REFERENCES "system_user" (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE user_maxfield ADD CONSTRAINT FK_9926F4BBA48CBC89 FOREIGN KEY (maxfield_id) REFERENCES maxfield (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 

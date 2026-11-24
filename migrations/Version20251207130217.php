@@ -20,14 +20,14 @@ final class Version20251207130217 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE system_user ADD role VARCHAR(50) NOT NULL');
-        $this->addSql('ALTER TABLE system_user DROP roles');
+        $this->addSql('ALTER TABLE "system_user" ADD role VARCHAR(50) NOT NULL');
+        $this->addSql('ALTER TABLE "system_user" DROP roles');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE system_user ADD roles JSON NOT NULL');
-        $this->addSql('ALTER TABLE system_user DROP role');
+        $this->addSql('ALTER TABLE "system_user" ADD roles JSON NOT NULL');
+        $this->addSql('ALTER TABLE "system_user" DROP role');
     }
 }

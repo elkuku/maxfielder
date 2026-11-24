@@ -23,7 +23,7 @@ final class Version20220926141839 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE maxfield_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE maxfield (id INT NOT NULL, owner_id INT NOT NULL, name VARCHAR(150) NOT NULL, path VARCHAR(255) DEFAULT NULL, json_data JSON DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_79AB10BB7E3C61F9 ON maxfield (owner_id)');
-        $this->addSql('ALTER TABLE maxfield ADD CONSTRAINT FK_79AB10BB7E3C61F9 FOREIGN KEY (owner_id) REFERENCES system_user (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE maxfield ADD CONSTRAINT FK_79AB10BB7E3C61F9 FOREIGN KEY (owner_id) REFERENCES "system_user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 
     public function down(Schema $schema): void
