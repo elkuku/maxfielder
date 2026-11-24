@@ -1,8 +1,13 @@
 services:
   database:
-    image: postgres:15-alpine
+    image: postgres:17-alpine
     environment:
       POSTGRES_USER: main
       POSTGRES_PASSWORD: main
       POSTGRES_DB: main
+    volumes:
+      - database_data_17:/var/lib/postgresql/data:rw
     ports: [ "5432" ]
+
+volumes:
+  database_data_17:
